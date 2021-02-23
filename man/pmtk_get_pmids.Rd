@@ -4,14 +4,7 @@
 \alias{pmtk_get_pmids}
 \title{Perform basic PubMed search.}
 \usage{
-pmtk_get_pmids(
-  pmed_search,
-  search_as_is = T,
-  db = "pubmed",
-  max_url = 2e+06,
-  summarize = F,
-  verbose = F
-)
+pmtk_get_pmids(pmed_search, convert_syntax = T, verbose = T)
 }
 \arguments{
 \item{pmids}{A vector of PMIDs}

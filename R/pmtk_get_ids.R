@@ -17,52 +17,54 @@
 #' @rdname pmtk_get_pmids
 #' 
 pmtk_get_pmids <- function (pmed_search,
-                            search_as_is = T, ##
-                            db = 'pubmed',  ##
-                            max_url = 2e6,
-                            summarize = F, ## - ??
-                            verbose = F) {
+                            convert_syntax = T,
+                            verbose = T) {
   
   ## we need to clean up these parameters -- too many -- 
-  
-  x <- lapply(1:length(pmed_search), function(y) {
+  db <- 'pubmed'
+  pre_url <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?"
+    
+  returns <- lapply(1:length(pmed_search), function(y) {
     
     s1 <- pmed_search[y]
     
-    if (search_as_is) {s2 <- s1} else{
-      s2 <- paste0(s1, '[MH]', ' OR ', s1, '[TIAB]')}
+    if (!convert_syntax) {s2 <- s1} else{
+      s2 <- paste0(s1, '[MH]', ' OR ', s1, '[TIAB]')
+      }
     # depression[MH] OR depression[tIAB]
     rentrez_search <- rentrez::entrez_search(term = s2, db = db)
-    ## Needs to be 
-    url_count <- min(max_url, rentrez_search$count) 
     
-    if (verbose) {finally =  print(paste0(y, ' / ', length(pmed_search)))}
+    # url_count <- min(max_url, rentrez_search$count) 
+    url_count <- rentrez_search$count 
+    
+    if(verbose){
+      finally =  print(paste0(y, ' / ', length(pmed_search), ' ',
+                              s2, ': ', url_count, ' pmids'))}
     
     if (url_count == 0) { 
       
-      data.frame(search = s1, 
-                 pmid = NA,
-                 stringsAsFactors = FALSE)} else{
-                   url_term_query <- gsub(" ", "+", s1, fixed = TRUE)
-                   pmids <- paste0 ("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?", 
-                                    "db=", db, "&retmax=", 
-                                    url_count, 
-                                    "&term=", 
-                                    url_term_query, 
-                                    "&usehistory=n") 
+      data.table::data.table(search = s1, pmid = NA)} else{ 
                    
-                   x <- RCurl::getURL(pmids)
-                   x1 <- xml2::read_xml(x) 
-                   x2 <- xml2::xml_find_all(x1, './/Id')
-                   x3 <- xml2::xml_text(x2)
-                   
-                   if (length(x3) == 0) {x3 <- NA}
-                   data.frame(search = s1, pmid = x3) } })
+          url_term_query <- gsub(" ", "+", s1, fixed = TRUE)
+          pmids <- paste0 (pre_url, 
+                           "db=", db, "&retmax=", 
+                           url_count, 
+                           "&term=", 
+                           url_term_query, 
+                           "&usehistory=n") 
+          
+          x <- RCurl::getURL(pmids)
+          x1 <- xml2::read_xml(x) 
+          x2 <- xml2::xml_find_all(x1, './/Id')
+          x3 <- xml2::xml_text(x2)
+          
+          if (length(x3) == 0) {x3 <- NA}
+          
+          data.table::data.table(search = s1, pmid = x3) 
+      
+      } 
+    
+    })
   
-  x <- data.table::rbindlist(x)
-  
-  if (summarize == FALSE) {x} else{
-    x <- x[order(pmid, search)]
-    x[, list(search = paste(search, collapse = " | ")), by = pmid]
-  }
+  data.table::rbindlist(returns)
 }
