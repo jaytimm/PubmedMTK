@@ -17,11 +17,12 @@
 #' @rdname pmtk_get_pmids
 #' 
 pmtk_get_pmids <- function (pmed_search,
-                            convert_syntax = T,
+                            #convert_syntax = T,
                             verbose = T) {
   
   ## we need to clean up these parameters -- too many -- 
   db <- 'pubmed'
+  convert_syntax = T
   pre_url <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?"
     
   returns <- lapply(1:length(pmed_search), function(y) {
@@ -45,15 +46,22 @@ pmtk_get_pmids <- function (pmed_search,
       
       data.table::data.table(search = s1, pmid = NA)} else{ 
                    
+        ## below is different than rentrez_search
           url_term_query <- gsub(" ", "+", s1, fixed = TRUE)
+          
           pmids <- paste0 (pre_url, 
                            "db=", db, "&retmax=", 
                            url_count, 
                            "&term=", 
-                           url_term_query, 
-                           "&usehistory=n") 
+                           url_term_query,
+                           '%5BMH%5D+OR+',
+                           url_term_query,
+                           '%5BTIAB%5D')
+                           #"&usehistory=n" 
           
           x <- RCurl::getURL(pmids)
+          
+          ## for search = induced senescence --??
           x1 <- xml2::read_xml(x) 
           x2 <- xml2::xml_find_all(x1, './/Id')
           x3 <- xml2::xml_text(x2)

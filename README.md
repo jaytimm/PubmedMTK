@@ -9,5 +9,3 @@ devtools::install_github("jaytimm/PubmedMTK")
 
 Usage
 -----
-
-### § pubmed
