@@ -1,9 +1,10 @@
 \~ PubMed Mining Toolkit
 
+Installation
+------------
+
 ``` r
-library(devtools)
-#devtools::install_github("jaytimm/PubmedMTK")
-library(PubmedMTK)
+devtools::install_github("jaytimm/PubmedMTK")
 ```
 
 Usage
