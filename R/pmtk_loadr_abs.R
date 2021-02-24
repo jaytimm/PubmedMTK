@@ -1,6 +1,6 @@
-#' Load output from `pmtk_batch_abstracts` as a single data.frame
+#' Load output from `pmtk_download_abs` as a single data.frame
 #' 
-#' @name pmtk_strip_batches
+#' @name pmtk_loadr_abs
 #' @param in_file File path to batches
 #' @param file_prefix  String specifying batch name
 #' @return A data.frame  
@@ -8,10 +8,11 @@
 #' 
 #' 
 #' @export
-#' @rdname pmtk_strip_batches
+#' @rdname pmtk_loadr_abs
 #' 
-pubmed_strip_batches <- function (in_file,
-                                 file_prefix) {
+pmtk_loadr_abs <- function (in_file,
+                            file_prefix) {
+
   setwd(in_file)
   gfiles <- list.files(path = in_file, 
                        pattern = file_prefix, 

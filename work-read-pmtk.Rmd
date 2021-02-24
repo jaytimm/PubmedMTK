@@ -4,34 +4,26 @@ output: html_document
 ---
 
 
+## Introductories
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
-# Load functions
-fns_location <- 'functions/'
-R.utils::sourceDirectory(fns_location)
+working_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/data-raw/'
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(text2vec, data.table, quanteda, 
-               rentrez, XML, xml2, RCurl, textmineR, 
-               tidytext, text2vec, tm, reshape2, 
-               tokenizers, pluralize, Matrix.utils, # function depends
-               magrittr, dplyr, tidyr, ggplot2) # analysis
-```
+pacman::p_load(data.table, # quanteda, 
+               rentrez, XML, xml2, RCurl,
+               reshape2, #text2vec,  
+               tokenizers, Matrix.utils,
+               ggplot2)
 
-
-
-```{r}
 ## devtools::install_github("jaytimm/PubmedMTK")
 ```
 
 
-
-*Note: Having a NCBI key becomes useful (and perhaps necessary) when performing larger queries, and creating larger sets of batch files.*   
-
 ```{r message=FALSE, warning=FALSE}
 # Set NCBI API key
-ncbi_key <- '4f47f85a9cc03c4031b3dc274c2840b06108'
-rentrez::set_entrez_key(ncbi_key)
+# ncbi_key <- '4f47f85a9cc03c4031b3dc274c2840b06108'
+# rentrez::set_entrez_key(ncbi_key)
 ```
 
 
@@ -41,75 +33,29 @@ The NCBI does not like multi-core API queries --
 ```{r message=FALSE, warning=FALSE}
 ## tester:: rentrez_search <- rentrez::entrez_search(term = 'cancer', db = 'pubmed')
 
-working_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/data-raw/'
   
 pmed_search <- c('senescence', 
-                    'aging', 
-                    'cancer',
-                    'beta galactosidase', 
-                    'cell cycle', 
-                    'p16',
-                    'dna damage', 
-                    'cellular senescence', 
-                    'induced senescence',
-                    'secretory phenotype')
+                 'aging', 
+                 'cancer',
+                 'beta galactosidase', 
+                 'cell cycle', 
+                 'p16',
+                 'dna damage', 
+                 'cellular senescence', 
+                 'induced senescence',
+                 'secretory phenotype')
 
 search_results1 <- PubmedMTK::pmtk_get_pmids(pmed_search = pmed_search)
+```
 
+
+```{r}
 setwd(working_dir)
-saveRDS(search_results1, 'search_results1.rds')
+#saveRDS(search_results1, 'search_results1.rds')
+search_results1 <- readRDS('search_results1.rds')
 ```
 
 
-
-
-```{r}
-dtm_to_sparse <- function(data, row, column, value, ...) {
-
-  ## -- ??
-  row_col <- quo_name(enquo(row))
-  column_col <- quo_name(enquo(column))
-  value_col <- enquo(value)
-
-  
-  row_names <- data[[row_col]]
-  col_names <- data[[column_col]]
-  if (is.numeric(value_col)) {
-    values <- value_col
-  } else {
-    value_col <- quo_name(value_col)
-    values <- data[[value_col]]
-  }
-
-  row_u <- unique(row_names)
-  i <- match(row_names, row_u)
-  col_u <- unique(col_names)
-  j <- match(col_names, col_u)
-
-  ret <- Matrix::sparseMatrix(
-  i = i, j = j, x = values,
-  dimnames = list(row_u, col_u), ...
-  )
-
-  ret
-}
-```
-
-
-
-
-```{r}
-dtm_to_tcm <- function(dtm){
-  
-  # create a binary matrix
-  dtm_binary <- dtm > 0
-  
-  # dot product gives us the result
-  result <- Matrix::t(dtm_binary) %*% dtm
-  
-  result
-}
-```
 
 
 

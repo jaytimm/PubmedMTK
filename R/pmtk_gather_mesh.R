@@ -1,7 +1,6 @@
 #' Download abstract and meta data for research articles included in PubMed.
 #'
-#' 
-#' @name pmtk_batch_abstracts
+#' @name pmtk_gather_mesh
 #' @param meta_df A vector of PMIDs 
 #' @return A data frame 
 #' 
@@ -11,9 +10,9 @@
 ## Extract KEYWORDS, MeSH HEADINGS & CHEM-NAMES from columns included in metadata as a clean data table. 
 
 #' @export
-#' @rdname pmtk_get_mesh
+#' @rdname pmtk_gather_mesh
 #' 
-pmtk_get_mesh <- function (meta_df) {
+pmtk_gather_mesh <- function (meta_df) {
   # specific to `pubmed_strip_batches` output --
   
   meta_df$keywords <- tolower(trimws(meta_df$keywords))

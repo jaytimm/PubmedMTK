@@ -1,11 +1,10 @@
 #' Download abstract and meta data for research articles included in PubMed.
 #'
 #' 
-#' @name pmtk_batch_abstracts
+#' @name pmtk_download_abs
 #' @param pmids A vector of PMIDs 
 #' @param out_file File path for output
 #' @param file_prefix String specifying batch name
-#' @param keep_empty_abs Boolean; FALSE excludes records for which abstract is not included
 #' @return A set of data frames as .RDS files  
 #' 
 #' @importFrom rentrez entrez_fetch
@@ -13,12 +12,11 @@
 #' 
 
 #' @export
-#' @rdname pmtk_batch_abstracts
+#' @rdname pmtk_download_abs
 #' 
-pmtk_batch_abstracts <- function (pmids,
-                                  out_file,
-                                  file_prefix,
-                                  keep_empty_abs = FALSE) {
+pmtk_download_abs <- function (pmids,
+                               out_file,
+                               file_prefix) {
   
   batches <- split(pmids, ceiling(seq_along(pmids)/199))  ## -- 
   
@@ -40,11 +38,12 @@ pmtk_batch_abstracts <- function (pmids,
     
     ## Also need to make NAs real.  Maybe other function.
     
-    xx$text <- ifelse(xx$text %in% c(' ', 'NA', 'n/a', 'n/a.') | is.na(xx$text), 
+    xx$text <- ifelse(xx$text %in% 
+                        c(' ', 'NA', 'n/a', 'n/a.') | is.na(xx$text),
                       NA, xx$text)
     
-    if(!keep_empty_abs) {
-      xx <- subset(xx, !is.na(text))}
+    # if(!keep_empty_abs) {
+    #   xx <- subset(xx, !is.na(text))}
     
     finally = print(paste0(i, ' / ', length(batches)))
     setwd(out_file)

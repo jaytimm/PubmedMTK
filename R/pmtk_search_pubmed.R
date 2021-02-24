@@ -1,6 +1,6 @@
 #' Perform basic PubMed search.
 #'
-#' @name pmtk_get_pmids
+#' @name pmtk_search_pubmed
 #' 
 #' @param pmids A vector of PMIDs 
 #' @param out_file File path for output
@@ -14,11 +14,11 @@
 #' 
 #' 
 #' @export
-#' @rdname pmtk_get_pmids
+#' @rdname pmtk_search_pubmed
 #' 
-pmtk_get_pmids <- function (pmed_search,
-                            #convert_syntax = T,
-                            verbose = T) {
+pmtk_search_pubmed <- function (pmed_search,
+                                #convert_syntax = T,
+                                verbose = T) {
   
   ## we need to clean up these parameters -- too many -- 
   db <- 'pubmed'
