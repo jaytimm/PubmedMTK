@@ -121,6 +121,8 @@ top_parents <- top_parents[, c(3:4, 1:2)]
 
 
 
+> Manully add labels for highest-level node in ontology:
+
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 ### 2-4 High-level categories
 cats <- 
@@ -181,7 +183,7 @@ pmtk_tbl_mesh <- concept_term %>%
 
 ### Sample records
 
-```{r echo=FALSE}
+```{r message=FALSE, warning=FALSE}
 knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 ```
 

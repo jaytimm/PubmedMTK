@@ -97,6 +97,8 @@ colnames(top_parents) <- c('tree2', 'mesh2', 'tree1', 'mesh1')
 top_parents <- top_parents[, c(3:4, 1:2)]
 ```
 
+> Manully add labels for highest-level node in ontology:
+
 ``` r
 ### 2-4 High-level categories
 cats <- 
@@ -156,8 +158,9 @@ pmtk_tbl_mesh <- concept_term %>%
 
 ### Sample records
 
-    ## Warning: replacing previous import 'data.table::melt' by 'reshape2::melt' when
-    ## loading 'PubmedMTK'
+``` r
+knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
+```
 
 | DescriptorUI | DescriptorName | TermName           | code | cats                | mesh1                  | mesh2                              | tree_location       | tree1 | tree2   |
 |:-------------|:---------------|:-------------------|:-----|:--------------------|:-----------------------|:-----------------------------------|:--------------------|:------|:--------|
