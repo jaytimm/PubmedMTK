@@ -1,0 +1,468 @@
+---
+title: "Craftbeer on Twitter"
+output: html_document
+---
+
+
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+# Load functions
+fns_location <- 'functions/'
+R.utils::sourceDirectory(fns_location)
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(text2vec, data.table, quanteda, 
+               rentrez, XML, xml2, RCurl, textmineR, 
+               tidytext, text2vec, tm, reshape2, 
+               tokenizers, pluralize, Matrix.utils, # function depends
+               magrittr, dplyr, tidyr, ggplot2) # analysis
+```
+
+
+
+```{r}
+## devtools::install_github("jaytimm/PubmedMTK")
+```
+
+
+
+*Note: Having a NCBI key becomes useful (and perhaps necessary) when performing larger queries, and creating larger sets of batch files.*   
+
+```{r message=FALSE, warning=FALSE}
+# Set NCBI API key
+ncbi_key <- '4f47f85a9cc03c4031b3dc274c2840b06108'
+rentrez::set_entrez_key(ncbi_key)
+```
+
+
+A search for `cancer` (with ~4 million records) won't break things, but it will take a minute
+The NCBI does not like multi-core API queries -- 
+
+```{r message=FALSE, warning=FALSE}
+## tester:: rentrez_search <- rentrez::entrez_search(term = 'cancer', db = 'pubmed')
+
+working_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/data-raw/'
+  
+pmed_search <- c('senescence', 
+                    'aging', 
+                    'cancer',
+                    'beta galactosidase', 
+                    'cell cycle', 
+                    'p16',
+                    'dna damage', 
+                    'cellular senescence', 
+                    'induced senescence',
+                    'secretory phenotype')
+
+search_results1 <- PubmedMTK::pmtk_get_pmids(pmed_search = pmed_search)
+
+setwd(working_dir)
+saveRDS(search_results1, 'search_results1.rds')
+```
+
+
+
+
+```{r}
+dtm_to_sparse <- function(data, row, column, value, ...) {
+
+  ## -- ??
+  row_col <- quo_name(enquo(row))
+  column_col <- quo_name(enquo(column))
+  value_col <- enquo(value)
+
+  
+  row_names <- data[[row_col]]
+  col_names <- data[[column_col]]
+  if (is.numeric(value_col)) {
+    values <- value_col
+  } else {
+    value_col <- quo_name(value_col)
+    values <- data[[value_col]]
+  }
+
+  row_u <- unique(row_names)
+  i <- match(row_names, row_u)
+  col_u <- unique(col_names)
+  j <- match(col_names, col_u)
+
+  ret <- Matrix::sparseMatrix(
+  i = i, j = j, x = values,
+  dimnames = list(row_u, col_u), ...
+  )
+
+  ret
+}
+```
+
+
+
+
+```{r}
+dtm_to_tcm <- function(dtm){
+  
+  # create a binary matrix
+  dtm_binary <- dtm > 0
+  
+  # dot product gives us the result
+  result <- Matrix::t(dtm_binary) %*% dtm
+  
+  result
+}
+```
+
+
+
+```{r message=FALSE, warning=FALSE}
+#  library(tidyverse)
+
+setwd(working_dir)
+search_results1 <- readRDS('search_results1.rds')
+
+search_results1$value = 1
+pmatrix <- chichi(data = search_results1,
+                                 row = pmid, 
+                                 column = search, 
+                                 value = value)
+
+v0 <- cmuscle(pmatrix)
+
+v1 <- cbind('search' = pmed_search,
+      as.data.frame(as.matrix(cross_matrix), 
+                    row.names = NA))
+
+v2 <- reshape2::melt(v1, 'search', c(2:ncol(v1)))
+```
+
+
+
+```{r eval=FALSE, include=FALSE}
+#parallel::detectCores()
+system.time({
+multi_pmids1 <- parallel::mclapply(pmed_search,
+                   pmtk_get_pmids,
+                   mc.cores = 10)
+})
+```
+
+
+
+
+```{r message=FALSE, warning=FALSE}
+## in order to batch, ... some changes ...
+sen_pmids <- PubmedMTK::pmtk_get_pmids(pmed_search = 'senescence', 
+                                       verbose = T)
+
+PubmedMTK::pmtk_batch_abstracts(pmids = sen_pmids$pmid,
+                                out_file = working_dir,
+                                file_prefix = 'sen',
+                                keep_empty_abs = T)
+
+
+batch_dir <- '/home/jtimm/jt_work/GitHub/x-my-nlp/presentation/senescence/batches/'
+
+sen_df <- PubmedMTK::pubmed_strip_batches(in_file = batch_dir, file_prefix = 'sen')
+```
+
+
+
+
+
+```{r}
+meshes <- PubmedMTK::pmtk_get_mesh(meta_df = sen_df$meta)
+```
+
+
+
+## PubMed simple query
+
+The `pubmed_get_ids` function facilitates relatively quick search for PMIDs based on a user-specified search query/queries.  Examples below detail two potential queries.  For `sleept_terms1`, `pubmed_get_ids` returns search results disaggregated by search term; in other words, independent searches for each term are performed.  As a  result, there will clearly be some overlap in PMIDs returned across searches. 
+
+
+`sleep_terms2`, in contrast, is treated as a single search; which is how PubMed's online search interface treats any query.   Only unique PMIDs will be returned.  
+
+
+```{r}
+sleep_terms1 <- c('narcolepsy', 'sleep-wake cycle', 'Restlessness', 
+                 'wakefulness', 'antifatigue', 'insomnia', 'jet lag')
+
+sleep_terms2 <- 'narcolepsy|sleep-wake cycle|Restlessness|wakefulness' # etc.
+```
+
+
+
+The `search_as_is` parameter specifies whether search should be converted to PubMed syntax, or not; if FALSE, syntax to search only *MeSH headings* ([MH]) and *titles & abstracts* ([TIAB]) is included in query. 
+
+The `max_url` parameter indicates the maximum number of PMIDs to be returned.  `summarize` indicates whether results should be aggregated to counts.
+
+
+```{r eval=FALSE}
+pmids <- pubmed_get_ids(pmed_search = sleep_terms1,
+                        search_as_is = F,
+                        db = 'pubmed', 
+                        max_url = 2e6,
+                        summarize = F,
+                        verbose = F) 
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+setwd('data-stash/book-eg-data/')
+#saveRDS(pmids, 'search_results_pmids.rds') 
+pmids <- readRDS('search_results_pmids.rds')
+```
+
+
+
+
+Function output is a simple data frame, which includes PMIDs per each search term.  
+
+```{r}
+pmids %>% head() %>% knitr::kable()
+```
+
+
+
+
+Total citations per search term are summarized below:
+
+```{r message=FALSE, warning=FALSE}
+pmids %>%
+  group_by(search) %>%
+  summarise(n = n()) %>%
+  arrange(desc(n)) %>%
+  knitr::kable()
+```
+
+
+
+## PubMed corpus build
+
+Long story short, most R-packages built for accessing PubMed data are not especially fantastic for our purposes, and definitely not designed for NLP.  Generally, the biggest road-blocks are limits on the number of times we can query the PubMed API.  Here, we work-around these limits via a "rapid fire" of smaller queries -- individual queries are performed using the `entrez_fetch` function from the `rentrez` package. 
+
+Results from each mini-query, then, are stored locally as a "batch" file; batch files are converted from XML to a data frame in RDS format. Each batch file contains n = 199 abstracts and metadata.  So, a search list of 5,000 PMIDs will generate 5,000/199 = 26 batch files.  Not an elegant solution.  Big searches -- eg, 1M abstracts -- will run over night.
+
+
+
+### Batch-based functions
+
+Two functions are at work here.  The first, `pubmed_batch_abstracts`, is the work-horse, and detailed below.  The local storage file path for batch files is indicated via the `out_file` parameter.  The `file_prefix` parameter specifies the file prefix to be used.  Lastly, `keep_empty_abs` specifies whether or not PMIDs without abstracts should be included in batch output.  
+
+
+```{r eval=FALSE}
+local_store_dir <- '/home/jtimm/Desktop/local_data_store/sleep/batches/'
+pubmed_batch_abstracts(pmids = unique(pmids$pmid), 
+                       out_file = local_store_dir,
+                       file_prefix = 'sleep',
+                       keep_empty_abs = F)
+```
+
+
+The second function, `pubmed_strip_batches`, simply loads the batch files as a corpus data frame (often referred to as a TIF).  For storage reasons, full meta data are included in a separate data frame.  
+
+```{r eval=FALSE, message=FALSE, warning=FALSE}
+pm_corpus <- pubmed_strip_batches(in_file = local_store_dir,
+                                  file_prefix = 'sleep') 
+
+pm_corpus$tif$sp_text <- txt_spacify_tif(pm_corpus$tif$text)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+# setwd('data-stash/primary-data/')
+# saveRDS(pm_corpus$tif, 'tif_sleep.rds')
+# saveRDS(pm_corpus$meta, 'meta_sleep.rds')
+```
+
+
+
+
+
+### PubMed metadata
+
+Features include: 
+
+```{r}
+eg <- meta %>%
+  filter(pmid == '26374456') %>%
+  t() 
+
+data.frame (feat = rownames(eg),
+            val = eg) %>%
+  mutate(val = gsub('\\|', ' \\| ', val)) %>%
+  knitr::kable()
+```
+
+
+
+## Quick analyses
+
+Some quick analyses based on results from `pubmed_get_ids` and `batch` functions that do not require any (substantial) text processing.  
+
+
+
+### Crosstab of search terms/results
+
+Based on the search results from the call to the `pubmed_get_ids` function, a cross-tab summary of PMID citation counts by search term.
+
+```{r message=FALSE, warning=FALSE}
+crosstab <- pmids %>%
+  mutate(val =1) %>%
+  tidytext::cast_sparse(row = pmid,
+                      column = search, 
+                      value = val) %>%
+  textmineR::Dtm2Tcm() %>%
+  as.matrix() %>%
+  data.frame(row.names = NULL) %>%
+  janitor::clean_names()
+
+crosstab %>%
+  mutate(x1 = colnames(crosstab)) %>%
+  pivot_longer(1:ncol(crosstab)) %>%
+  ggplot(
+       aes(x = x1,
+           y = name)) + 
+  geom_text(aes(fill = value,  
+                label = value),
+            size = 3.5) + 
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  xlab('') + ylab('')
+```
+
+
+
+
+### Trends by search term
+
+**Investigate how PubMed search results change over time**.  A relative frequency-based perspective.  Based on search results from the `pubmed_get_ids` function, the metadata included in the output of the `batch` functions, and a yearly summary of total Medline citations made available [here](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html).
+
+> **Note on Medline counts**: I am not sure if this is the perfect denominator, but it seems a reasonable enough estimate.  Obviously relative frequencies will not be perfect.  Also, I have added totals for 2019 and 2020 using a very simple projection method. 
+
+
+```{r}
+med_cites <- read.csv('data-stash/resources/medline_citations.csv') 
+med_cites$year <- as.Date(med_cites$year)
+pro_rata <- (as.POSIXlt(Sys.Date())$yday + 1) / 365
+med_cites$total <- ifelse(med_cites$year == '2020-01-01', 
+                          round(med_cites$total * pro_rata), 
+                          med_cites$total)
+```
+
+
+
+Sample output is summarized in the table below.     
+
+```{r message=FALSE, warning=FALSE}
+for_trend <- meta %>% 
+  filter(!grepl('[a-z]', year)) %>%
+  mutate(year = as.Date(paste(year, '01', '01', sep = '-'))) %>%
+  left_join(pmids) %>%
+
+  group_by(year, search) %>%
+  summarize(n = n()) %>%
+  ungroup()  %>%
+
+  left_join(med_cites) %>% 
+  mutate(per_100k = round(n / total * 100000, 3))
+```
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+for_trend %>%
+  filter(year == '2002-01-01') %>%
+  select(-usa) %>%
+  knitr::kable()
+```
+
+
+
+
+
+**Quick visualization of PubMed search results**:
+
+```{r eval=FALSE, include=FALSE}
+# hf <- SH_search_freq_by_year() %>%
+#       bind_rows(SH_cooc()) %>%
+#       complete(date_published = as.character(c(2010:2019)))
+```
+
+
+```{r message=FALSE, warning=FALSE}
+for_trend %>%
+  filter(year > '1969-01-01') %>%
+  plotly::plot_ly(x = ~year, 
+                  y = ~per_100k, 
+                  color = ~search,
+                  #linetype = ~descriptor_name,
+                  type = 'scatter',
+                  mode = 'lines') %>% 
+  
+  plotly::layout(#title = "Top 10 Drug Types", 
+                 xaxis = list(title = "Year"),
+                 yaxis = list (title = "# Citations (per 1K)"),
+                 legend = list(orientation = 'h')) # height = 600)
+```
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+## Via ggplot -- 
+for_trend %>%
+  filter(!is.na(search) & year > as.Date('1969', format = '%Y')) %>% ## why --
+  ggplot() +
+  geom_line(aes(x = year, 
+                y = per_100k, 
+                group = search,
+                color = search), 
+            size = 1
+            ) +
+  theme_minimal() +
+  ggthemes::scale_color_stata() +
+  theme(legend.position = 'bottom',
+        legend.title = element_blank())  + 
+  ylab('Per 100,000 Medline citations') 
+```
+
+
+
+
+### Search in context
+
+Functionality made available via the `quanteda` package -- a really nice text-analytic package that -- sadly -- doesn't always scale to larger data sets.
+
+```{r viz-select}
+qorp <- quanteda::corpus(tif$text)
+quanteda::docnames(qorp) <- tif$pmid
+```
+
+
+`info_sample_context`:
+
+```{r}
+set.seed(99)
+info_sample_contexts(qorp = qorp, 
+                           search = 'jet lag', 
+                           window = 15) %>%
+  select(docname, context) %>%
+  sample_n(5) %>%
+  DT::datatable(rownames = F, escape = F)
+```
+
+
+
+### MeSH terms & keywords
+
+`pubmed_get_mesh`: Extract KEYWORDS, MeSH HEADINGS & CHEM-NAMES from columns included in metadata as a clean data table.  **Note that the TYPE column is now included in data output**.
+
+```{r message=FALSE, warning=FALSE}
+pubmed_get_mesh(meta_df = meta) %>% 
+  select(-count) %>% head() %>% 
+  knitr::kable()
+```
+
+
+

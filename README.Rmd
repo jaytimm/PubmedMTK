@@ -1,0 +1,18 @@
+
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+~ PubMed Mining Toolkit
+
+## Installation
+
+```{r eval=FALSE}
+devtools::install_github("jaytimm/PubmedMTK")
+```
+
+
+## Usage
+

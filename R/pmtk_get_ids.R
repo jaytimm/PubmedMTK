@@ -40,7 +40,7 @@ pmtk_get_pmids <- function (pmed_search,
     
     if(verbose){
       finally =  print(paste0(y, ' / ', length(pmed_search), ' ',
-                              s2, ': ', url_count, ' pmids'))}
+                              s2, ': ', url_count, ' records'))}
     
     if (url_count == 0) { 
       
