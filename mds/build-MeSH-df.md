@@ -1,29 +1,13 @@
----
-output:
-  md_document:
-    variant: markdown_github
----
-
 ## A simple restructure of MeSH ontology
-
 
 ### Intro
 
-> A clean & un-adulterated version of MeSH ontology as data frame.  Included in the R package `PumbedMTK`. Based on two files: `desc2021.xml` & `mtrees2021.bin`; available via [nlm.nih.gov](https://www.nlm.nih.gov/databases/download/mesh.html).
+> A clean & un-adulterated version of MeSH ontology as data frame.
+> Included in the R package `PumbedMTK`. Based on two files:
+> `desc2021.xml` & `mtrees2021.bin`; available via
+> [nlm.nih.gov](https://www.nlm.nih.gov/databases/download/mesh.html).
 
-```{r include=FALSE}
-git_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/mesh/'
-```
-
-
-```{r eval=FALSE, include=FALSE}
-## Most recent data are available for downlaod below:
-desc2020 <- 'ftp://nlmpubs.nlm.nih.gov/online/mesh/2020/xmlmesh/desc2021.xml'
-trees2021 <- 'ftp://nlmpubs.nlm.nih.gov/online/mesh/MESH_FILES/meshtrees/mtrees2021.bin'
-```
-
-
-```{r eval=FALSE, message=FALSE, warning=FALSE}
+``` r
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(magrittr, dplyr, tidyr, xml2)
 
@@ -32,13 +16,11 @@ desc <- xml2::read_xml('desc2020.xml')
 trees <- read.csv('mtrees2021.bin', header = FALSE, sep =';')
 ```
 
-
-
 ### `desc` file
 
 > Extract descriptor details (& concepts & terms) from descriptor file.
 
-```{r eval=FALSE}
+``` r
 ## Descriptor
 DescriptorUI <- desc %>% 
   xml2::xml_find_all('.//DescriptorUI') %>% 
@@ -75,11 +57,9 @@ TermName <- desc %>% xml2::xml_find_all('.//Term') %>%
 term <- data.frame(TermUI, TermName) 
 ```
 
+> Note: Primary concept == primary term == descriptor name == mesh term.
 
-
-> Note: Primary concept == primary term == descriptor name == mesh term.  
-
-```{r eval=FALSE}
+``` r
 concept_term <- term %>%
   
   left_join(concept, by = c('TermName' = 'ConceptName')) %>%
@@ -94,11 +74,9 @@ concept_term <- term %>%
          TermUI, TermName)
 ```
 
-
-
 ### `mtrees` file
 
-```{r eval=FALSE}
+``` r
 tree <- trees %>%
   rename(mesh_heading = V1,
          tree_location = V2) %>%
@@ -119,11 +97,9 @@ colnames(top_parents) <- c('tree2', 'mesh2', 'tree1', 'mesh1')
 top_parents <- top_parents[, c(3:4, 1:2)]
 ```
 
+> Manually add labels for highest-level node in ontology:
 
-
-> Manully add labels for highest-level node in ontology:
-
-```{r eval=FALSE, message=FALSE, warning=FALSE}
+``` r
 ### 2-4 High-level categories
 cats <- 
 c('Anatomy', 'Organisms', 'Diseases', 'Chemicals and Drugs',
@@ -145,14 +121,14 @@ meta <- top_parents %>%
   select(code:cats, tree1:mesh2)
 ```
 
-
-
-
 ### Joining two data sets
 
-> Which adds the MeSH tree location to descriptor data via `MeSH` heading & `DescriptorName` variables.  Note that a single `DescriptorName` may be classified (in tree structure) in multiple ways.  
+> Which adds the MeSH tree location to descriptor data via `MeSH`
+> heading & `DescriptorName` variables. Note that a single
+> `DescriptorName` may be classified (in tree structure) in multiple
+> ways.
 
-```{r eval=FALSE, message=FALSE, warning=FALSE}
+``` r
 clean_col <- function(x) {
   x <- enc2utf8(x)
   x <- trimws(x)
@@ -180,24 +156,25 @@ pmtk_tbl_mesh <- concept_term %>%
   filter(complete.cases(.))
 ```
 
-
 ### Sample records
 
-```{r message=FALSE, warning=FALSE}
+``` r
 knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 ```
 
-
+| DescriptorUI | DescriptorName | TermName           | code | cats                | mesh1                  | mesh2                              | tree_location       | tree1 | tree2   |
+|:-------------|:---------------|:-------------------|:-----|:--------------------|:-----------------------|:-----------------------------------|:--------------------|:------|:--------|
+| D000001      | calcimycin     | calcimycin         | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | a-23187            | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | a 23187            | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | a23187             | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | antibiotic a23187  | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | a23187, antibiotic | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
 
 ### Output
 
-```{r eval=FALSE}
+``` r
 pmtk_tbl_mesh <- data.table::data.table(pmtk_tbl_mesh)
 setwd('/home/jtimm/jt_work/GitHub/PubmedMTK/data')
 usethis::use_data(pmtk_tbl_mesh, overwrite=TRUE)
 ```
-
-
-
-
-

@@ -1,18 +1,325 @@
-
 ---
 output:
   md_document:
     variant: markdown_github
 ---
 
-~ PubMed Mining Toolkit
+
+## PubMed Mining Toolkit: an overview
+
+Thoughts -- A collection of functions -- a toolkit for mining PubMed -- with a focus on more downstream NLP tasks -- ?
+
 
 ## Installation
 
-```{r eval=FALSE}
+```{r}
 devtools::install_github("jaytimm/PubmedMTK")
 ```
 
 
 ## Usage
+
+
+### Introductories
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+working_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/data-raw/'
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(data.table, # quanteda, 
+               rentrez, 
+               XML, xml2, RCurl,
+               reshape2, #text2vec,  
+               tokenizers, 
+               tm,
+               tidytext,
+               Matrix.utils,
+               ggplot2, knitr)
+
+## devtools::install_github("jaytimm/PubmedMTK")
+```
+
+
+
+
+```{r message=FALSE, warning=FALSE}
+# Set NCBI API key
+# ncbi_key <- '4f47f85a9cc03c4031b3dc274c2840b06108'
+# rentrez::set_entrez_key(ncbi_key)
+```
+
+
+
+
+### Load MeSH dictionary 
+
+The package ships with a MeSH dictionary ... [Details](https://github.com/jaytimm/PubmedMTK/blob/main/build-MeSH-df.md): 
+
+```{r}
+knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
+```
+
+
+
+### Search PubMed
+
+The `pmtk_search_pubmed` function facilitates relatively quick search for PMIDs based on a user-specified search query/queries. Search is limited to *MeSH headings* ([MH]) and *titles & abstracts* ([TIAB]).
+
+```{r message=FALSE, warning=FALSE}
+## tester:: rentrez_search <- rentrez::entrez_search(term = 'cancer', db = 'pubmed')
+
+pmed_search <- c('senescence', 
+                 'aging', 
+                 'cancer',
+                 'beta galactosidase', 
+                 'cell cycle', 
+                 'p16',
+                 'dna damage', 
+                 'cellular senescence', 
+                 'induced senescence',
+                 'secretory phenotype')
+```
+
+
+```{r eval=FALSE}
+search_results1 <- PubmedMTK::pmtk_search_pubmed(pmed_search = pmed_search)
+```
+
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+setwd(working_dir)
+#saveRDS(search_results1, 'search_results1.rds')
+search_results1 <- readRDS('search_results1.rds')
+```
+
+
+
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+# ## Total citations per search term are summarized below:
+# pmids %>%
+#   group_by(search) %>%
+#   summarise(n = n()) %>%
+#   arrange(desc(n)) %>%
+#   knitr::kable()
+```
+
+
+
+### Search-based metrics
+
+this needs to be sold as "no abstracts required" -- framed as "quick inspection" --  
+
+
+
+
+## corpus build-ish
+
+Long story short, most R-packages built for accessing PubMed data are not especially fantastic for our purposes, and definitely not designed for NLP.  Generally, the biggest road-blocks are limits on the number of times we can query the PubMed API.  
+
+Here, we work-around these limits via a "rapid fire" of smaller queries -- individual queries are performed using the `entrez_fetch` function from the `rentrez` package. 
+
+Results from each mini-query, then, are stored locally as a "batch" file; batch files are converted from XML to a data frame in RDS format. Each batch file contains n = 199 abstracts and metadata.  
+
+So, a search list of 5,000 PMIDs will generate 5,000/199 = 26 batch files.  Not an elegant solution.  Big searches -- eg, 1M abstracts -- will run over night.
+
+
+
+### Batch download 
+
+The local storage file path for batch files is indicated via the `out_file` parameter.  The `file_prefix` parameter specifies the file prefix to be used.  // The second function, `pubmed_strip_batches`, simply loads the batch files as a corpus data frame (often referred to as a TIF).  For storage reasons, full meta data are included in a separate data frame.  
+
+
+```{r eval=FALSE, message=FALSE, warning=FALSE}
+batch_dir <- paste0(working_dir, 'batches/')
+
+PubmedMTK::pmtk_download_abs(pmids = sen_pmids$pmid,
+                             out_file = working_dir,
+                             file_prefix = 'sen')
+```
+
+
+
+
+### Load batches as df
+
+```{r message=FALSE, warning=FALSE}
+sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir, file_prefix = 'sen')
+```
+
+
+
+### meta details
+
+```{r}
+### PubMed metadata
+## As some `View` function -- ??
+## this is horrible --
+eg <- meta %>%
+  filter(pmid == '26374456') %>%
+  t() 
+
+data.frame (feat = rownames(eg),
+            val = eg) %>%
+  mutate(val = gsub('\\|', ' \\| ', val)) %>%
+  knitr::kable()
+```
+
+
+
+
+### trend --
+
+Bi-grams -- 
+
+As function -- and (time permitting) -- historical associations among search terms -- also relevant for MeSH terms -- !! -- ideally a generic solution -- 
+
+Parameter -- `raw` or `relative` counts --
+
+**Investigate how PubMed search results change over time**.  A relative frequency-based perspective.  Based on search results from the `pubmed_get_ids` function, the metadata included in the output of the `batch` functions, 
+
+and a yearly summary of total Medline citations made available [here](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html).
+
+> **Note on Medline counts**: I am not sure if this is the perfect denominator, but it seems a reasonable enough estimate.  Obviously relative frequencies will not be perfect.  
+
+> Also, I have added totals for 2019 and 2020 using a very simple projection method. 
+
+
+```{r}
+## included in function -- and posted to Git Hub -- !!
+
+med_cites <- read.csv('data-stash/resources/medline_citations.csv') 
+med_cites$year <- as.Date(med_cites$year)
+pro_rata <- (as.POSIXlt(Sys.Date())$yday + 1) / 365
+
+med_cites$total <- ifelse(med_cites$year == '2020-01-01', 
+                          round(med_cites$total * pro_rata), 
+                          med_cites$total)
+```
+
+
+
+Sample output is summarized in the table below.     
+
+```{r message=FALSE, warning=FALSE}
+for_trend <- meta %>% 
+  filter(!grepl('[a-z]', year)) %>%
+  mutate(year = as.Date(paste(year, '01', '01', sep = '-'))) %>%
+  left_join(pmids) %>%
+
+  group_by(year, search) %>%
+  summarize(n = n()) %>%
+  ungroup()  %>%
+
+  
+  ## last piece -- 
+  left_join(med_cites) %>% 
+  mutate(per_100k = round(n / total * 100000, 3))
+
+
+# ## Via ggplot -- 
+# for_trend %>%
+#   filter(!is.na(search) & year > as.Date('1969', format = '%Y')) %>% ## why --
+#   ggplot() +
+#   geom_line(aes(x = year, 
+#                 y = per_100k, 
+#                 group = search,
+#                 color = search), 
+#             size = 1
+#             ) +
+#   theme_minimal() +
+#   ggthemes::scale_color_stata() +
+#   theme(legend.position = 'bottom',
+#         legend.title = element_blank())  + 
+#   ylab('Per 100,000 Medline citations') 
+```
+
+
+
+
+
+### MeSH classifications 
+
+Extract KEYWORDS, MeSH HEADINGS & CHEM-NAMES -- output is a MeSH-comprised vector representation -- 
+
+```{r}
+## this takes too long -- 
+meshes <- PubmedMTK::pmtk_gather_mesh(meta_df = sen_df$meta)
+txts <- length(unique(meshes$pmid))
+
+
+## get frequencies -- 
+freqs <-  meshes[, list(doc_freq = length(unique(pmid))), by = list(descriptor_name)]
+freqs$doc_prop <- freqs$doc_freq/ txts
+freqs1 <- subset(freqs, doc_prop > 0.0001 & doc_prop < 0.02)
+
+meshes1 <- subset(meshes, descriptor_name %in% freqs1$descriptor_name)
+```
+
+
+
+
+## Some applications
+
+Via minimal text processing.  using MeSH-Keywords-etc. -- and some exploratory interface -- for simplicity --
+
+
+### MeSH-based topic model
+
+> Latent Dirichlet allocation -- topic modeling algorithm.  **Each document** in corpus modeled as 
+a composite of topics; **each topic** modeled as a composite of terms.  
+
+```{r}
+mesh_dtm <- tidytext::cast_sparse(data = meshes1,
+                                  row = pmid,
+                                  column = descriptor_name,
+                                  value = count)
+lda <- mesh_lda
+mesh_lda <- text2vec::LDA$new(n_topics = 30) ## This is the model
+topic_model_fit <- mesh_lda$fit_transform(mesh_dtm, progressbar = F)
+```
+
+
+tidying function for text2vec LDA output -- with output potentially modeled after tidytext -- ??
+
+```{r}
+topic_model_summary <- PubmedMTK::mtk_summarize_lda(lda = mesh_lda, topic_feats_n = 15)
+
+summary <- twd[ , .(topic_features = paste0(variable, collapse = ' | ')), by = topic_id]
+knitr::kable(summary)
+```
+
+
+```{r}
+## topic model html widget
+```
+
+
+### annotation and dependencies--
+
+### Custom NER -- Pubtator files etc. --
+
+
+---
+
+### Search in context
+
+*Output instead as HTML* --- find that one website super-simple & BW -- !! -- 
+
+Functionality made available via the `quanteda` package -- a really nice text-analytic package that -- sadly -- doesn't always scale to larger data sets.
+
+```{r viz-select}
+qorp <- quanteda::corpus(tif$text)
+quanteda::docnames(qorp) <- tif$pmid
+
+set.seed(99)
+info_sample_contexts(qorp = qorp, 
+                           search = 'jet lag', 
+                           window = 15) %>%
+  select(docname, context) %>%
+  sample_n(5) %>%
+  DT::datatable(rownames = F, escape = F)
+```
+
 
