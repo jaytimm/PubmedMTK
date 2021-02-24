@@ -5,18 +5,15 @@ available
 [here](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html).
 Medline counts are complete through 2018; here, we have projected counts
 by year for 2019 onward using the R package `forecast`. An imperfect
-solution, but a reasonable enough denominator for rough relative
-frequency counts historically.
+solution, but a reasonable enough denominator for computing rough
+relative frequency counts historically.
 
 ``` r
 if (!require("pacman")) install.packages("pacman")
-```
-
-    ## Loading required package: pacman
-
-``` r
 pacman::p_load(magrittr, dplyr, ggplot2, rvest, xml2, forecast)
 ```
+
+### Build table
 
 ``` r
 url <- 'https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html'
@@ -43,7 +40,8 @@ forecasted <- data.frame(year = c(2019:2021),
                          total = round(total$mean[1:3]),
                          usa = round(usa$mean[1:3]))
 pmtk_tbl_citations <- rbind(medl1, forecasted) 
-pmtk_tbl_citations$year <- as.Date(paste(pmtk_tbl_citations$year , 1, 1, sep = "-"))
+pmtk_tbl_citations$year <- as.Date(paste(pmtk_tbl_citations$year , 
+                                         1, 1, sep = "-"))
 ```
 
 ``` r
@@ -51,11 +49,7 @@ setwd('/home/jtimm/jt_work/GitHub/PubmedMTK/data')
 usethis::use_data(pmtk_tbl_citations, overwrite=TRUE)
 ```
 
-    ## ✓ Setting active project to '/home/jtimm/jt_work/GitHub/PubmedMTK'
-
-    ## ✓ Saving 'pmtk_tbl_citations' to 'data/pmtk_tbl_citations.rda'
-
-    ## ● Document your data (see 'https://r-pkgs.org/data.html')
+### Hitorical citation counts
 
 ``` r
 pmtk_tbl_citations %>%
