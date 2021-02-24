@@ -9,7 +9,7 @@ output:
 
 ### Intro
 
-> A clean & un-adulterated version of MeSH ontology as data frame.  Included in the R package `PumbedMTK`. Based on two files: `desc2019.xml` & `mtrees2020.bin`; available via nlm.nih.gov [here](https://www.nlm.nih.gov/databases/download/mesh.html).
+> A clean & un-adulterated version of MeSH ontology as data frame.  Included in the R package `PumbedMTK`. Based on two files: `desc2021.xml` & `mtrees2021.bin`; available via [nlm.nih.gov](https://www.nlm.nih.gov/databases/download/mesh.html).
 
 ```{r include=FALSE}
 git_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/mesh/'
@@ -18,18 +18,18 @@ git_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/mesh/'
 
 ```{r eval=FALSE, include=FALSE}
 ## Most recent data are available for downlaod below:
-desc2020 <- 'ftp://nlmpubs.nlm.nih.gov/online/mesh/2020/xmlmesh/desc2020.xml'
+desc2020 <- 'ftp://nlmpubs.nlm.nih.gov/online/mesh/2020/xmlmesh/desc2021.xml'
 trees2021 <- 'ftp://nlmpubs.nlm.nih.gov/online/mesh/MESH_FILES/meshtrees/mtrees2021.bin'
 ```
 
 
-```{r eval=FALSE}
+```{r eval=FALSE, message=FALSE, warning=FALSE}
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(magrittr, dplyr, tidyr, xml2)
 
 setwd(git_dir)
-desc <- xml2::read_xml('desc2019.xml')
-trees <- read.csv('mtrees2020.bin', header = FALSE, sep =';')
+desc <- xml2::read_xml('desc2020.xml')
+trees <- read.csv('mtrees2021.bin', header = FALSE, sep =';')
 ```
 
 
@@ -121,7 +121,7 @@ top_parents <- top_parents[, c(3:4, 1:2)]
 
 
 
-```{r eval=FALSE}
+```{r eval=FALSE, message=FALSE, warning=FALSE}
 ### 2-4 High-level categories
 cats <- 
 c('Anatomy', 'Organisms', 'Diseases', 'Chemicals and Drugs',
@@ -150,7 +150,7 @@ meta <- top_parents %>%
 
 > Which adds the MeSH tree location to descriptor data via `MeSH` heading & `DescriptorName` variables.  Note that a single `DescriptorName` may be classified (in tree structure) in multiple ways.  
 
-```{r eval=FALSE}
+```{r eval=FALSE, message=FALSE, warning=FALSE}
 clean_col <- function(x) {
   x <- enc2utf8(x)
   x <- trimws(x)
@@ -179,10 +179,18 @@ pmtk_tbl_mesh <- concept_term %>%
 ```
 
 
+### Sample records
+
+```{r echo=FALSE}
+knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
+```
+
+
 
 ### Output
 
 ```{r eval=FALSE}
+pmtk_tbl_mesh <- data.table::data.table(pmtk_tbl_mesh)
 setwd('/home/jtimm/jt_work/GitHub/PubmedMTK/data')
 usethis::use_data(pmtk_tbl_mesh, overwrite=TRUE)
 ```

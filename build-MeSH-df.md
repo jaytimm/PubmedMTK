@@ -4,16 +4,16 @@
 
 > A clean & un-adulterated version of MeSH ontology as data frame.
 > Included in the R package `PumbedMTK`. Based on two files:
-> `desc2019.xml` & `mtrees2020.bin`; available via nlm.nih.gov
-> [here](https://www.nlm.nih.gov/databases/download/mesh.html).
+> `desc2021.xml` & `mtrees2021.bin`; available via
+> [nlm.nih.gov](https://www.nlm.nih.gov/databases/download/mesh.html).
 
 ``` r
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(magrittr, dplyr, tidyr, xml2)
 
 setwd(git_dir)
-desc <- xml2::read_xml('desc2019.xml')
-trees <- read.csv('mtrees2020.bin', header = FALSE, sep =';')
+desc <- xml2::read_xml('desc2020.xml')
+trees <- read.csv('mtrees2021.bin', header = FALSE, sep =';')
 ```
 
 ### `desc` file
@@ -154,9 +154,24 @@ pmtk_tbl_mesh <- concept_term %>%
   filter(complete.cases(.))
 ```
 
+### Sample records
+
+    ## Warning: replacing previous import 'data.table::melt' by 'reshape2::melt' when
+    ## loading 'PubmedMTK'
+
+| DescriptorUI | DescriptorName | TermName           | code | cats                | mesh1                  | mesh2                              | tree_location       | tree1 | tree2   |
+|:-------------|:---------------|:-------------------|:-----|:--------------------|:-----------------------|:-----------------------------------|:--------------------|:------|:--------|
+| D000001      | calcimycin     | calcimycin         | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | a-23187            | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | a 23187            | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | a23187             | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | antibiotic a23187  | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+| D000001      | calcimycin     | a23187, antibiotic | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+
 ### Output
 
 ``` r
+pmtk_tbl_mesh <- data.table::data.table(pmtk_tbl_mesh)
 setwd('/home/jtimm/jt_work/GitHub/PubmedMTK/data')
 usethis::use_data(pmtk_tbl_mesh, overwrite=TRUE)
 ```
