@@ -4,7 +4,7 @@
 \alias{mtk_cast_matrix}
 \title{Project data frame as a sparse matrix.}
 \usage{
-mtk_cast_matrix(dtm, row, column, value, ...)
+mtk_cast_matrix(df, row, column, value, ...)
 }
 \arguments{
 \item{dtm}{}

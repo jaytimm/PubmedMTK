@@ -13,7 +13,7 @@
 #' @export
 #' @rdname mtk_cast_spmatrix
 #'
-mtk_cast_matrix <- function(dtm, row, column, value, ...) {
+mtk_cast_matrix <- function(df, row, column, value, ...) {
   
   ## -- ??
   row_col <- quo_name(enquo(row))
@@ -21,13 +21,13 @@ mtk_cast_matrix <- function(dtm, row, column, value, ...) {
   value_col <- enquo(value)
   
   
-  row_names <- data[[row_col]]
-  col_names <- data[[column_col]]
+  row_names <- df[[row_col]]
+  col_names <- df[[column_col]]
   if (is.numeric(value_col)) {
     values <- value_col
   } else {
     value_col <- quo_name(value_col)
-    values <- data[[value_col]]
+    values <- df[[value_col]]
   }
   
   row_u <- unique(row_names)
