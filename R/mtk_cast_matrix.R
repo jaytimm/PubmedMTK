@@ -1,6 +1,6 @@
 #' Project data frame as a sparse matrix.
 #'
-#' @name pmtk_cast_spmatrix
+#' @name mtk_cast_matrix
 #' @param dtm 
 #' @param row
 #' @param column
@@ -11,9 +11,9 @@
 #' 
 
 #' @export
-#' @rdname pmtk_cast_spmatrix
+#' @rdname mtk_cast_spmatrix
 #'
-pmtk_cast_spmatrix <- function(dtm, row, column, value, ...) {
+mtk_cast_matrix <- function(dtm, row, column, value, ...) {
   
   ## -- ??
   row_col <- quo_name(enquo(row))

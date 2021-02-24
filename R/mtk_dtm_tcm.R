@@ -1,6 +1,6 @@
 #' Convet DTM to TCM; ie, treat document as context.
 #'
-#' @name pmtk_dtm_tcm
+#' @name mtk_dtm_tcm
 #' @param dtm 
 #' @return A sparse matrix  
 #' 
@@ -8,9 +8,9 @@
 #' 
 
 #' @export
-#' @rdname pmtk_dtm_tcm
+#' @rdname mtk_dtm_tcm
 #'
-pmtk_dtm2tcm <- function(dtm){
+mtk_dtm_tcm <- function(dtm){
   
   # create a binary matrix
   dtm_binary <- dtm > 0
