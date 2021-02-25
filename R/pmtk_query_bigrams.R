@@ -13,10 +13,10 @@ pmtk_query_bigrams <- function(search_results){
   
   search_results$value = 1 ### change such that we can add this as value-value -- 
   
-  pmatrix <- PubmedMTK::mtk_cast_matrix (df = search_results,
-                                         row = pmid, 
-                                         column = search, 
-                                         value = value)
+  pmatrix <- tidytext::cast_sparse(data = search_results,
+                                   row = pmid, 
+                                   column = search, 
+                                   value = value)
   
   v0 <- PubmedMTK::mtk_dtm_tcm(pmatrix)
   

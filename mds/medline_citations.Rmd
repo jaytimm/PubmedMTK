@@ -44,6 +44,7 @@ forecasted <- data.frame(year = c(2019:2021),
 pmtk_tbl_citations <- rbind(medl1, forecasted) 
 pmtk_tbl_citations$year <- as.Date(paste(pmtk_tbl_citations$year , 
                                          1, 1, sep = "-"))
+pmtk_tbl_citations <- data.table::data.table((pmtk_tbl_citations))
 ```
 
 
