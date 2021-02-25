@@ -4,12 +4,12 @@ output:
     variant: markdown_github
 ---
 
-## A simple restructure of MeSH ontology
+## A simple restructure of MeSH vocabulary
 
 
 ### Intro
 
-> A clean & un-adulterated version of MeSH ontology as data frame.  Included in the R package `PumbedMTK`. Based on two files: `desc2021.xml` & `mtrees2021.bin`; available via [nlm.nih.gov](https://www.nlm.nih.gov/databases/download/mesh.html).
+> A clean & un-adulterated version of the MeSH hierarchical vocabulary & thesaurus as data frame.  Included in the R package `PumbedMTK`. Based on two files: `desc2021.xml` & `mtrees2021.bin`; available via [nlm.nih.gov](https://www.nlm.nih.gov/databases/download/mesh.html).
 
 ```{r include=FALSE}
 git_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/mesh/'
@@ -121,7 +121,7 @@ top_parents <- top_parents[, c(3:4, 1:2)]
 
 
 
-> Manually add labels for highest-level node in ontology:
+> Manually add labels for highest-level node in hierarchy:
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 ### 2-4 High-level categories

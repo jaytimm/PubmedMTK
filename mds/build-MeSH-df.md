@@ -1,10 +1,10 @@
-## A simple restructure of MeSH ontology
+## A simple restructure of MeSH vocabulary
 
 ### Intro
 
-> A clean & un-adulterated version of MeSH ontology as data frame.
-> Included in the R package `PumbedMTK`. Based on two files:
-> `desc2021.xml` & `mtrees2021.bin`; available via
+> A clean & un-adulterated version of the MeSH hierarchical vocabulary &
+> thesaurus as data frame. Included in the R package `PumbedMTK`. Based
+> on two files: `desc2021.xml` & `mtrees2021.bin`; available via
 > [nlm.nih.gov](https://www.nlm.nih.gov/databases/download/mesh.html).
 
 ``` r
@@ -97,7 +97,7 @@ colnames(top_parents) <- c('tree2', 'mesh2', 'tree1', 'mesh1')
 top_parents <- top_parents[, c(3:4, 1:2)]
 ```
 
-> Manually add labels for highest-level node in ontology:
+> Manually add labels for highest-level node in hierarchy:
 
 ``` r
 ### 2-4 High-level categories

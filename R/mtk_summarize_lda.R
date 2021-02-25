@@ -7,7 +7,9 @@
 #' @importFrom reshape2 melt
 
 
-
+#' @export
+#' @rdname mtk_summarize_lda
+#' 
 mtk_summarize_lda <- function (lda, topic_feats_n = 10){
   
   ## Extract topic_word_distributions
