@@ -23,31 +23,30 @@ pmtk_download_abs <- function (pmids,
   for (i in 1:length(batches)) {
     
     ### tryCatch() -- here -- 
-    fetch.pubmed <- rentrez::entrez_fetch(db = "pubmed", 
-                                          id = batches[[i]],
-                                          rettype = "xml", 
-                                          parsed = T)
+    fetch.pubmed <- tryCatch(
+      {
+      rentrez::entrez_fetch(db = "pubmed", 
+                            id = batches[[i]],
+                            rettype = "xml", 
+                            parsed = T)
+      },
+      error = function(e) {'http fail'})
     
-    yy <- as(fetch.pubmed, "character")
-    
-    xx <- strip_xml(yy)
-    encoding <- 'UTF-8'
-    Encoding(xx$articletitle) <- encoding
-    Encoding(xx$text) <- encoding
-    Encoding(xx$authors) <- encoding
-    
-    ## Also need to make NAs real.  Maybe other function.
-    
-    xx$text <- ifelse(xx$text %in% 
-                        c(' ', 'NA', 'n/a', 'n/a.') | is.na(xx$text),
-                      NA, xx$text)
-    
-    # if(!keep_empty_abs) {
-    #   xx <- subset(xx, !is.na(text))}
-    
-    finally = print(paste0(i, ' / ', length(batches)))
-    setwd(out_file)
-    saveRDS(xx, file = paste0(file_prefix, i, '.rds'))
+      if (fetch.pubmed != 'http fail') {
+        
+        yy <- as(fetch.pubmed, "character")
+        
+        xx <- strip_xml(yy)
+        encoding <- 'UTF-8'
+        Encoding(xx$articletitle) <- encoding
+        Encoding(xx$text) <- encoding
+        Encoding(xx$authors) <- encoding
+        
+        setwd(out_file)
+        saveRDS(xx, file = paste0(file_prefix, i, '.rds'))
+        }
+      
+      finally = print(paste0(i, ' / ', length(batches)))
   }
 }
 
