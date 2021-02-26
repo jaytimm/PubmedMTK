@@ -17,19 +17,19 @@
 #' @rdname pmtk_search_pubmed
 #' 
 pmtk_search_pubmed <- function (pmed_search,
-                                #convert_syntax = T,
+                                translate_syntax = T,
                                 verbose = T) {
   
   ## we need to clean up these parameters -- too many -- 
   db <- 'pubmed'
-  convert_syntax = T
+  #convert_syntax = T
   pre_url <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?"
     
   returns <- lapply(1:length(pmed_search), function(y) {
     
     s1 <- pmed_search[y]
     
-    if (!convert_syntax) {s2 <- s1} else{
+    if (!translate_syntax) {s2 <- s1} else{
       s2 <- paste0(s1, '[MH]', ' OR ', s1, '[TIAB]')
       }
     # depression[MH] OR depression[tIAB]

@@ -4,7 +4,7 @@
 \alias{pmtk_search_pubmed}
 \title{Perform basic PubMed search.}
 \usage{
-pmtk_search_pubmed(pmed_search, verbose = T)
+pmtk_search_pubmed(pmed_search, translate_syntax = T, verbose = T)
 }
 \arguments{
 \item{pmids}{A vector of PMIDs}

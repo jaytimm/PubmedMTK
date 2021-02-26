@@ -30,12 +30,11 @@ pmtk_download_abs <- function (pmids,
                             rettype = "xml", 
                             parsed = T)
       },
-      error = function(e) {'http fail'})
+      error = function(e) {'error-unspecified'})
     
-      if (fetch.pubmed != 'http fail') {
+      if (any(!class(fetch.pubmed) == 'character')) {
         
         yy <- as(fetch.pubmed, "character")
-        
         xx <- strip_xml(yy)
         encoding <- 'UTF-8'
         Encoding(xx$articletitle) <- encoding
@@ -44,7 +43,7 @@ pmtk_download_abs <- function (pmids,
         
         setwd(out_file)
         saveRDS(xx, file = paste0(file_prefix, i, '.rds'))
-        }
+        } else{}
       
       finally = print(paste0(i, ' / ', length(batches)))
   }

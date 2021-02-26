@@ -5,7 +5,7 @@ PubMed Mining Toolkit - an overview
 -   [Usage](#usage)
     -   [MeSH vocabulary](#mesh-vocabulary)
     -   [Search the PubMed database -
-        `pmtk_search_pubmed`](#search-the-pubmed-database---%60pmtk_search_pubmed%60)
+        `pmtk_search_pubmed()`](#search-the-pubmed-database---%60pmtk_search_pubmed()%60)
         -   [Summary of record counts returned by PubMed
             query](#summary-of-record-counts-returned-by-pubmed-query)
     -   [Advanced counting](#advanced-counting)
@@ -19,14 +19,13 @@ PubMed Mining Toolkit - an overview
         -   [Record details](#record-details)
     -   [PubMed search results trend
         data](#pubmed-search-results-trend-data)
-    -   [MeSH classifications](#mesh-classifications)
-        -   [Example vector
-            representations](#example-vector-representations)
+    -   [Extract MeSH classifications -
+        `pmtk_gather_mesh()`](#extract-mesh-classifications---%60pmtk_gather_mesh()%60)
     -   [MeSH-based topic model](#mesh-based-topic-model)
         -   [Feature composition of first ten
             topics](#feature-composition-of-first-ten-topics)
-        -   [Topic model summary - html
-            widget](#topic-model-summary---html-widget)
+    -   [Topic model summary - html
+        widget](#topic-model-summary---html-widget)
 
 Installation
 ------------
@@ -176,7 +175,7 @@ knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 </tbody>
 </table>
 
-### Search the PubMed database - `pmtk_search_pubmed`
+### Search the PubMed database - `pmtk_search_pubmed()`
 
 Find records included in PubMed that match some search term or multiple
 search terms. If multiple search terms are specified, independent
@@ -236,8 +235,9 @@ search_results1 %>%
 Quick inspection of query results – before fetching record details.
 
 ``` r
-query_bigrams <- PubmedMTK::pmtk_query_bigrams(search_results1) 
+# query_bigrams <- PubmedMTK::pmtk_query_bigrams(search_results1) 
 ## crosstab_qresults()
+## re-name columnbs: term1 - term2
 ```
 
 ### Fetch abstract data from PubMed
@@ -264,7 +264,7 @@ storage; the `file_prefix` parameter specifies a character string used
 to identify batches (along with a batch \#).
 
 ``` r
-PubmedMTK::pmtk_download_abs(pmids = unique(search_results1$pmid),
+pmtk_download_abs(pmids = unique(search_results1$pmid),
                              out_file = paste0(working_dir, 'batches/'),
                              file_prefix = 'sen')
 ```
@@ -293,10 +293,10 @@ sen_df$tif %>%
   knitr::kable()
 ```
 
-| includes\_abstract |      n|   tokens|
-|:-------------------|------:|--------:|
-| N                  |   1428|       NA|
-| Y                  |  24837|  5215770|
+| includes\_abstract |       n|    tokens|
+|:-------------------|-------:|---------:|
+| N                  |   60981|        NA|
+| Y                  |  468070|  98294700|
 
 #### Record details
 
@@ -425,7 +425,7 @@ tr4 %>%
 
 ![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
-### MeSH classifications
+### Extract MeSH classifications - `pmtk_gather_mesh()`
 
 Extract KEYWORDS, MeSH HEADINGS & CHEM-NAMES – output is a
 MeSH-comprised text representation.
@@ -446,7 +446,7 @@ meshes1 <- subset(meshes, descriptor_name %in% freqs1$descriptor_name)
 meshes1 <- subset(meshes1, nchar(descriptor_name) > 0)
 ```
 
-#### Example vector representations
+> Example vector representations:
 
 ``` r
 set.seed(999)
@@ -581,7 +581,7 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 </tbody>
 </table>
 
-#### Topic model summary - html widget
+### Topic model summary - html widget
 
 ``` r
 ## topic model html widget
