@@ -1,33 +1,32 @@
-PubMed Mining Toolkit: an overview
-----------------------------------
+PubMed Mining Toolkit - an overview
+-----------------------------------
 
--   [PubMed Mining Toolkit: an
-    overview](#pubmed-mining-toolkit:-an-overview)
 -   [Installation](#installation)
 -   [Usage](#usage)
     -   [MeSH vocabulary](#mesh-vocabulary)
     -   [Search the PubMed database -
         `pmtk_search_pubmed`](#search-the-pubmed-database---%60pmtk_search_pubmed%60)
-        -   [Sample output:](#sample-output:)
         -   [Summary of record counts returned by PubMed
-            query:](#summary-of-record-counts-returned-by-pubmed-query:)
+            query](#summary-of-record-counts-returned-by-pubmed-query)
     -   [Advanced counting](#advanced-counting)
     -   [Fetch abstract data from
         PubMed](#fetch-abstract-data-from-pubmed)
-        -   [Download batch data:
-            `pmtk_download_abs()`](#download-batch-data:-%60pmtk_download_abs()%60)
-        -   [Load batch data:
-            `pmtk_loadr_abs()`](#load-batch-data:-%60pmtk_loadr_abs()%60)
+        -   [Download batch data -
+            `pmtk_download_abs()`](#download-batch-data---%60pmtk_download_abs()%60)
+        -   [Load batch data -
+            `pmtk_loadr_abs()`](#load-batch-data---%60pmtk_loadr_abs()%60)
         -   [Corpus details](#corpus-details)
         -   [Record details](#record-details)
     -   [PubMed search results trend
         data](#pubmed-search-results-trend-data)
     -   [MeSH classifications](#mesh-classifications)
         -   [Example vector
-            representation](#example-vector-representation)
+            representations](#example-vector-representations)
     -   [MeSH-based topic model](#mesh-based-topic-model)
-    -   [Topic model summary: html
-        widget](#topic-model-summary:-html-widget)
+        -   [Feature composition of first ten
+            topics](#feature-composition-of-first-ten-topics)
+        -   [Topic model summary - html
+            widget](#topic-model-summary---html-widget)
 
 Installation
 ------------
@@ -207,24 +206,7 @@ pmed_search <- c('senescence',
 search_results1 <- PubmedMTK::pmtk_search_pubmed(pmed_search = pmed_search)
 ```
 
-#### Sample output:
-
-``` r
-search_results1 %>%
-  head() %>%
-  knitr::kable()
-```
-
-| search     | pmid     |
-|:-----------|:---------|
-| senescence | 33631788 |
-| senescence | 33631598 |
-| senescence | 33631183 |
-| senescence | 33630953 |
-| senescence | 33629548 |
-| senescence | 33629281 |
-
-#### Summary of record counts returned by PubMed query:
+#### Summary of record counts returned by PubMed query
 
 ``` r
 # ## Total citations per search term are summarized below:
@@ -275,7 +257,7 @@ the most of rate limits. Each “batch” contains n = 199 records; batch
 files are converted from XML to a data frame in RDS format and stored
 locally in a user-specified file path.
 
-#### Download batch data: `pmtk_download_abs()`
+#### Download batch data - `pmtk_download_abs()`
 
 The `out_file` parameter specifies the file path for local batch file
 storage; the `file_prefix` parameter specifies a character string used
@@ -287,7 +269,7 @@ PubmedMTK::pmtk_download_abs(pmids = unique(search_results1$pmid),
                              file_prefix = 'sen')
 ```
 
-#### Load batch data: `pmtk_loadr_abs()`
+#### Load batch data - `pmtk_loadr_abs()`
 
 The `pmtk_loadr_abs()` function loads batch files as two data frames:
 the first, a corpus object containing the record id and abstract, and
@@ -441,7 +423,7 @@ tr4 %>%
   ggtitle('wrong')
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 ### MeSH classifications
 
@@ -464,12 +446,12 @@ meshes1 <- subset(meshes, descriptor_name %in% freqs1$descriptor_name)
 meshes1 <- subset(meshes1, nchar(descriptor_name) > 0)
 ```
 
-#### Example vector representation
+#### Example vector representations
 
 ``` r
 set.seed(999)
 meshes1 %>%
-  filter(pmid %in% sample(unique(meshes1$pmid), 10)) %>%
+  filter(pmid %in% sample(unique(meshes1$pmid), 5)) %>%
   group_by(pmid) %>%
   summarize (d = paste0(descriptor_name, collapse = ' | ')) %>%
   knitr::kable()
@@ -477,8 +459,8 @@ meshes1 %>%
 
 <table>
 <colgroup>
-<col style="width: 1%" />
-<col style="width: 98%" />
+<col style="width: 3%" />
+<col style="width: 96%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -488,28 +470,12 @@ meshes1 %>%
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">1017451</td>
-<td style="text-align: left;">achievement | aptitude | intelligence tests | pattern recognition, visual | psychometrics</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">1439082</td>
 <td style="text-align: left;">chloroplasts | hordeum | plant proteins | plant proteins</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">19675177</td>
 <td style="text-align: left;">accidents, traffic | automobile driving | depressive disorder | geriatric assessment | health status | physical fitness | probability | risk assessment | task performance and analysis</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">19816867</td>
-<td style="text-align: left;">aorta | cardiac catheterization | diaphragm | dyspnea | echocardiography, transesophageal | heart septal defects, atrial | hemodynamics | hypoxia | magnetic resonance imaging | paralysis | severity of illness index | treatment outcome</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">23461035</td>
-<td style="text-align: left;">butyrates | cell proliferation | fibroblasts | histone deacetylase inhibitors | map kinase signaling system | mechanistic target of rapamycin complex 1 | multiprotein complexes | phosphorylation | sodium | tor serine-threonine kinases | p38 mitogen-activated protein kinases | butyrates | histone deacetylase inhibitors | multiprotein complexes | sodium | tor serine-threonine kinases | mechanistic target of rapamycin complex 1 | p38 mitogen-activated protein kinases</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">25555041</td>
-<td style="text-align: left;">cognitive function | overactive bladder | treatment | activities of daily living | benzhydryl compounds | benzofurans | cognition disorders | depression | follow-up studies | geriatric assessment | muscarinic antagonists | pyrrolidines | quality of life | treatment outcome | urinary bladder, overactive | benzhydryl compounds | benzofurans | muscarinic antagonists | pyrrolidines</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">25653617</td>
@@ -522,10 +488,6 @@ meshes1 %>%
 <tr class="odd">
 <td style="text-align: left;">32392179</td>
 <td style="text-align: left;">creatine | hemolysis | lifespan</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">8420683</td>
-<td style="text-align: left;">ovarian neoplasms | prognosis | randomized controlled trials as topic | retrospective studies</td>
 </tr>
 </tbody>
 </table>
@@ -561,6 +523,8 @@ features per topic using the `topic_feats_n`.
 tm_summary <- PubmedMTK::mtk_summarize_lda(
   lda = mesh_lda, topic_feats_n = 15)
 ```
+
+#### Feature composition of first ten topics
 
 <table>
 <colgroup>
@@ -614,90 +578,10 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 <td style="text-align: right;">10</td>
 <td style="text-align: left;">cell line, tumor | cell proliferation | tumor suppressor protein p53 | cell cycle | gene expression regulation, neoplastic | antineoplastic agents | breast neoplasms | mesenchymal stem cells | dna damage | cell transformation, neoplastic | down-regulation | neoplasms | up-regulation | micrornas | rna, small interfering</td>
 </tr>
-<tr class="odd">
-<td style="text-align: right;">11</td>
-<td style="text-align: left;">geriatrics | health services for the aged | nursing homes | long-term care | hospitalization | health services needs and demand | homes for the aged | health knowledge, attitudes, practice | attitude of health personnel | home care services | geriatric nursing | delivery of health care | health promotion | medicare | health policy</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">12</td>
-<td style="text-align: left;">rats, sprague-dawley | rats, wistar | rats, inbred f344 | immunohistochemistry | in vitro techniques | endothelium, vascular | dopamine | brain chemistry | rats, inbred strains | cerebral cortex | nitric oxide | norepinephrine | dose-response relationship, drug | cerebellum | corpus striatum</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">13</td>
-<td style="text-align: left;">depression | social support | quality of life | adaptation, psychological | stress, psychological | caregivers | interpersonal relations | mental health | self concept | anxiety | family | attitude to health | personal satisfaction | social environment | health status</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">14</td>
-<td style="text-align: left;">skin aging | skin | collagen | ultraviolet rays | face | rejuvenation | retina | cosmetic techniques | patient satisfaction | macular degeneration | treatment outcome | visual acuity | light | skin neoplasms | rhytidoplasty</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">15</td>
-<td style="text-align: left;">prevalence | health status | activities of daily living | logistic models | chronic disease | socioeconomic factors | multivariate analysis | european continental ancestry group | geriatric assessment | comorbidity | health surveys | age distribution | odds ratio | incidence | disabled persons</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">16</td>
-<td style="text-align: left;">testosterone | organ size | estradiol | testis | rats, inbred strains | estrogens | insulin-like growth factor i | growth hormone | hypothalamus | sex characteristics | luteinizing hormone | androgens | ovary | sexual maturation | hydrocortisone</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">17</td>
-<td style="text-align: left;">obesity | insulin | blood glucose | adipose tissue | glucose | diabetes mellitus | diabetes mellitus, type 2 | cholesterol | lipids | insulin resistance | body mass index | body composition | energy metabolism | lipid metabolism | triglycerides</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">18</td>
-<td style="text-align: left;">kidney | dose-response relationship, drug | liver | rats, inbred strains | tissue distribution | kinetics | kidney diseases | drug interactions | creatinine | sodium | potassium | glomerular filtration rate | rats, wistar | intestinal mucosa | kidney failure, chronic</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">19</td>
-<td style="text-align: left;">inflammation | neoplasms | telomere | models, biological | dogs | lung | senescence | telomerase | models, animal | lens, crystalline | osteoarthritis | cancer | cataract | cartilage, articular | leukocytes</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">20</td>
-<td style="text-align: left;">magnetic resonance imaging | cognition disorders | cerebral cortex | image processing, computer-assisted | disease progression | brain mapping | atrophy | hippocampus | cognitive dysfunction | diagnosis, differential | cerebrovascular circulation | frontal lobe | positron-emission tomography | neural pathways | case-control studies</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">21</td>
-<td style="text-align: left;">exercise | geriatric assessment | activities of daily living | elderly | frail elderly | older adults | accidental falls | quality of life | cognitive dysfunction | walking | independent living | physical fitness | frailty | gait | postural balance</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">22</td>
-<td style="text-align: left;">reproducibility of results | sensitivity and specificity | models, biological | algorithms | reference values | water | computer simulation | stress, mechanical | analysis of variance | models, statistical | materials testing | temperature | surface properties | microscopy, electron, scanning | elasticity</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">23</td>
-<td style="text-align: left;">molecular sequence data | base sequence | dna-binding proteins | amino acid sequence | transcription factors | transcription, genetic | dna repair | dna | plant leaves | protein binding | saccharomyces cerevisiae | promoter regions, genetic | gene expression regulation, plant | dna damage | nuclear proteins</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">24</td>
-<td style="text-align: left;">mitochondria | antioxidants | reactive oxygen species | oxidation-reduction | superoxide dismutase | hydrogen peroxide | lipid peroxidation | plant extracts | glutathione | free radicals | dna, mitochondrial | catalase | ascorbic acid | oxygen | vitamin e</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">25</td>
-<td style="text-align: left;">diet | cattle | species specificity | chickens | energy intake | reproduction | seasons | swine | dietary supplements | feeding behavior | dietary proteins | eating | temperature | phospholipids | amino acids</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">26</td>
-<td style="text-align: left;">muscle, skeletal | reference values | muscles | sarcopenia | biomechanical phenomena | sleep | sex characteristics | muscle contraction | muscle strength | exercise | body composition | adaptation, physiological | posture | movement | electromyography</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">27</td>
-<td style="text-align: left;">behavior, animal | motor activity | stress, physiological | gene expression regulation | caenorhabditis elegans | circadian rhythm | drosophila melanogaster | models, biological | maze learning | caenorhabditis elegans proteins | homeostasis | environment | caloric restriction | mutation | drosophila</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">28</td>
-<td style="text-align: left;">memory | reaction time | analysis of variance | attention | psychomotor performance | mental recall | memory disorders | cognition disorders | learning | electroencephalography | memory, short-term | photic stimulation | executive function | visual perception | pattern recognition, visual</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">29</td>
-<td style="text-align: left;">cardiovascular diseases | smoking | regression analysis | body mass index | sex characteristics | japan | menopause | follow-up studies | life style | nutritional status | risk | linear models | postmenopause | alcohol drinking | prevalence</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">30</td>
-<td style="text-align: left;">blood pressure | hypertension | myocardium | heart rate | heart | heart failure | hemodynamics | oxygen consumption | electrocardiography | myocardial infarction | aorta | arteriosclerosis | arteries | cardiovascular diseases | antihypertensive agents</td>
-</tr>
 </tbody>
 </table>
 
-### Topic model summary: html widget
+#### Topic model summary - html widget
 
 ``` r
 ## topic model html widget
