@@ -21,10 +21,15 @@ mtk_summarize_lda <- function (lda, topic_feats_n = 10){
   twd <- reshape2::melt(twd, id.vars = 'topic_id')
   twd <- twd[order(twd$value, decreasing = TRUE), ]
   
-  twd <- setorder(setDT(twd), -value)[, head(.SD, topic_feats_n), keyby = topic_id]
+  twd <- data.table::setorder(setDT(twd), -value)[, head(.SD, topic_feats_n), 
+                                                  keyby = topic_id]
+  data.table::setnames(twd, old = "value", new = "beta")
+  data.table::setnames(twd, old = "variable", new = "feature")
   
-  twd 
+  tws <- twd[ , .(topic_features = paste0(feature, collapse = ' | ')), by = topic_id]
   
+  out <- list("topic_word_dist" = twd, "topic_summary" = tws)
+  out
 }
 
   
