@@ -701,7 +701,8 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 
 ``` r
 ## topic model html widget
-mesh_lda$plot()
+#mesh_lda$plot()
+mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 ```
 
-    ## Loading required namespace: servr
+![](README_files/figure-markdown_github/demo-tm-viz.png)
