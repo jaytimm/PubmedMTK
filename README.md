@@ -1,12 +1,36 @@
-## PubMed Mining Toolkit: an overview
+PubMed Mining Toolkit: an overview
+----------------------------------
 
-## Installation
+-   [PubMed Mining Toolkit: an
+    overview](#pubmed-mining-toolkit:-an-overview)
+-   [Installation](#installation)
+-   [Usage](#usage)
+    -   [MeSH vocabulary](#mesh-vocabulary)
+    -   [Search the PubMed database:
+        `pmtk_search_pubmed()`](#search-the-pubmed-database:-%60pmtk_search_pubmed()%60)
+    -   [Advanced counting](#advanced-counting)
+    -   [Fetch abstract data from
+        PubMed](#fetch-abstract-data-from-pubmed)
+        -   [Download batch data:
+            `pmtk_download_abs()`](#download-batch-data:-%60pmtk_download_abs()%60)
+        -   [Load batch data:
+            `pmtk_loadr_abs()`](#load-batch-data:-%60pmtk_loadr_abs()%60)
+        -   [Record details](#record-details)
+    -   [Trend data:](#trend-data:)
+    -   [MeSH classifications](#mesh-classifications)
+    -   [MeSH-based topic model](#mesh-based-topic-model)
+    -   [Topic model summary: html
+        widget](#topic-model-summary:-html-widget)
+
+Installation
+------------
 
 ``` r
 devtools::install_github("jaytimm/PubmedMTK")
 ```
 
-## Usage
+Usage
+-----
 
 ``` r
 working_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/data-raw/'
@@ -38,7 +62,6 @@ hierarchically-organized vocabulary – comprised of 2021 versions of
 `descriptor` & `trees` files made available via NLM-NIH. An account of
 how the table was constructed is detailed
 [here](https://github.com/jaytimm/PubmedMTK/blob/main/build-MeSH-df.md).
-
 Also, [a useful
 reference](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5324252/).
 
@@ -46,17 +69,108 @@ reference](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5324252/).
 knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 ```
 
-    ## Warning: replacing previous import 'data.table::melt' by 'reshape2::melt' when
-    ## loading 'PubmedMTK'
-
-| DescriptorUI | DescriptorName | TermName           | code | cats                | mesh1                  | mesh2                              | tree_location       | tree1 | tree2   |
-|:-------------|:---------------|:-------------------|:-----|:--------------------|:-----------------------|:-----------------------------------|:--------------------|:------|:--------|
-| D000001      | calcimycin     | calcimycin         | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
-| D000001      | calcimycin     | a-23187            | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
-| D000001      | calcimycin     | a 23187            | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
-| D000001      | calcimycin     | a23187             | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
-| D000001      | calcimycin     | antibiotic a23187  | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
-| D000001      | calcimycin     | a23187, antibiotic | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 9%" />
+<col style="width: 11%" />
+<col style="width: 3%" />
+<col style="width: 12%" />
+<col style="width: 14%" />
+<col style="width: 21%" />
+<col style="width: 12%" />
+<col style="width: 3%" />
+<col style="width: 4%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">DescriptorUI</th>
+<th style="text-align: left;">DescriptorName</th>
+<th style="text-align: left;">TermName</th>
+<th style="text-align: left;">code</th>
+<th style="text-align: left;">cats</th>
+<th style="text-align: left;">mesh1</th>
+<th style="text-align: left;">mesh2</th>
+<th style="text-align: left;">tree_location</th>
+<th style="text-align: left;">tree1</th>
+<th style="text-align: left;">tree2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">D000001</td>
+<td style="text-align: left;">calcimycin</td>
+<td style="text-align: left;">calcimycin</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">Chemicals and Drugs</td>
+<td style="text-align: left;">Heterocyclic Compounds</td>
+<td style="text-align: left;">Heterocyclic Compounds, Fused-Ring</td>
+<td style="text-align: left;">D03.633.100.221.173</td>
+<td style="text-align: left;">D03</td>
+<td style="text-align: left;">D03.633</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D000001</td>
+<td style="text-align: left;">calcimycin</td>
+<td style="text-align: left;">a-23187</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">Chemicals and Drugs</td>
+<td style="text-align: left;">Heterocyclic Compounds</td>
+<td style="text-align: left;">Heterocyclic Compounds, Fused-Ring</td>
+<td style="text-align: left;">D03.633.100.221.173</td>
+<td style="text-align: left;">D03</td>
+<td style="text-align: left;">D03.633</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D000001</td>
+<td style="text-align: left;">calcimycin</td>
+<td style="text-align: left;">a 23187</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">Chemicals and Drugs</td>
+<td style="text-align: left;">Heterocyclic Compounds</td>
+<td style="text-align: left;">Heterocyclic Compounds, Fused-Ring</td>
+<td style="text-align: left;">D03.633.100.221.173</td>
+<td style="text-align: left;">D03</td>
+<td style="text-align: left;">D03.633</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D000001</td>
+<td style="text-align: left;">calcimycin</td>
+<td style="text-align: left;">a23187</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">Chemicals and Drugs</td>
+<td style="text-align: left;">Heterocyclic Compounds</td>
+<td style="text-align: left;">Heterocyclic Compounds, Fused-Ring</td>
+<td style="text-align: left;">D03.633.100.221.173</td>
+<td style="text-align: left;">D03</td>
+<td style="text-align: left;">D03.633</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D000001</td>
+<td style="text-align: left;">calcimycin</td>
+<td style="text-align: left;">antibiotic a23187</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">Chemicals and Drugs</td>
+<td style="text-align: left;">Heterocyclic Compounds</td>
+<td style="text-align: left;">Heterocyclic Compounds, Fused-Ring</td>
+<td style="text-align: left;">D03.633.100.221.173</td>
+<td style="text-align: left;">D03</td>
+<td style="text-align: left;">D03.633</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D000001</td>
+<td style="text-align: left;">calcimycin</td>
+<td style="text-align: left;">a23187, antibiotic</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">Chemicals and Drugs</td>
+<td style="text-align: left;">Heterocyclic Compounds</td>
+<td style="text-align: left;">Heterocyclic Compounds, Fused-Ring</td>
+<td style="text-align: left;">D03.633.100.221.173</td>
+<td style="text-align: left;">D03</td>
+<td style="text-align: left;">D03.633</td>
+</tr>
+</tbody>
+</table>
 
 ### Search the PubMed database: `pmtk_search_pubmed()`
 
@@ -72,8 +186,6 @@ search is focused on *MeSH headings* (\[MH\]) and *titles & abstracts*
 `aging[MH] OR aging[TIAB]`.
 
 ``` r
-## tester:: rentrez_search <- rentrez::entrez_search(term = 'cancer', db = 'pubmed')
-
 pmed_search <- c('senescence', 
                  'aging', 
                  'cancer',
@@ -119,26 +231,27 @@ search_results1 %>%
   knitr::kable()
 ```
 
-| search              |       n |
+| search              |        n|
 |:--------------------|--------:|
-| cancer              | 3929619 |
-| cell cycle          |  416790 |
-| aging               |  368768 |
-| senescence          |  278509 |
-| dna damage          |  134624 |
-| beta galactosidase  |   33247 |
-| induced senescence  |   25826 |
-| cellular senescence |   25673 |
-| p16                 |   14681 |
-| secretory phenotype |    2705 |
-| Total               | 5230442 |
+| cancer              |  3929619|
+| cell cycle          |   416790|
+| aging               |   368768|
+| senescence          |   278509|
+| dna damage          |   134624|
+| beta galactosidase  |    33247|
+| induced senescence  |    25826|
+| cellular senescence |    25673|
+| p16                 |    14681|
+| secretory phenotype |     2705|
+| Total               |  5230442|
 
 ### Advanced counting
 
 Quick inspection of query results – before fetching record details.
 
 ``` r
-query_bigrams <- PubmedMTK::pmtk_query_bigrams(search_results1) ## crosstab_qresults()
+query_bigrams <- PubmedMTK::pmtk_query_bigrams(search_results1) 
+## crosstab_qresults()
 ```
 
 ### Fetch abstract data from PubMed
@@ -147,22 +260,21 @@ As a two-step process: using functions `pmtk_download_abs()` and
 `pmtk_loadr_abs(()`.
 
 While `rentrez` is a lovely package (and maintained by
-[ROpenSci](https://github.com/ropensci/rentrez)), in my experience it is
+[rOpenSci](https://github.com/ropensci/rentrez)), in my experience it is
 not especially well-designed for fetching PubMed abstracts in bulk or
 building text corpora. API rate-limits being most problematic.
 
-The approach taken here utilizes a combination of local storage and
-“more + smaller” API queries to make the most of rate limits – employing
-the `entrez_fetch` function from the `rentrez` package to perform
-individual queries. Each “batch” contains n = 199 records; batch files
-are converted from XML to a data frame in RDS format and stored locally
-in a user-specified file path.
+While `rentrez` is still employed, the approach taken here utilizes a
+combination of local storage and “more + smaller” API queries to make
+the most of rate limits. Each “batch” contains n = 199 records; batch
+files are converted from XML to a data frame in RDS format and stored
+locally in a user-specified file path.
 
 #### Download batch data: `pmtk_download_abs()`
 
 The `out_file` parameter specifies the file path for local batch file
-storage is indicated via The `file_prefix` parameter specifies a
-character string used to identify batches (along with a batch \#).
+storage; the `file_prefix` parameter specifies a character string used
+to identify batches (along with a batch \#).
 
 ``` r
 PubmedMTK::pmtk_download_abs(pmids = sen_pmids$pmid,
@@ -179,37 +291,96 @@ details, eg, article name, MeSH terms, Pub Date, etc.
 
 ``` r
 batch_dir <- paste0(working_dir, 'batches/')
-sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir, file_prefix = 'sen')
+sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir, 
+                                    file_prefix = 'sen')
 ```
 
 #### Record details
 
 ``` r
 sen_df$meta %>%
-  filter(complete.cases(.)) %>% ## !! NA's are not proper stil -- !!!
+  filter(complete.cases(.)) %>% 
+  ## !! NA's are not proper stil -- !!!
   slice(1) %>%
   data.table::transpose(keep.names = "var") %>%
   mutate(V1 = gsub('\\|', ' \\| ', V1)) %>%
   knitr::kable()
 ```
 
-| var           | V1                                                                                                                                                                            |
-|:--------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| pmid          | 33608630                                                                                                                                                                      |
-| doi           | 10.1038/s42003-020-01619-4                                                                                                                                                    |
-| authors       | Kim G \| Kim M \| Kim M \| Park C \| Yoon Y \| Lim DH \| Yeo H \| Kang S \| Lee YG \| Beak NI \| Lee J \| Kim S \| Kwon JY \| Choi WW \| Lee C \| Yoon KW \| Park H \| Lee DG |
-| year          | 2021                                                                                                                                                                          |
-| articletitle  | Spermidine-induced recovery of human dermal structure and barrier function by skin microbiome.                                                                                |
-| journal       | Commun Biol                                                                                                                                                                   |
-| volume        | 4                                                                                                                                                                             |
-| issue         | 1                                                                                                                                                                             |
-| pages         | 231                                                                                                                                                                           |
-| meshHeadings  | NA                                                                                                                                                                            |
-| chemNames     | NA                                                                                                                                                                            |
-| nctID         | NA                                                                                                                                                                            |
-| ptype         | Journal Article                                                                                                                                                               |
-| keywords      | NA                                                                                                                                                                            |
-| revision_date | 18680                                                                                                                                                                         |
+<table>
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 94%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">var</th>
+<th style="text-align: left;">V1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">pmid</td>
+<td style="text-align: left;">33608630</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">doi</td>
+<td style="text-align: left;">10.1038/s42003-020-01619-4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">authors</td>
+<td style="text-align: left;">Kim G | Kim M | Kim M | Park C | Yoon Y | Lim DH | Yeo H | Kang S | Lee YG | Beak NI | Lee J | Kim S | Kwon JY | Choi WW | Lee C | Yoon KW | Park H | Lee DG</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">year</td>
+<td style="text-align: left;">2021</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">articletitle</td>
+<td style="text-align: left;">Spermidine-induced recovery of human dermal structure and barrier function by skin microbiome.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">journal</td>
+<td style="text-align: left;">Commun Biol</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">volume</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">issue</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pages</td>
+<td style="text-align: left;">231</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">meshHeadings</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">chemNames</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nctID</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ptype</td>
+<td style="text-align: left;">Journal Article</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">keywords</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">revision_date</td>
+<td style="text-align: left;">18680</td>
+</tr>
+</tbody>
+</table>
 
 ### Trend data:
 
@@ -252,7 +423,7 @@ tr4 %>%
   ggtitle('wrong')
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 ### MeSH classifications
 
@@ -296,9 +467,6 @@ mesh_lda <- text2vec::LDA$new(n_topics = 30) ## This is the model
 topic_model_fit <- mesh_lda$fit_transform(mesh_dtm, progressbar = F)
 ```
 
-    ## INFO  [22:44:47.530] early stopping at 180 iteration 
-    ## INFO  [22:45:05.634] early stopping at 20 iteration
-
 The `mtk_summarize_lda` function summarizes and extracts topic
 composition from the `text2vec::LDA` output.
 
@@ -306,43 +474,146 @@ composition from the `text2vec::LDA` output.
 topic_model_summary <- PubmedMTK::mtk_summarize_lda(lda = mesh_lda, 
                                                     topic_feats_n = 15)
 
-summary <- topic_model_summary[ , .(topic_features = paste0(variable, collapse = ' | ')), 
+summary <- topic_model_summary[ , .(topic_features = paste0(variable,
+                                                            collapse = ' | ')
+                                    ), 
                                 by = topic_id]
-knitr::kable(summary)
 ```
 
-| topic_id | topic_features                                                                                                                                                                                                                                                                                                                                            |
-|---------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | cell division \| microscopy, electron \| liver \| telomere \| dna \| proteins \| rats, inbred strains \| cell survival \| fibroblasts \| tissue distribution \| cell nucleus \| kinetics \| kidney \| cell count \| mice, inbred strains                                                                                                                  |
-|        2 | reference values \| sex characteristics \| bone and bones \| stroke \| tomography, x-ray computed \| osteoarthritis \| diagnosis, differential \| regression analysis \| case-control studies \| osteoporosis \| ultrasonography \| reproducibility of results \| cartilage, articular \| femur \| sensitivity and specificity                            |
-|        3 | mortality \| life expectancy \| population dynamics \| demography \| socioeconomic factors \| forecasting \| europe \| population \| health \| retirement \| research \| demographic factors \| fertility \| developing countries \| employment                                                                                                           |
-|        4 | molecular sequence data \| base sequence \| dna damage \| amino acid sequence \| dna-binding proteins \| transcription, genetic \| dna repair \| mutation \| transcription factors \| dna \| nuclear proteins \| promoter regions, genetic \| polymerase chain reaction \| protein binding \| histones                                                    |
-|        5 | health services for the aged \| nursing homes \| geriatrics \| long-term care \| caregivers \| qualitative research \| homes for the aged \| health knowledge, attitudes, practice \| health services needs and demand \| decision making \| family \| attitude of health personnel \| home care services \| health promotion \| geriatric nursing        |
-|        6 | blood pressure \| hypertension \| cardiovascular diseases \| heart rate \| diabetes mellitus \| kidney \| diabetes mellitus, type 2 \| arteriosclerosis \| hemodynamics \| aorta \| coronary disease \| electrocardiography \| atherosclerosis \| arteries \| kidney diseases                                                                             |
-|        7 | prevalence \| geriatrics \| japan \| european continental ancestry group \| regression analysis \| china \| socioeconomic factors \| african americans \| asian continental ancestry group \| models, statistical \| educational status \| health surveys \| sex \| research \| history, 20th century                                                     |
-|        8 | retrospective studies \| follow-up studies \| prognosis \| incidence \| risk assessment \| treatment outcome \| prevalence \| logistic models \| comorbidity \| predictive value of tests \| multivariate analysis \| hospitalization \| proportional hazards models \| severity of illness index \| odds ratio                                           |
-|        9 | cell differentiation \| immunohistochemistry \| stem cells \| parkinson disease \| mice, knockout \| cell proliferation \| mice, transgenic \| gene expression regulation, developmental \| nerve tissue proteins \| mesenchymal stem cells \| regeneration \| astrocytes \| gene expression \| drosophila \| spinal cord                                 |
-|       10 | diet \| calcium \| chickens \| dietary supplements \| nutritional status \| energy intake \| feeding behavior \| amino acids \| eating \| dietary proteins \| dietary fats \| nutritional physiological phenomena \| intestinal mucosa \| cattle \| swine                                                                                                 |
-|       11 | hippocampus \| rats, sprague-dawley \| cerebral cortex \| rats, wistar \| synapses \| in vitro techniques \| dopamine \| rats, inbred f344 \| neuronal plasticity \| cerebellum \| electric stimulation \| norepinephrine \| axons \| immunohistochemistry \| rats, inbred strains                                                                        |
-|       12 | phosphorylation \| blotting, western \| gene expression regulation \| caenorhabditis elegans \| cell line \| mice, knockout \| reverse transcriptase polymerase chain reaction \| membrane proteins \| enzyme activation \| transcription factors \| up-regulation \| carrier proteins \| caenorhabditis elegans proteins \| autophagy \| gene expression |
-|       13 | models, biological \| inflammation \| rats, sprague-dawley \| dose-response relationship, drug \| caloric restriction \| neoplasms \| homeostasis \| models, animal \| autophagy \| nitric oxide \| rats, wistar \| neurodegenerative diseases \| senescence \| endothelial cells \| ageing                                                               |
-|       14 | postural balance \| reference values \| lung \| biomechanical phenomena \| gait \| retina \| posture \| walking \| movement \| accidental falls \| visual acuity \| pain \| electromyography \| respiration \| oxygen                                                                                                                                     |
-|       15 | muscle, skeletal \| obesity \| exercise \| body mass index \| body composition \| bone density \| osteoporosis \| sarcopenia \| adipose tissue \| muscle strength \| physical fitness \| anthropometry \| absorptiometry, photon \| muscle contraction \| oxygen consumption                                                                              |
-|       16 | memory \| reaction time \| analysis of variance \| attention \| psychomotor performance \| mental recall \| behavior, animal \| learning \| memory disorders \| maze learning \| photic stimulation \| motor activity \| memory, short-term \| visual perception \| electroencephalography                                                                |
-|       17 | antioxidants \| reactive oxygen species \| oxidation-reduction \| superoxide dismutase \| mitochondria \| hydrogen peroxide \| lipid peroxidation \| plant extracts \| rats, wistar \| lens, crystalline \| free radicals \| glutathione \| cataract \| chromatography, high pressure liquid \| catalase                                                  |
-|       18 | cytokines \| t-lymphocytes \| spleen \| mice, inbred balb c \| inflammation \| lymphocyte activation \| macrophages \| tumor necrosis factor-alpha \| thymus gland \| lymphocytes \| flow cytometry \| interleukin-6 \| b-lymphocytes \| hematopoietic stem cells \| antibodies, monoclonal                                                               |
-|       19 | analysis of variance \| hydrogen-ion concentration \| in vitro techniques \| temperature \| kinetics \| water \| stress, mechanical \| materials testing \| surface properties \| microscopy, electron, scanning \| ethanol \| hot temperature \| solubility \| drug interactions \| staining and labeling                                                |
-|       20 | depression \| smoking \| cognition disorders \| chronic disease \| life style \| mental disorders \| psychiatric status rating scales \| exercise \| anxiety \| stress, psychological \| depressive disorder \| alcohol drinking \| psychometrics \| physical activity \| motor activity                                                                  |
-|       21 | models, biological \| stress, physiological \| species specificity \| reproduction \| circadian rhythm \| plant leaves \| seasons \| gene expression regulation, plant \| light \| adaptation, physiological \| dogs \| melatonin \| plant proteins \| arabidopsis \| larva                                                                               |
-|       22 | cell proliferation \| neoplasms \| cell line, tumor \| tumor suppressor protein p53 \| cell cycle \| gene expression regulation, neoplastic \| breast neoplasms \| antineoplastic agents \| cell transformation, neoplastic \| cancer \| lung neoplasms \| fibroblasts \| tumor cells, cultured \| senescence \| cell survival                            |
-|       23 | liver \| mitochondria \| insulin \| blood glucose \| glucose \| cholesterol \| energy metabolism \| muscles \| lipids \| lipid metabolism \| insulin resistance \| triglycerides \| adenosine triphosphate \| fatty acids \| muscle development                                                                                                           |
-|       24 | skin aging \| skin \| treatment outcome \| collagen \| ultraviolet rays \| face \| rejuvenation \| fibroblasts \| cosmetic techniques \| extracellular matrix \| wound healing \| patient satisfaction \| double-blind method \| rhytidoplasty \| hyaluronic acid                                                                                         |
-|       25 | amyloid beta-peptides \| myocardium \| mice, transgenic \| heart \| peptide fragments \| hiv infections \| tau proteins \| alzheimer’s disease \| alzheimer’s disease \| disease progression \| heart failure \| amyloid beta-protein precursor \| calcium \| organ size \| amyloid                                                                       |
-|       26 | magnetic resonance imaging \| cognitive dysfunction \| cognition disorders \| reproducibility of results \| image processing, computer-assisted \| brain mapping \| cerebral cortex \| atrophy \| sleep \| algorithms \| sensitivity and specificity \| executive function \| hippocampus \| disease progression \| mild cognitive impairment             |
-|       27 | pregnancy \| infant, newborn \| erythrocytes \| erythrocyte aging \| fetus \| rabbits \| cattle \| sheep \| iron \| gestational age \| kinetics \| oocytes \| hemoglobins \| swine \| blood proteins                                                                                                                                                      |
-|       28 | quality of life \| activities of daily living \| geriatric assessment \| health status \| social support \| frail elderly \| adaptation, psychological \| independent living \| frailty \| disabled persons \| mental health \| interpersonal relations \| older adults \| depression \| self concept                                                     |
-|       29 | phenotype \| mutation \| genotype \| genetic predisposition to disease \| gene expression profiling \| case-control studies \| polymorphism, single nucleotide \| dna methylation \| epigenesis, genetic \| alleles \| genetic variation \| biological evolution \| polymorphism, genetic \| transcriptome \| apolipoproteins e                           |
-|       30 | testosterone \| menopause \| estradiol \| organ size \| testis \| estrogens \| insulin-like growth factor i \| ovary \| growth hormone \| luteinizing hormone \| hypothalamus \| androgens \| hydrocortisone \| sexual maturation \| sex characteristics                                                                                                  |
+<table>
+<colgroup>
+<col style="width: 2%" />
+<col style="width: 97%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">topic_id</th>
+<th style="text-align: left;">topic_features</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">blood pressure | hypertension | myocardium | heart rate | heart | heart failure | aorta | hemodynamics | endothelium, vascular | electrocardiography | myocardial infarction | atherosclerosis | cardiovascular diseases | muscle, smooth, vascular | arteries</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">geriatric assessment | activities of daily living | frail elderly | chronic disease | european continental ancestry group | comorbidity | hospitalization | frailty | quality of life | african americans | pain | older adults | prevalence | disability evaluation | independent living</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">parkinson disease | immunohistochemistry | cell count | nerve tissue proteins | mice, transgenic | synapses | cerebellum | axons | spinal cord | neuronal plasticity | nerve degeneration | drosophila | drosophila proteins | neuroglia | drosophila melanogaster</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">inflammation | antioxidants | reactive oxygen species | oxidation-reduction | superoxide dismutase | cytokines | hydrogen peroxide | lipid peroxidation | tumor necrosis factor-alpha | glutathione | free radicals | interleukin-6 | catalase | ascorbic acid | vitamin e</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">life expectancy | population dynamics | mortality | socioeconomic factors | demography | research | forecasting | europe | population | demographic factors | delivery of health care | health | developing countries | employment | rural population</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">prevalence | body mass index | incidence | cardiovascular diseases | follow-up studies | smoking | risk assessment | logistic models | multivariate analysis | obesity | life style | diabetes mellitus | age distribution | proportional hazards models | odds ratio</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">skin aging | skin | collagen | ultraviolet rays | face | rejuvenation | fibroblasts | treatment outcome | cosmetic techniques | wound healing | patient satisfaction | extracellular matrix | rhytidoplasty | hyaluronic acid | keratinocytes</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">erythrocytes | erythrocyte aging | temperature | hydrogen-ion concentration | kinetics | water | stress, mechanical | hot temperature | materials testing | hemoglobins | cattle | surface properties | microscopy, electron, scanning | rabbits | oxygen</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">memory | reaction time | attention | psychomotor performance | analysis of variance | brain mapping | mental recall | learning | electroencephalography | memory, short-term | photic stimulation | executive function | memory disorders | visual perception | functional laterality</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">models, biological | dna methylation | epigenesis, genetic | retina | lens, crystalline | cataract | saccharomyces cerevisiae | environment | light | macular degeneration | biological evolution | neoplasms | visual acuity | glycation end products, advanced | macaca mulatta</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">health status | depression | quality of life | social support | stress, psychological | adaptation, psychological | socioeconomic factors | mental health | interpersonal relations | self concept | anxiety | caregivers | activities of daily living | family | personal satisfaction</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">pregnancy | infant, newborn | liver | rats, inbred strains | dna | cattle | fetus | swine | species specificity | rabbits | kinetics | chickens | sheep | gestational age | lung</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">mitochondria | autophagy | caenorhabditis elegans | mutation | stress, physiological | hiv infections | caenorhabditis elegans proteins | gene expression regulation | reactive oxygen species | dna, mitochondrial | caloric restriction | homeostasis | drosophila melanogaster | proteomics | mass spectrometry</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">treatment outcome | retrospective studies | follow-up studies | prognosis | severity of illness index | sleep | circadian rhythm | postoperative complications | clinical trials as topic | lung | schizophrenia | history, 20th century | disease progression | respiration | sleep wake disorders</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">phenotype | molecular sequence data | genotype | mutation | base sequence | genetic predisposition to disease | amino acid sequence | gene expression profiling | polymorphism, single nucleotide | polymerase chain reaction | plant leaves | alleles | genetic variation | polymorphism, genetic | gene expression regulation, plant</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">dose-response relationship, drug | motor activity | rats, sprague-dawley | behavior, animal | rats, wistar | rats, inbred strains | dopamine | plant extracts | administration, oral | brain chemistry | chromatography, high pressure liquid | drug interactions | double-blind method | kinetics | serotonin</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">geriatrics | nursing homes | health services for the aged | long-term care | health promotion | quality of life | homes for the aged | health knowledge, attitudes, practice | qualitative research | health services needs and demand | disabled persons | attitude of health personnel | home care services | canada | geriatric nursing</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">cell differentiation | t-lymphocytes | stem cells | mice, inbred balb c | spleen | flow cytometry | lymphocyte activation | mesenchymal stem cells | thymus gland | lymphocytes | b-lymphocytes | cell proliferation | hematopoietic stem cells | bone marrow cells | immunoglobulin g</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">muscle, skeletal | insulin | obesity | blood glucose | glucose | adipose tissue | body composition | oxygen consumption | energy metabolism | muscles | insulin resistance | diabetes mellitus, type 2 | muscle contraction | exercise | adaptation, physiological</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">gene expression | immunohistochemistry | blotting, western | gene expression regulation | mice, knockout | membrane proteins | reverse transcriptase polymerase chain reaction | liver | carrier proteins | cell nucleus | proteins | rats, sprague-dawley | microscopy, electron | cell line | rats, wistar</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">diet | kidney | dietary supplements | nutritional status | energy intake | feeding behavior | fatty acids | eating | amino acids | dietary proteins | dietary fats | nutritional physiological phenomena | kidney diseases | creatinine | glomerular filtration rate</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">testosterone | reproduction | estradiol | testis | menopause | seasons | ovary | estrogens | fertility | luteinizing hormone | hydrocortisone | androgens | hypothalamus | cricetinae | sexual maturation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">23</td>
+<td style="text-align: left;">neoplasms | telomere | cell proliferation | cell line, tumor | telomerase | gene expression regulation, neoplastic | breast neoplasms | antineoplastic agents | cancer | cell transformation, neoplastic | senescence | lung neoplasms | micrornas | oocytes | prostatic neoplasms</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">24</td>
+<td style="text-align: left;">reproducibility of results | magnetic resonance imaging | reference values | regression analysis | sensitivity and specificity | image processing, computer-assisted | algorithms | predictive value of tests | cognition disorders | osteoarthritis | disease progression | tomography, x-ray computed | radiography | models, statistical | diagnosis, differential</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">hippocampus | amyloid beta-peptides | mice, transgenic | cerebral cortex | alzheimer’s disease | magnetic resonance imaging | cognitive dysfunction | alzheimer’s disease | peptide fragments | tau proteins | amyloid beta-protein precursor | microglia | disease progression | atrophy | mild cognitive impairment</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">26</td>
+<td style="text-align: left;">exercise | osteoporosis | bone density | bone and bones | biomechanical phenomena | postural balance | muscle strength | walking | physical fitness | accidental falls | gait | absorptiometry, photon | vitamin d | postmenopause | posture</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">27</td>
+<td style="text-align: left;">reference values | sex characteristics | cholesterol | insulin-like growth factor i | lipids | organ size | triglycerides | growth hormone | rats, inbred strains | body height | infant, newborn | dogs | liver | calcium | potassium</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">28</td>
+<td style="text-align: left;">dna damage | cell line | fibroblasts | dna-binding proteins | tumor suppressor protein p53 | dna repair | transcription factors | cell proliferation | gene expression regulation | cell cycle | nuclear proteins | transfection | protein-serine-threonine kinases | cell cycle proteins | cell survival</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">29</td>
+<td style="text-align: left;">case-control studies | cognition disorders | sex characteristics | analysis of variance | ageing | linear models | stroke | cognitive dysfunction | chronic disease | healthy aging | randomized controlled trials as topic | elderly | sex | risk | educational status</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">30</td>
+<td style="text-align: left;">in vitro techniques | calcium | rats, sprague-dawley | rats, inbred f344 | rats, wistar | phosphorylation | cell survival | nitric oxide | enzyme activation | enzyme inhibitors | electric stimulation | endothelial cells | hippocampus | action potentials | electrophysiology</td>
+</tr>
+</tbody>
+</table>
 
 ### Topic model summary: html widget
 
