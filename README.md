@@ -1,6 +1,12 @@
 PubMed Mining Toolkit - an overview
 -----------------------------------
 
+Two general sets of utility. (1) Exploratory tools for investigating and
+visualizing high-level patterns/trends based on PubMed search results;
+(2) Build custom corpora based on PubMed abstracts for downstream NLP
+tasks – word sense disambiguation, custom named entity recognition,
+association extraction, etc.
+
 -   [Installation](#installation)
 -   [Usage](#usage)
     -   [MeSH vocabulary](#mesh-vocabulary)
@@ -17,7 +23,7 @@ PubMed Mining Toolkit - an overview
     -   [MeSH-based topic model](#mesh-based-topic-model)
     -   [Topic model summary - html
         widget](#topic-model-summary---html-widget)
-    -   [Image summary](#image-summary)
+    -   [Google image summary](#google-image-summary)
 
 Installation
 ------------
@@ -56,8 +62,9 @@ pacman::p_load(data.table, # quanteda,
 
 The package includes as a data frame the MeSH thesaurus/
 hierarchically-organized vocabulary – comprised of 2021 versions of
-`descriptor` & `trees` files made available via NLM-NIH. [A workflow for
-re-creating the table from raw data
+`descriptor` & `trees` files made available via NLM-NIH.
+
+[A workflow for re-creating the table from raw data
 sets](https://github.com/jaytimm/PubmedMTK/blob/main/build-MeSH-df.md).
 
 ``` r
@@ -169,11 +176,10 @@ knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 
 ### Search the PubMed database - `pmtk_search_pubmed()`
 
-Find records included in PubMed that match some search term or multiple
-search terms. If multiple search terms are specified, independent
-queries are performed per term. Output, then, includes PMID results per
-search term – which can subsequently be used to fetch full
-records/abstracts.
+**Identify PubMed records that match some search term or multiple search
+terms**. If multiple search terms are specified, independent queries are
+performed per term. Output includes PMID results per search term – which
+can subsequently be used to fetch full records/abstracts.
 
 Search terms are by default translated into NCBI syntax; for simplicity,
 search is focused on *MeSH headings* (\[MH\]) and *titles & abstracts*
@@ -198,7 +204,7 @@ pmed_search <- c('human life span',
 search_results1 <- PubmedMTK::pmtk_search_pubmed(pmed_search = pmed_search)
 ```
 
-> Summary of record counts returned by PubMed query
+#### Summary of record counts returned by PubMed query
 
 ``` r
 # ## Total citations per search term are summarized below:
@@ -224,7 +230,7 @@ search_results1 %>%
 | telomere attrition        |     853|
 | stem cell exhaustion      |     162|
 
-> Unique records
+#### Unique records
 
 ``` r
 length(unique(search_results1$pmid))
@@ -259,6 +265,8 @@ search_tab %>% filter(term1 == 'senescence') %>% knitr::kable()
 | senescence | stem cell exhaustion      |  278659|     162|     88|   0.668|
 | senescence | telomere attrition        |  278659|     853|    443|   0.623|
 
+Positive pointwise mutual information.
+
 ``` r
 search_tab %>%
   mutate(pmi = ifelse(pmi < 0, 0, pmi),
@@ -285,20 +293,17 @@ search_tab %>%
 
 ### Fetch abstract data from PubMed
 
-As a two-step process: using functions `pmtk_download_abs()` and
-`pmtk_loadr_abs(()`.
+As a two-step process: (1) `pmtk_download_abs()` and (2)
+`pmtk_loadr_abs()`. Other R packages provide access to NCBI-PubMed data
+via the `Eutils` API (most notable being `rentrez`); however, none of
+them are perfectly suited for fetching PubMed abstracts in bulk, or
+building text corpora.
 
-`rentrez` is a lovely package (and maintained by
-[rOpenSci](https://github.com/ropensci/rentrez)); however, in my
-experience it is not especially well-designed for fetching PubMed
-abstracts in bulk or building text corpora. API rate-limits being most
-problematic.
-
-While `rentrez` is still employed here, our approach utilizes a
-combination of local storage and “more + smaller” API queries to make
-the most of rate limits. Each “batch” contains n = 199 records; batch
-files are converted from XML to a data frame in RDS format and stored
-locally in a user-specified file path.
+**The approach utilized here** is not the most elegant, but it makes the
+most out of rate-limits by utilizing a combination of local storage and
+“more + smaller” API batch queries. Each “batch” contains n = 199
+records; batch files are converted from XML to a data frame in RDS
+format and stored locally in a user-specified file path.
 
 #### Download batch data - `pmtk_download_abs()`
 
@@ -340,6 +345,9 @@ sen_df$tif %>%
 |:-------------------|-------:|---------:|
 | N                  |   62790|        NA|
 | Y                  |  426053|  89471130|
+
+> From here, custom-built models. Example. Show example text with search
+> – perhaps – two birds –
 
 #### Record details
 
@@ -429,11 +437,23 @@ sen_df$meta %>%
 
 ### PubMed search results trend data
 
+**Investigate and compare historical citation frequencies for a set of
+search terms**. Analysis is based on search results from the
+`pubmed_get_ids` function, and additionally requires the metadata
+returned from the call to `pmtk_loadr_abs()`, namely “data of
+publication.”
+
+The package includes a table named `pmtk_tbl_citations`, which
+summarizes total Medline citation counts by year – made available by
+NCBI [here](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html).
+Based on these historical values as denominators, we can approximate
+changes in relative citation frequency over time for some set of search
+terms.
+
 ``` r
 ## in theory, this could be used for other things -- 
 tr <- subset(sen_df$meta, !grepl('[a-z]', year))
 tr$year <- as.Date(paste(tr$year, '01', '01', sep = '-'))
-## 
 tr1 <- tr[search_results1, on = 'pmid']
 
 ## 
@@ -441,20 +461,19 @@ meds <- data.table::data.table(PubmedMTK::pmtk_tbl_citations)
 tr2 <-  tr1[, list(n = .N), by = list(search, year)]
 tr3 <- subset(tr2, year > as.Date('1969', format = '%Y') &
                 year < as.Date('2019', format = '%Y') )
-
 tr4 <- meds[tr3, on = 'year']
 tr4$per_100k = round(tr4$n / tr4$total * 100000, 3)
 ```
 
-*FACET on absolute versus relative !!!*
+#### Citation frequencies (per 100K total citations) for `senescence`related search terms from 1970 to 2018.
 
 ``` r
 ## Via ggplot --
 tr4 %>%
   ggplot() +
   geom_line(aes(x = year,
-                #y = n, 
-                y = per_100k,
+                #y = n,  ## RAW Citation counts
+                y = per_100k, ## Relative citation counts -- 
                 group = search,
                 color = search),
             size = 1
@@ -464,7 +483,7 @@ tr4 %>%
   theme(legend.position = 'right',
         legend.title = element_blank())  +
   ylab('Per 100,000 Medline citations') +
-  ggtitle('wrong')
+  ggtitle('Relative frequencies of search term citations historically')
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-21-1.png)
@@ -503,8 +522,8 @@ meshes1 %>%
 
 <table>
 <colgroup>
-<col style="width: 3%" />
-<col style="width: 96%" />
+<col style="width: 1%" />
+<col style="width: 98%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -514,24 +533,24 @@ meshes1 %>%
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">1439082</td>
-<td style="text-align: left;">chloroplasts | hordeum | plant proteins | plant proteins</td>
+<td style="text-align: left;">14081572</td>
+<td style="text-align: left;">adolescence | histology | infant | skin | histology | infant | skin</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">19675177</td>
-<td style="text-align: left;">accidents, traffic | automobile driving | depressive disorder | geriatric assessment | health status | physical fitness | probability | risk assessment | task performance and analysis</td>
+<td style="text-align: left;">16012945</td>
+<td style="text-align: left;">acetylation | actin cytoskeleton | adenoma | amino acid sequence | cell line, transformed | colorectal neoplasms | dna methylation | epigenesis, genetic | gene expression regulation, neoplastic | gene silencing | genes, tumor suppressor | genes, ras | histones | kidney | proteins | tumor suppressor proteins | histones | proteins | tumor suppressor proteins</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">25653617</td>
-<td style="text-align: left;">alzheimer’s | dti | mci</td>
+<td style="text-align: left;">1907469</td>
+<td style="text-align: left;">parkinson disease | psychomotor performance | serine | serine</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">32240105</td>
-<td style="text-align: left;">bioinformatics | tumor microenvironment</td>
+<td style="text-align: left;">30484227</td>
+<td style="text-align: left;">adult stem cells | biological evolution | cell differentiation | induced pluripotent stem cells | pluripotent stem cells</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">32392179</td>
-<td style="text-align: left;">creatine | hemolysis | lifespan</td>
+<td style="text-align: left;">30810280</td>
+<td style="text-align: left;">lifespan | metabolism | proteostasis | drosophila | drosophila proteins | gene ontology | glucose | glucosephosphate dehydrogenase | glycolysis | jnk mitogen-activated protein kinases | lysine | mass spectrometry | pentose phosphate pathway | phosphoprotein phosphatases | proteome | proteostasis | rna-seq | drosophila proteins | proteome | glucosephosphate dehydrogenase | jnk mitogen-activated protein kinases | phosphoprotein phosphatases | glucose | lysine</td>
 </tr>
 </tbody>
 </table>
@@ -584,48 +603,51 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">1</td>
-<td style="text-align: left;">retrospective studies | treatment outcome | prognosis | follow-up studies | risk assessment | severity of illness index | hiv infections | incidence | pain | postoperative complications | predictive value of tests | clinical trials as topic | survival analysis | stroke | comorbidity</td>
+<td style="text-align: left;">transfection | blotting, western | genetic vectors | reverse transcriptase polymerase chain reaction | genes, reporter | mice, transgenic | microscopy, fluorescence | fluorescent antibody technique | flow cytometry | genetic therapy | gene transfer techniques | retina | adenoviridae | promoter regions, genetic | green fluorescent proteins</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2</td>
-<td style="text-align: left;">calcium | hippocampus | osteoporosis | bone density | bone and bones | neuronal plasticity | synapses | rats, sprague-dawley | vitamin d | radiography | absorptiometry, photon | lumbar vertebrae | synaptic transmission | action potentials | electrophysiology</td>
+<td style="text-align: left;">hypertension | inflammation | cardiovascular diseases | smoking | treatment outcome | blood pressure | lung | retrospective studies | disease progression | arteriosclerosis | chronic disease | hiv infections | prognosis | immunity, innate | risk</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">3</td>
-<td style="text-align: left;">mice, transgenic | amyloid beta-peptides | phosphorylation | autophagy | peptide fragments | membrane proteins | tau proteins | alzheimer’s disease | parkinson disease | neurodegenerative diseases | amyloid beta-protein precursor | astrocytes | microglia | nerve tissue proteins | alzheimer’s disease</td>
+<td style="text-align: left;">enzyme activation | caspase 3 | caspases | enzyme inhibitors | tumor cells, cultured | proto-oncogene proteins c-bcl-2 | poly(adp-ribose) polymerases | cell death | proto-oncogene proteins | in situ nick-end labeling | drug synergism | bcl-2-associated x protein | flow cytometry | proto-oncogene proteins c-akt | doxorubicin</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">4</td>
-<td style="text-align: left;">phenotype | mutation | genotype | genetic predisposition to disease | gene expression profiling | polymorphism, single nucleotide | dna methylation | epigenesis, genetic | case-control studies | gene expression regulation | alleles | genetic variation | apolipoproteins e | polymorphism, genetic | transcriptome</td>
+<td style="text-align: left;">cross-sectional studies | longitudinal studies | cohort studies | prospective studies | geriatric assessment | prevalence | follow-up studies | surveys and questionnaires | dementia | activities of daily living | incidence | health status | risk assessment | retrospective studies | socioeconomic factors</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">5</td>
-<td style="text-align: left;">cell differentiation | fibroblasts | cell line | cell division | cell survival | stem cells | cell proliferation | gene expression regulation | mice, knockout | gene expression | regeneration | epithelial cells | reverse transcriptase polymerase chain reaction | extracellular matrix | cell movement</td>
+<td style="text-align: left;">cell cycle proteins | phosphorylation | nuclear proteins | protein-serine-threonine kinases | histones | dna breaks, double-stranded | tumor suppressor proteins | ataxia telangiectasia mutated proteins | hela cells | protein kinases | atm protein, human | intracellular signaling peptides and proteins | ubiquitin-protein ligases | h2ax protein, human | chromatin</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">6</td>
-<td style="text-align: left;">cytokines | t-lymphocytes | spleen | mice, inbred balb c | lymphocyte activation | macrophages | flow cytometry | tumor necrosis factor-alpha | thymus gland | lymphocytes | interleukin-6 | b-lymphocytes | antibodies, monoclonal | hematopoietic stem cells | immunoglobulin g</td>
+<td style="text-align: left;">t-lymphocytes | mice, inbred balb c | spermatozoa | spleen | thymus gland | lymphocyte activation | b-lymphocytes | antibodies, monoclonal | mice, inbred strains | flow cytometry | immunoglobulin g | infertility, male | cd4-positive t-lymphocytes | mice, inbred c3h | cytokines</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">7</td>
-<td style="text-align: left;">kinetics | erythrocytes | liver | erythrocyte aging | rabbits | proteins | dna | cell membrane | iron | electrophoresis, polyacrylamide gel | in vitro techniques | hemoglobins | molecular weight | isoenzymes | biological transport</td>
+<td style="text-align: left;">cattle | in vitro techniques | hydrogen-ion concentration | electrophoresis, polyacrylamide gel | chickens | rabbits | nitric oxide | galactosidases | molecular weight | endothelium, vascular | amino acids | proteins | lens, crystalline | skin | temperature</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">8</td>
-<td style="text-align: left;">mortality | life expectancy | population dynamics | demography | research | socioeconomic factors | europe | population | health | geriatrics | forecasting | demographic factors | statistics as topic | retirement | developing countries</td>
+<td style="text-align: left;">comet assay | mutagens | cricetinae | lymphocytes | mutagenicity tests | micronucleus tests | cho cells | water pollutants, chemical | environmental exposure | cricetulus | occupational exposure | environmental monitoring | genotoxicity | glutathione transferase | chromosome aberrations</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">9</td>
-<td style="text-align: left;">pregnancy | infant, newborn | microscopy, electron | immunohistochemistry | fetus | cell count | axons | spinal cord | gestational age | fertility | oocytes | cats | embryonic and fetal development | reproduction | histocytochemistry</td>
+<td style="text-align: left;">reproduction | life expectancy | mortality | fertility | research | population dynamics | species specificity | seasons | biological evolution | geriatrics | environment | demography | statistics as topic | models, theoretical | larva</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">10</td>
-<td style="text-align: left;">cell line, tumor | cell proliferation | tumor suppressor protein p53 | cell cycle | gene expression regulation, neoplastic | antineoplastic agents | breast neoplasms | mesenchymal stem cells | dna damage | cell transformation, neoplastic | down-regulation | neoplasms | up-regulation | micrornas | rna, small interfering</td>
+<td style="text-align: left;">infant | infant, newborn | kidney | dogs | heart rate | blood pressure | reference values | fetus | swine | hemodynamics | species specificity | gestational age | sheep | electrocardiography | horses</td>
 </tr>
 </tbody>
 </table>
 
 ### Topic model summary - html widget
+
+An interactive html widget for exploration of topic model results, and
+conceptual structure.
 
 ``` r
 ## topic model html widget
@@ -635,6 +657,8 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 
 ![](README_files/figure-markdown_github/demo-tm-viz.png)
 
-### Image summary
+### Google image summary
+
+Lastly, a Google Image search for `human senescence` –
 
 ![](README_files/figure-markdown_github/summary.png)
