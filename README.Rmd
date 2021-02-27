@@ -391,6 +391,7 @@ tm_summary$topic_summary %>% slice(1:10) %>% knitr::kable()
 ```
 
 
+---
 
 ### Topic model summary - html widget
 
@@ -404,19 +405,15 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 
 ![](README_files/figure-markdown_github/demo-tm-viz.png)
 
-```{r eval=FALSE, include=FALSE}
-This likely goes elsewhere -- but next step -- 
 
-### annotation and dependencies--
 
-### Custom NER -- Pubtator files etc. --
-```
 
+---
 
 
 ### Google image summary
 
-Lastly, a Google Image search for `human senescence` -- 
+Lastly, some fairly simple functionality (not detailed here) for building collages based on a Google image search.  Below, results from a Google Image search for `human senescence` -- 
 
 
 ![](README_files/figure-markdown_github/summary.png)

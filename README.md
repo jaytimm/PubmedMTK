@@ -644,6 +644,8 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 </tbody>
 </table>
 
+------------------------------------------------------------------------
+
 ### Topic model summary - html widget
 
 An interactive html widget for exploration of topic model results, and
@@ -657,8 +659,12 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 
 ![](README_files/figure-markdown_github/demo-tm-viz.png)
 
+------------------------------------------------------------------------
+
 ### Google image summary
 
-Lastly, a Google Image search for `human senescence` –
+Lastly, some fairly simple functionality (not detailed here) for
+building collages based on a Google image search. Below, results from a
+Google Image search for `human senescence` –
 
 ![](README_files/figure-markdown_github/summary.png)
