@@ -6,26 +6,18 @@ PubMed Mining Toolkit - an overview
     -   [MeSH vocabulary](#mesh-vocabulary)
     -   [Search the PubMed database -
         `pmtk_search_pubmed()`](#search-the-pubmed-database---%60pmtk_search_pubmed()%60)
-        -   [Summary of record counts returned by PubMed
-            query](#summary-of-record-counts-returned-by-pubmed-query)
-    -   [Advanced counting](#advanced-counting)
+    -   [Advanced counting -
+        `pmtk_crosstab_query()`](#advanced-counting---%60pmtk_crosstab_query()%60)
     -   [Fetch abstract data from
         PubMed](#fetch-abstract-data-from-pubmed)
-        -   [Download batch data -
-            `pmtk_download_abs()`](#download-batch-data---%60pmtk_download_abs()%60)
-        -   [Load batch data -
-            `pmtk_loadr_abs()`](#load-batch-data---%60pmtk_loadr_abs()%60)
-        -   [Corpus details](#corpus-details)
-        -   [Record details](#record-details)
     -   [PubMed search results trend
         data](#pubmed-search-results-trend-data)
     -   [Extract MeSH classifications -
         `pmtk_gather_mesh()`](#extract-mesh-classifications---%60pmtk_gather_mesh()%60)
     -   [MeSH-based topic model](#mesh-based-topic-model)
-        -   [Feature composition of first ten
-            topics](#feature-composition-of-first-ten-topics)
     -   [Topic model summary - html
         widget](#topic-model-summary---html-widget)
+    -   [Image summary](#image-summary)
 
 Installation
 ------------
@@ -189,23 +181,24 @@ search is focused on *MeSH headings* (\[MH\]) and *titles & abstracts*
 `aging[MH] OR aging[TIAB]`.
 
 ``` r
-pmed_search <- c('senescence', 
-                 'aging', 
-                 #'cancer',
-                 'beta galactosidase', 
-                 'cell cycle', 
-                 'p16',
+pmed_search <- c('human life span',
+                 'senescence', 
+                 'proteostasis',
                  'dna damage', 
-                 'cellular senescence', 
-                 'induced senescence',
-                 'secretory phenotype')
+                 'beta galactosidase', 
+                 'genomic instability',
+                 'telomere attrition',
+                 'epigenetic alterations',
+                 'mitochondrial dysfunction',
+                 'cellular senescence',
+                 'stem cell exhaustion')
 ```
 
 ``` r
 search_results1 <- PubmedMTK::pmtk_search_pubmed(pmed_search = pmed_search)
 ```
 
-#### Summary of record counts returned by PubMed query
+> Summary of record counts returned by PubMed query
 
 ``` r
 # ## Total citations per search term are summarized below:
@@ -213,32 +206,82 @@ search_results1 %>%
   group_by(search) %>%
   summarise(n = n()) %>%
   arrange(desc(n)) %>%
-  janitor::adorn_totals() %>%
+  #janitor::adorn_totals() %>%
   knitr::kable()
 ```
 
-| search              |        n|
-|:--------------------|--------:|
-| cell cycle          |   416905|
-| aging               |   368927|
-| senescence          |   278659|
-| dna damage          |   134703|
-| beta galactosidase  |    33254|
-| induced senescence  |    25843|
-| cellular senescence |    25707|
-| p16                 |    14690|
-| secretory phenotype |     2703|
-| Total               |  1301391|
+| search                    |       n|
+|:--------------------------|-------:|
+| senescence                |  278659|
+| dna damage                |  134703|
+| beta galactosidase        |   33254|
+| cellular senescence       |   25707|
+| mitochondrial dysfunction |   22063|
+| genomic instability       |   21671|
+| human life span           |   12145|
+| epigenetic alterations    |    5049|
+| proteostasis              |    3625|
+| telomere attrition        |     853|
+| stem cell exhaustion      |     162|
 
-### Advanced counting
-
-Quick inspection of query results – before fetching record details.
+> Unique records
 
 ``` r
-# query_bigrams <- PubmedMTK::pmtk_query_bigrams(search_results1) 
-## crosstab_qresults()
-## re-name columnbs: term1 - term2
+length(unique(search_results1$pmid))
 ```
+
+    ## [1] 489299
+
+### Advanced counting - `pmtk_crosstab_query()`
+
+Quick analysis of search term co-occurrence based on results from
+`pmtk_search_pubmed()`. Here, *term-A* and *term-B* are said to co-occur
+in *abstract-X* if independent PubMed queries for *term-A* and *term-B*
+both return *abstract-X*. Ideal for quick exploration.
+
+``` r
+search_tab <- PubmedMTK::pmtk_crosstab_query(search_results1) %>%
+  mutate(pmi = round(log( (n1n2/1e6) / ( (n1/1e6) * (n2/1e6) )), 3))
+
+search_tab %>% filter(term1 == 'senescence') %>% knitr::kable()
+```
+
+| term1      | term2                     |      n1|      n2|   n1n2|     pmi|
+|:-----------|:--------------------------|-------:|-------:|------:|-------:|
+| senescence | beta galactosidase        |  278659|   33254|   3214|  -1.059|
+| senescence | cellular senescence       |  278659|   25707|  16005|   0.804|
+| senescence | dna damage                |  278659|  134703|   5685|  -1.887|
+| senescence | epigenetic alterations    |  278659|    5049|    201|  -1.946|
+| senescence | genomic instability       |  278659|   21671|   1054|  -1.746|
+| senescence | human life span           |  278659|   12145|  12003|   1.266|
+| senescence | mitochondrial dysfunction |  278659|   22063|   1450|  -1.445|
+| senescence | proteostasis              |  278659|    3625|    470|  -0.765|
+| senescence | stem cell exhaustion      |  278659|     162|     88|   0.668|
+| senescence | telomere attrition        |  278659|     853|    443|   0.623|
+
+``` r
+search_tab %>%
+  mutate(pmi = ifelse(pmi < 0, 0, pmi),
+         term2 = as.character(term2)) %>%
+  rowwise() %>%
+  
+  mutate(ords = paste(sort(c(term1, term2)), collapse = '_')) %>%
+  group_by(ords) %>% slice(1) %>% ungroup() %>%
+  
+  #arrange(term1, term2) %>%
+  ggplot(aes(x = term1, y = term2, fill = pmi)) + 
+  geom_tile() + 
+  geom_text(aes(fill = pmi, label = n1n2), size = 3) + 
+  scale_fill_gradient2(low = scales::muted("#d8b365"), 
+                       mid = "#f5f5f5", 
+                       high = scales::muted('#5ab4ac'),
+                       midpoint = 0) +
+  theme_minimal() + xlab('') + ylab('') +
+  theme(legend.position = 'none',
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 ### Fetch abstract data from PubMed
 
@@ -264,7 +307,7 @@ storage; the `file_prefix` parameter specifies a character string used
 to identify batches (along with a batch \#).
 
 ``` r
-pmtk_download_abs(pmids = unique(search_results1$pmid),
+PubmedMTK::pmtk_download_abs(pmids = unique(search_results1$pmid),
                              out_file = paste0(working_dir, 'batches/'),
                              file_prefix = 'sen')
 ```
@@ -295,15 +338,14 @@ sen_df$tif %>%
 
 | includes\_abstract |       n|    tokens|
 |:-------------------|-------:|---------:|
-| N                  |   60981|        NA|
-| Y                  |  468070|  98294700|
+| N                  |   62790|        NA|
+| Y                  |  426053|  89471130|
 
 #### Record details
 
 ``` r
 sen_df$meta %>%
   filter(complete.cases(.)) %>% 
-  ## !! NA's are not proper stil -- !!!
   slice(1) %>%
   data.table::transpose(keep.names = "var") %>%
   mutate(V1 = gsub('\\|', ' \\| ', V1)) %>%
@@ -312,8 +354,8 @@ sen_df$meta %>%
 
 <table>
 <colgroup>
-<col style="width: 5%" />
-<col style="width: 94%" />
+<col style="width: 3%" />
+<col style="width: 96%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -324,63 +366,63 @@ sen_df$meta %>%
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">pmid</td>
-<td style="text-align: left;">30053915</td>
+<td style="text-align: left;">31748285</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">doi</td>
-<td style="text-align: left;">10.1186/s13073-018-0568-8</td>
+<td style="text-align: left;">10.1136/bmjopen-2018-027984</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">authors</td>
-<td style="text-align: left;">Scepanovic P | Alanio C | Hammer C | Hodel F | Bergstedt J | Patin E | Thorball CW | Chaturvedi N | Charbit B | Abel L | Quintana-Murci L | Duffy D | Albert ML | Fellay J</td>
+<td style="text-align: left;">Ali D | Callan N | Ennis S | Powell R | McGuire S | McGregor G | Weickert MO | Miller MA | Cappuccio FP | Banerjee P</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">year</td>
-<td style="text-align: left;">2018</td>
+<td style="text-align: left;">2019</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">articletitle</td>
-<td style="text-align: left;">Human genetic variants and age are the strongest predictors of humoral immune responses to common pathogens and vaccines.</td>
+<td style="text-align: left;">Heart failure with preserved ejection fraction (HFpEF) pathophysiology study (IDENTIFY-HF): does increased arterial stiffness associate with HFpEF, in addition to ageing and vascular effects of comorbidities? Rationale and design.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">journal</td>
-<td style="text-align: left;">Genome Med</td>
+<td style="text-align: left;">BMJ Open</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">volume</td>
-<td style="text-align: left;">10</td>
+<td style="text-align: left;">9</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">issue</td>
-<td style="text-align: left;">1</td>
+<td style="text-align: left;">11</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">pages</td>
-<td style="text-align: left;">59</td>
+<td style="text-align: left;">e027984</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">meshHeadings</td>
-<td style="text-align: left;">Adult | Aged | Aging | Bacterial Infections | Female | HLA-D Antigens | Humans | Immunity, Humoral | Male | Middle Aged | Polymorphism, Single Nucleotide | Vaccines | Virus Diseases</td>
+<td style="text-align: left;">Aged | Aged, 80 and over | Aging | Biomarkers | Comorbidity | Diabetes Mellitus | Echocardiography | Exercise Tolerance | Female | Heart Failure | Heart Ventricles | Humans | Hypertension | Male | Observational Studies as Topic | Prospective Studies | Pulse Wave Analysis | Research Design | Stroke Volume | Vascular Stiffness</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">chemNames</td>
-<td style="text-align: left;">HLA-D Antigens | Vaccines</td>
+<td style="text-align: left;">Biomarkers</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">nctID</td>
-<td style="text-align: left;">NCT01699893</td>
+<td style="text-align: left;">NCT03186833</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ptype</td>
-<td style="text-align: left;">Clinical Trial | Journal Article | Research Support, Non-U.S. Gov’t</td>
+<td style="text-align: left;">Journal Article</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">keywords</td>
-<td style="text-align: left;">Age | GWAS | HLA | Human genomics | Humoral immunity | Immunoglobulins | Infection | Serology | Sex | Vaccination</td>
+<td style="text-align: left;">arterial stiffness | comorbidities | heart failure with preserved ejection fraction | pathophysiology</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">revision_date</td>
-<td style="text-align: left;">17883</td>
+<td style="text-align: left;">18565</td>
 </tr>
 </tbody>
 </table>
@@ -404,6 +446,8 @@ tr4 <- meds[tr3, on = 'year']
 tr4$per_100k = round(tr4$n / tr4$total * 100000, 3)
 ```
 
+*FACET on absolute versus relative !!!*
+
 ``` r
 ## Via ggplot --
 tr4 %>%
@@ -423,7 +467,7 @@ tr4 %>%
   ggtitle('wrong')
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-21-1.png)
 
 ### Extract MeSH classifications - `pmtk_gather_mesh()`
 
@@ -453,7 +497,7 @@ set.seed(999)
 meshes1 %>%
   filter(pmid %in% sample(unique(meshes1$pmid), 5)) %>%
   group_by(pmid) %>%
-  summarize (d = paste0(descriptor_name, collapse = ' | ')) %>%
+  summarize (mesh_reps = paste0(descriptor_name, collapse = ' | ')) %>%
   knitr::kable()
 ```
 
@@ -465,7 +509,7 @@ meshes1 %>%
 <thead>
 <tr class="header">
 <th style="text-align: left;">pmid</th>
-<th style="text-align: left;">d</th>
+<th style="text-align: left;">mesh_reps</th>
 </tr>
 </thead>
 <tbody>
@@ -590,3 +634,7 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 ```
 
 ![](README_files/figure-markdown_github/demo-tm-viz.png)
+
+### Image summary
+
+![](README_files/figure-markdown_github/summary.png)

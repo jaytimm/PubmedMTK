@@ -5,7 +5,7 @@ output:
 ---
 
 
-## PubMed Mining Toolkit: an overview
+## PubMed Mining Toolkit - an overview
 
 
 ```{r setup, include=FALSE}
@@ -31,7 +31,9 @@ macro-level --
 
 
 ```{r echo=FALSE}
-render_toc("/home/jtimm/jt_work/GitHub/PubmedMTK/README.Rmd")
+render_toc("/home/jtimm/jt_work/GitHub/PubmedMTK/README.Rmd",
+           toc_header_name = "PubMed Mining Toolkit - an overview",
+           toc_depth = 2)
 ```
 
 
@@ -73,7 +75,11 @@ pacman::p_load(data.table, # quanteda,
 
 ### MeSH vocabulary 
 
-The package includes as a data frame the MeSH thesaurus/ hierarchically-organized vocabulary -- comprised of 2021 versions of `descriptor` & `trees` files made available via NLM-NIH. An account of how the table was constructed is detailed [here](https://github.com/jaytimm/PubmedMTK/blob/main/build-MeSH-df.md).  Also, [a useful reference](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5324252/).
+The package includes as a data frame the MeSH thesaurus/ hierarchically-organized vocabulary -- comprised of 2021 versions of `descriptor` & `trees` files made available via NLM-NIH. [A workflow for re-creating the table from raw data sets](https://github.com/jaytimm/PubmedMTK/blob/main/build-MeSH-df.md).  
+
+```{r eval=FALSE, include=FALSE}
+Also, [a useful reference](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5324252/).
+```
 
 
 ```{r message=FALSE, warning=FALSE}
@@ -82,23 +88,24 @@ knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 
 
 
-### Search the PubMed database: `pmtk_search_pubmed()`
+### Search the PubMed database - `pmtk_search_pubmed()`
 
 Find records included in PubMed that match some search term or multiple search terms.  If multiple search terms are specified, independent queries are performed per term. Output, then, includes PMID results per search term -- which can subsequently be used to fetch full records/abstracts.  
 
 Search terms are by default translated into NCBI syntax; for simplicity, search is focused on *MeSH headings* ([MH]) and *titles & abstracts* ([TIAB]).  So: a search for `aging` is translated as `aging[MH] OR aging[TIAB]`.
 
 ```{r message=FALSE, warning=FALSE}
-pmed_search <- c('senescence', 
-                 'aging', 
-                 'cancer',
-                 'beta galactosidase', 
-                 'cell cycle', 
-                 'p16',
+pmed_search <- c('human life span',
+                 'senescence', 
+                 'proteostasis',
                  'dna damage', 
-                 'cellular senescence', 
-                 'induced senescence',
-                 'secretory phenotype')
+                 'beta galactosidase', 
+                 'genomic instability',
+                 'telomere attrition',
+                 'epigenetic alterations',
+                 'mitochondrial dysfunction',
+                 'cellular senescence',
+                 'stem cell exhaustion')
 ```
 
 
@@ -114,22 +121,7 @@ search_results1 <- readRDS('search_results1.rds')
 
 
 
-Sample output:
-
-```{r}
-search_results1 %>%
-  head() %>%
-  knitr::kable()
-```
-
-
-
-
-
-
-
-
-Summary of record counts returned by PubMed query:
+> Summary of record counts returned by PubMed query
 
 ```{r message=FALSE, warning=FALSE}
 # ## Total citations per search term are summarized below:
@@ -137,22 +129,52 @@ search_results1 %>%
   group_by(search) %>%
   summarise(n = n()) %>%
   arrange(desc(n)) %>%
-  janitor::adorn_totals() %>%
+  #janitor::adorn_totals() %>%
   knitr::kable()
 ```
 
 
-
-
-### Advanced counting
-
-Quick inspection of query results -- before fetching record details.  
+> Unique records
 
 ```{r}
-query_bigrams <- PubmedMTK::pmtk_query_bigrams(search_results1) 
-## crosstab_qresults()
+length(unique(search_results1$pmid))
 ```
 
+
+
+### Advanced counting - `pmtk_crosstab_query()`
+
+Quick analysis of search term co-occurrence based on results from `pmtk_search_pubmed()`.  Here, *term-A* and *term-B* are said to co-occur in *abstract-X* if independent PubMed queries for *term-A* and *term-B* both return *abstract-X*.  Ideal for quick exploration.
+
+```{r}
+search_tab <- PubmedMTK::pmtk_crosstab_query(search_results1) %>%
+  mutate(pmi = round(log( (n1n2/1e6) / ( (n1/1e6) * (n2/1e6) )), 3))
+
+search_tab %>% filter(term1 == 'senescence') %>% knitr::kable()
+```
+
+
+```{r fig.height=5, message=FALSE, warning=FALSE}
+search_tab %>%
+  mutate(pmi = ifelse(pmi < 0, 0, pmi),
+         term2 = as.character(term2)) %>%
+  rowwise() %>%
+  
+  mutate(ords = paste(sort(c(term1, term2)), collapse = '_')) %>%
+  group_by(ords) %>% slice(1) %>% ungroup() %>%
+  
+  #arrange(term1, term2) %>%
+  ggplot(aes(x = term1, y = term2, fill = pmi)) + 
+  geom_tile() + 
+  geom_text(aes(fill = pmi, label = n1n2), size = 3) + 
+  scale_fill_gradient2(low = scales::muted("#d8b365"), 
+                       mid = "#f5f5f5", 
+                       high = scales::muted('#5ab4ac'),
+                       midpoint = 0) +
+  theme_minimal() + xlab('') + ylab('') +
+  theme(legend.position = 'none',
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
 
 
 
@@ -161,25 +183,25 @@ query_bigrams <- PubmedMTK::pmtk_query_bigrams(search_results1)
 
 As a two-step process: using functions `pmtk_download_abs()` and `pmtk_loadr_abs(()`. 
 
-While `rentrez` is a lovely package (and maintained by [rOpenSci](https://github.com/ropensci/rentrez)), in my experience it is not especially well-designed for fetching PubMed abstracts in bulk or building text corpora.  API rate-limits being most problematic.
+`rentrez` is a lovely package (and maintained by [rOpenSci](https://github.com/ropensci/rentrez)); however, in my experience it is not especially well-designed for fetching PubMed abstracts in bulk or building text corpora.  API rate-limits being most problematic.
 
-While `rentrez` is still employed, the approach taken here utilizes a combination of local storage and "more + smaller" API queries to make the most of rate limits.  Each "batch" contains n = 199 records; batch files are converted from XML to a data frame in RDS format and stored locally in a user-specified file path.   
+While `rentrez` is still employed here, our approach utilizes a combination of local storage and "more + smaller" API queries to make the most of rate limits.  Each "batch" contains n = 199 records; batch files are converted from XML to a data frame in RDS format and stored locally in a user-specified file path.   
 
 
 
-#### Download batch data: `pmtk_download_abs()` 
+#### Download batch data - `pmtk_download_abs()` 
 
 The `out_file` parameter specifies the file path for local batch file storage; the `file_prefix` parameter specifies a character string used to identify batches (along with a batch #). 
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
-PubmedMTK::pmtk_download_abs(pmids = sen_pmids$pmid,
+PubmedMTK::pmtk_download_abs(pmids = unique(search_results1$pmid),
                              out_file = paste0(working_dir, 'batches/'),
                              file_prefix = 'sen')
 ```
 
 
 
-#### Load batch data: `pmtk_loadr_abs()`
+#### Load batch data - `pmtk_loadr_abs()`
 
 The `pmtk_loadr_abs()` function loads batch files as two data frames: the first, a corpus object containing the record id and abstract, and the second, a metadata object including record id and all other record details, eg, article name, MeSH terms, Pub Date, etc.
 
@@ -191,12 +213,25 @@ sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir,
 
 
 
+#### Corpus details 
+
+```{r}
+sen_df$tif %>%
+  mutate(includes_abstract = ifelse(is.na(text), 'N', 'Y')) %>%
+  count(includes_abstract) %>%
+  mutate(tokens = ifelse(includes_abstract == 'Y',
+                         n* 210, NA)) %>%
+  knitr::kable()
+```
+
+
+
+
 #### Record details 
 
 ```{r}
 sen_df$meta %>%
   filter(complete.cases(.)) %>% 
-  ## !! NA's are not proper stil -- !!!
   slice(1) %>%
   data.table::transpose(keep.names = "var") %>%
   mutate(V1 = gsub('\\|', ' \\| ', V1)) %>%
@@ -206,7 +241,7 @@ sen_df$meta %>%
 
 
 
-### Trend data: 
+### PubMed search results trend data
 
 ```{r eval=FALSE, include=FALSE}
 As function -- and (time permitting) -- historical associations among search terms -- also relevant for MeSH terms -- !! -- ideally a generic solution -- 
@@ -222,14 +257,11 @@ and a yearly summary of total Medline citations made available [here](https://ww
 
 
 ```{r}
-## pmtk_
-
 ## in theory, this could be used for other things -- 
 tr <- subset(sen_df$meta, !grepl('[a-z]', year))
 tr$year <- as.Date(paste(tr$year, '01', '01', sep = '-'))
 ## 
 tr1 <- tr[search_results1, on = 'pmid']
-
 
 ## 
 meds <- data.table::data.table(PubmedMTK::pmtk_tbl_citations)
@@ -242,6 +274,8 @@ tr4$per_100k = round(tr4$n / tr4$total * 100000, 3)
 ```
 
 
+
+*FACET on absolute versus relative !!!*
 
 ```{r fig.height=6, message=FALSE, warning=FALSE}
 ## Via ggplot --
@@ -266,12 +300,12 @@ tr4 %>%
 
 
 
-### MeSH classifications 
+### Extract MeSH classifications - `pmtk_gather_mesh()`
 
-Extract KEYWORDS, MeSH HEADINGS & CHEM-NAMES -- output is a MeSH-comprised vector representation -- 
+Extract KEYWORDS, MeSH HEADINGS & CHEM-NAMES -- output is a MeSH-comprised text representation.
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
-## this takes too long -- 
+## this takes too long --based
 meshes <- PubmedMTK::pmtk_gather_mesh(meta_df = sen_df$meta)
 txts <- length(unique(meshes$pmid))
 
@@ -283,6 +317,7 @@ freqs$doc_prop <- freqs$doc_freq/ txts
 freqs1 <- subset(freqs, doc_prop > 0.0001 & doc_prop < 0.02)
 
 meshes1 <- subset(meshes, descriptor_name %in% freqs1$descriptor_name)
+meshes1 <- subset(meshes1, nchar(descriptor_name) > 0)
 ```
 
 
@@ -295,10 +330,15 @@ meshes1 <- readRDS('meshes1.rds')
 
 
 
-Example MeSH-based vector representation:
+> Example vector representations:
 
-```{r}
-
+```{r message=FALSE, warning=FALSE}
+set.seed(999)
+meshes1 %>%
+  filter(pmid %in% sample(unique(meshes1$pmid), 5)) %>%
+  group_by(pmid) %>%
+  summarize (mesh_reps = paste0(descriptor_name, collapse = ' | ')) %>%
+  knitr::kable()
 ```
 
 
@@ -309,7 +349,7 @@ Example MeSH-based vector representation:
 > Latent Dirichlet allocation: a topic modeling algorithm that models **each document** in corpus as 
 a composite of topics, and **each topic** as a composite of terms.  
 
-Here, we utilize the MeSH-based abstract representations to build a topic model.  *Exploratory utility*: (1) no real text processing, (2) information-dense, ie, no fluff, just MeSH.
+Here, we utilize the MeSH-based abstract representations to build a topic model.  *Exploratory utility*: (1) no real text processing, (2) information-dense, ie, no fluff, just MeSH.  Topic composition can be interpreted as sets of MeSH terms that frequently co-occur.
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 mesh_dtm <- tidytext::cast_sparse(data = meshes1,
@@ -325,39 +365,38 @@ topic_model_fit <- mesh_lda$fit_transform(mesh_dtm, progressbar = F)
 
 ```{r include=FALSE}
 setwd(working_dir)
-## saveRDS(mesh_lda, 'mesh_lda.rds')
-mesh_lda<- readRDS('mesh_lda.rds')
+#saveRDS(mesh_lda, 'mesh_lda.rds')
+mesh_lda <- readRDS('mesh_lda.rds')
 ```
 
 
 
-The `mtk_summarize_lda` function summarizes and extracts topic composition from the `text2vec::LDA` output. 
+The `mtk_summarize_lda` function summarizes and extracts topic composition from the `text2vec::LDA` output. For each possible topic-feature pair, the model computes the likelihood a given topic generated a given feature.  Output is filtered to the highest scoring features per topic using the `topic_feats_n`.
 
 ```{r message=FALSE, warning=FALSE}
-topic_model_summary <- PubmedMTK::mtk_summarize_lda(lda = mesh_lda, 
-                                                    topic_feats_n = 15)
-
-summary <- topic_model_summary[ , .(topic_features = paste0(variable,
-                                                            collapse = ' | ')
-                                    ), 
-                                by = topic_id]
+tm_summary <- PubmedMTK::mtk_summarize_lda(
+  lda = mesh_lda, topic_feats_n = 15)
 ```
 
 
+
+#### Feature composition of first ten topics
 
 ```{r echo=FALSE}
-knitr::kable(summary)
+tm_summary$topic_summary %>% slice(1:10) %>% knitr::kable()
 ```
 
 
 
-### Topic model summary: html widget
+### Topic model summary - html widget
 
-```{r}
+```{r eval=FALSE}
 ## topic model html widget
+#mesh_lda$plot()
+mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 ```
 
-
+![](README_files/figure-markdown_github/demo-tm-viz.png)
 
 ```{r eval=FALSE, include=FALSE}
 This likely goes elsewhere -- but next step -- 
@@ -367,6 +406,11 @@ This likely goes elsewhere -- but next step --
 ### Custom NER -- Pubtator files etc. --
 ```
 
+
+
+### Image summary
+
+![](README_files/figure-markdown_github/summary.png)
 
 
 
