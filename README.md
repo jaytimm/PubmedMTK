@@ -38,6 +38,7 @@ Included here is a set of example applications, including:
     -   [Topic model summary - html
         widget](#topic-model-summary---html-widget)
     -   [Google image summary](#google-image-summary)
+    -   [Summary](#summary)
 
 ## Installation
 
@@ -197,7 +198,7 @@ search_tab %>% filter(term1 == 'senescence') %>% knitr::kable()
 
 **The plot below** details PMI-based associative strengths among search
 terms. Labels specify co-occurrence in terms of citation counts; color
-demotes PMI value.
+denotes PMI value.
 
 ``` r
 search_tab %>%
@@ -511,8 +512,10 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 
 ### Google image summary
 
-Lastly, some fairly simple functionality (not detailed here) for
-building collages based on a Google image search. Below, results from a
-Google Image search for `human senescence` –
+Lastly, some fairly simple functionality (not presented in much detail
+here) for building collages based on a Google image search. Below,
+results from a Google Image search for `human senescence` –
 
 ![](README_files/figure-markdown_github/summary.png)
+
+### Summary
