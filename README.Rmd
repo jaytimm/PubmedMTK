@@ -7,14 +7,17 @@ output:
 
 # PubMed Mining Toolkit - an overview
 
-A collection of functions and resources for accessing, manipulating, and visualizing data made available on PubMed using R, including (1) PubMed query tools, (2) query exploration tools, and (3) abstract-level data acquisition tools for metadata extraction and custom corpus creation.  
+A collection of functions and resources for accessing, manipulating, and visualizing data made available on PubMed using R, including (1) PubMed query tools, (2) query exploration tools, and (3) abstract-level data acquisition tools for metadata & abstract extraction.  
 
 Included here is a set of example applications, including: 
 
 * Automated, independent searches for multiple (& complex) search queries;
 * More in-depth exploration of PubMed search results; namely, the investigation of high-level co-occurrence associations among a set of search terms;
-* Extraction of abstract-level metadata for (1) comparing citation trends historically and (2) investigating topic structure among abstracts; and
+* Extraction of abstract-level metadata for (1) comparing citation trends historically and (2) investigating annotation-based topic structure within a set abstracts; and
 * Lastly, streamlining the creation of custom, abstract-based corpora for subsequent NLP tasks.
+
+
+---
 
 
 
@@ -84,7 +87,9 @@ knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 
 ### Search the PubMed database - `pmtk_search_pubmed()`
 
-**Identify PubMed records that match some search term or multiple search terms**.  If multiple search terms are specified, independent queries are performed per term. Output includes PMID results per search term -- which can subsequently be used to fetch full records/abstracts.  
+For searches typically performed using the [PubMed online interface](https://pubmed.ncbi.nlm.nih.gov/). 
+
+Identify PubMed records that match some search term or multiple search terms.  If multiple search terms are specified, independent queries are performed per term. Output includes PMID results per search term -- which can subsequently be used to fetch full records/abstracts.  
 
 Search terms are by default translated into NCBI syntax; for simplicity, search is focused on *MeSH headings* ([MH]) and *titles & abstracts* ([TIAB]).  So: a search for `aging` is translated as `aging[MH] OR aging[TIAB]`.  The user can specify their own PubMed-ready queries by setting the `translate_syntax` parameter to FALSE.
 
@@ -227,7 +232,7 @@ sen_df$tif %>%
 
 
 ```{r}
-sen_df$tif$text[1191]
+sen_df$tif$text[1191] %>% strwrap()
 ```
 
 

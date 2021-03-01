@@ -3,28 +3,25 @@
 A collection of functions and resources for accessing, manipulating, and
 visualizing data made available on PubMed using R, including (1) PubMed
 query tools, (2) query exploration tools, and (3) abstract-level data
-acquisition tools for metadata extraction and custom corpus creation.
+acquisition tools for metadata & abstract extraction.
 
 Included here is a set of example applications, including:
 
 -   Automated, independent searches for multiple (& complex) search
     queries;
-
 -   More in-depth exploration of PubMed search results; namely, the
     investigation of high-level co-occurrence associations among a set
     of search terms;
-
 -   Extraction of abstract-level metadata for (1) comparing citation
-    trends historically and (2) investigating topic structure among
-    abstracts; and
-
+    trends historically and (2) investigating annotation-based topic
+    structure within a set abstracts; and
 -   Lastly, streamlining the creation of custom, abstract-based corpora
     for subsequent NLP tasks.
 
+------------------------------------------------------------------------
+
 -   [Installation](#installation)
-
 -   [Usage](#usage)
-
     -   [MeSH vocabulary](#mesh-vocabulary)
     -   [Search the PubMed database -
         `pmtk_search_pubmed()`](#search-the-pubmed-database---%60pmtk_search_pubmed()%60)
@@ -97,8 +94,11 @@ knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 
 ### Search the PubMed database - `pmtk_search_pubmed()`
 
-**Identify PubMed records that match some search term or multiple search
-terms**. If multiple search terms are specified, independent queries are
+For searches typically performed using the [PubMed online
+interface](https://pubmed.ncbi.nlm.nih.gov/).
+
+Identify PubMed records that match some search term or multiple search
+terms. If multiple search terms are specified, independent queries are
 performed per term. Output includes PMID results per search term – which
 can subsequently be used to fetch full records/abstracts.
 
@@ -283,10 +283,27 @@ sen_df$tif %>%
 | Y                 | 820758 | 172359180 |
 
 ``` r
-sen_df$tif$text[1191]
+sen_df$tif$text[1191] %>% strwrap()
 ```
 
-    ## [1] "It is known that distraction reduces the benefits of collision avoidance systems by slowing a driver's response. The current study examined the impact of a drivers' use of an in-vehicle intersection crossing assist system under demanding cognitive load conditions. Forty eight drivers crossed a busy rural intersection in a simulated environment while completing four blocks of trials, in half of which they used the assist system and engaged in a working memory task. Participants were dichotomized into older and younger age groups. The results showed a tendency towards conservative driving in a single-task condition when only using the assist system. A similar shift in driving style was observed when drivers crossed the intersection while engaged in a secondary task. Using the in-vehicle intersection crossing assist system under cognitively demanding conditions did not result in adverse consequences-the impact of distraction was different compared to a typical collision avoidance system. Older drivers showed some evidence of more conservative intersection crossing, however they also appeared to rely more on the in-vehicle assist system when presented with an extraneous additional task."
+    ##  [1] "It is known that distraction reduces the benefits of collision"         
+    ##  [2] "avoidance systems by slowing a driver's response. The current study"    
+    ##  [3] "examined the impact of a drivers' use of an in-vehicle intersection"    
+    ##  [4] "crossing assist system under demanding cognitive load conditions. Forty"
+    ##  [5] "eight drivers crossed a busy rural intersection in a simulated"         
+    ##  [6] "environment while completing four blocks of trials, in half of which"   
+    ##  [7] "they used the assist system and engaged in a working memory task."      
+    ##  [8] "Participants were dichotomized into older and younger age groups. The"  
+    ##  [9] "results showed a tendency towards conservative driving in a single-task"
+    ## [10] "condition when only using the assist system. A similar shift in driving"
+    ## [11] "style was observed when drivers crossed the intersection while engaged" 
+    ## [12] "in a secondary task. Using the in-vehicle intersection crossing assist" 
+    ## [13] "system under cognitively demanding conditions did not result in adverse"
+    ## [14] "consequences-the impact of distraction was different compared to a"     
+    ## [15] "typical collision avoidance system. Older drivers showed some evidence" 
+    ## [16] "of more conservative intersection crossing, however they also appeared" 
+    ## [17] "to rely more on the in-vehicle assist system when presented with an"    
+    ## [18] "extraneous additional task."
 
 #### \~ Record details
 
