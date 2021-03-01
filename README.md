@@ -3,19 +3,19 @@
 A collection of functions and resources for accessing, manipulating, and
 visualizing data made available on PubMed using R, including (1) PubMed
 query tools, (2) query exploration tools, and (3) abstract-level data
-acquisition tools for metadata & abstract extraction.
+acquisition tools.
 
 Included here is a set of example applications, including:
 
 -   Automated, independent searches for multiple (& complex) search
     queries;
 -   More in-depth exploration of PubMed search results; namely, the
-    investigation of high-level co-occurrence associations among a set
-    of search terms;
+    investigation of high-level co-occurrence associations among a query
+    terms;
 -   Extraction of abstract-level metadata for (1) comparing citation
     trends historically and (2) investigating annotation-based topic
     structure within a set abstracts; and
--   Creation of custom corpora based on PubMed abstracts.
+-   Creation of custom text corpora based on PubMed abstracts.
 
 ------------------------------------------------------------------------
 
@@ -28,16 +28,14 @@ Included here is a set of example applications, including:
         `pmtk_crosstab_query()`](#advanced-counting---%60pmtk_crosstab_query()%60)
     -   [Fetch abstract data from
         PubMed](#fetch-abstract-data-from-pubmed)
-    -   [PubMed search results trend
-        data](#pubmed-search-results-trend-data)
+    -   [Citation trends historically](#citation-trends-historically)
     -   [Extract MeSH classifications -
         `pmtk_gather_mesh()`](#extract-mesh-classifications---%60pmtk_gather_mesh()%60)
     -   [Subject-based lexicon](#subject-based-lexicon)
     -   [MeSH-based topic model](#mesh-based-topic-model)
     -   [Topic model summary - html
         widget](#topic-model-summary---html-widget)
-    -   [Google image summary](#google-image-summary)
-    -   [Summary](#summary)
+    -   [Google image analysis](#google-image-analysis)
 
 ## Installation
 
@@ -336,7 +334,7 @@ sen_df$meta %>%
 | keywords      | arterial stiffness \| comorbidities \| heart failure with preserved ejection fraction \| pathophysiology                                                                                                                                                                                                                                                  |
 | revision_date | 18565                                                                                                                                                                                                                                                                                                                                                     |
 
-### PubMed search results trend data
+### Citation trends historically
 
 **Investigate and compare historical citation frequencies for a set of
 search terms**. Analysis is based on (1) search results from the
@@ -436,6 +434,7 @@ meshes1 %>%
 
 Reference corpora, key-ness, and the [PMC Open Access
 Subset](https://www.ncbi.nlm.nih.gov/pmc/tools/openftlist/).
+Forthcoming.
 
 ### MeSH-based topic model
 
@@ -508,12 +507,10 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 
 ------------------------------------------------------------------------
 
-### Google image summary
+### Google image analysis
 
 Lastly, some fairly simple functionality (not presented in much detail
 here) for building collages based on a Google image search. Below,
 results from a Google Image search for `human senescence` –
 
 ![](README_files/figure-markdown_github/summary.png)
-
-### Summary

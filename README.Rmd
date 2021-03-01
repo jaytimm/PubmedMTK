@@ -7,14 +7,14 @@ output:
 
 # PubMed Mining Toolkit - an overview
 
-A collection of functions and resources for accessing, manipulating, and visualizing data made available on PubMed using R, including (1) PubMed query tools, (2) query exploration tools, and (3) abstract-level data acquisition tools for metadata & abstract extraction.  
+A collection of functions and resources for accessing, manipulating, and visualizing data made available on PubMed using R, including (1) PubMed query tools, (2) query exploration tools, and (3) abstract-level data acquisition tools.  
 
 Included here is a set of example applications, including: 
 
 * Automated, independent searches for multiple (& complex) search queries;
-* More in-depth exploration of PubMed search results; namely, the investigation of high-level co-occurrence associations among a set of search terms;
+* More in-depth exploration of PubMed search results; namely, the investigation of high-level co-occurrence associations among a query terms;
 * Extraction of abstract-level metadata for (1) comparing citation trends historically and (2) investigating annotation-based topic structure within a set abstracts; and
-* Creation of custom corpora based on PubMed abstracts.
+* Creation of custom text corpora based on PubMed abstracts.
 
 
 ---
@@ -254,7 +254,7 @@ sen_df$meta %>%
 
 
 
-### PubMed search results trend data
+### Citation trends historically
 
 **Investigate and compare historical citation frequencies for a set of search terms**.  Analysis is based on (1) search results from the `pubmed_get_ids` function, and (2) the metadata table returned from `pmtk_loadr_abs()`, namely "data of publication."  
 
@@ -350,7 +350,7 @@ meshes1 %>%
 
 ### Subject-based lexicon
 
-Reference corpora, key-ness, and the [PMC Open Access Subset](https://www.ncbi.nlm.nih.gov/pmc/tools/openftlist/).  
+Reference corpora, key-ness, and the [PMC Open Access Subset](https://www.ncbi.nlm.nih.gov/pmc/tools/openftlist/).  Forthcoming.
 
 
 
@@ -422,7 +422,7 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 
 ---
 
-### Google image summary
+### Google image analysis
 
 Lastly, some fairly simple functionality (not presented in much detail here) for building collages based on a Google image search.  Below, results from a Google Image search for `human senescence` -- 
 
@@ -430,5 +430,5 @@ Lastly, some fairly simple functionality (not presented in much detail here) for
 ![](README_files/figure-markdown_github/summary.png)
 
 
-### Summary
+
 
