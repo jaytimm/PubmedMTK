@@ -15,8 +15,7 @@ Included here is a set of example applications, including:
 -   Extraction of abstract-level metadata for (1) comparing citation
     trends historically and (2) investigating annotation-based topic
     structure within a set abstracts; and
--   Lastly, streamlining the creation of custom, abstract-based corpora
-    for subsequent NLP tasks.
+-   Creation of custom corpora based on PubMed abstracts.
 
 ------------------------------------------------------------------------
 
@@ -75,9 +74,8 @@ pacman::p_load(data.table, # quanteda,
 
 For starters, the package includes as a data frame the MeSH thesaurus &
 hierarchically-organized vocabulary – comprised of 2021 versions of
-`descriptor` & `trees` files made available via NLM-NIH. So, current and
-straightforwardly structured. [A workflow for re-creating the table from
-raw data
+`descriptor` & `trees` files made available via NLM-NIH. [A workflow for
+re-creating the table from raw data
 sets](https://github.com/jaytimm/PubmedMTK/blob/main/build-MeSH-df.md).
 
 ``` r
@@ -280,8 +278,8 @@ sen_df$tif %>%
 
 | includes_abstract |      n |    tokens |
 |:------------------|-------:|----------:|
-| N                 | 128095 |        NA |
-| Y                 | 820758 | 172359180 |
+| N                 | 127898 |        NA |
+| Y                 | 820756 | 172358760 |
 
 ``` r
 sen_df$tif$text[1191] %>% strwrap()
