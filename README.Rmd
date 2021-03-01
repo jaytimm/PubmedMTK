@@ -7,27 +7,23 @@ output:
 
 ## PubMed Mining Toolkit - an overview
 
+Two general sets of utility.  --- in increasing order of ~effort --
+
+(1) Exploratory tools for investigating and visualizing high-level patterns/trends based on PubMed search results; --- searches that one would typically perform using the PubMed online interface --- 
+
+(2) Extract metadata, including MeSH terms and publication info, etc., for trend analyses and some ... 
+
+(3) Build custom corpora based on PubMed abstracts --- 
+
+The latter which can serve as the basis for subsequent/downstream NLP tasks -- eg -- word sense disambiguation, custom named entity recognition, association extraction, etc.  Which we do not here ---
+
+*Exploratory utility*: (1) no real text processing, (2) information-dense.  
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 source("/home/jtimm/jt_work/GitHub/packages/render_toc.R")
 ```
-
-
-```{r eval=FALSE, include=FALSE}
-Thoughts -- A collection of functions -- a toolkit for mining PubMed -- with a focus on more downstream NLP tasks -- ?
-
-[rentrez](https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html) --
-
-The primary utility of this package is twofold: (1) query the PubMed database using any number of search terms for relevant PMIDs; and (2) download abstracts from the PubMed database based on PMID input.  and NLP-focused -- !!
-
-Secondary functions can be used ... including:
-
-Here ... introduce functions, and walk through an example work-flow that includes ... 
-
-macro-level --
-```
-
 
 
 ```{r echo=FALSE}
@@ -75,7 +71,7 @@ pacman::p_load(data.table, # quanteda,
 
 ### MeSH vocabulary 
 
-The package includes as a data frame the MeSH thesaurus/ hierarchically-organized vocabulary -- comprised of 2021 versions of `descriptor` & `trees` files made available via NLM-NIH. [A workflow for re-creating the table from raw data sets](https://github.com/jaytimm/PubmedMTK/blob/main/build-MeSH-df.md).  
+For starters, the package includes as a data frame the MeSH thesaurus & hierarchically-organized vocabulary -- comprised of 2021 versions of `descriptor` & `trees` files made available via NLM-NIH. So, current and straightforwardly structured.  [A workflow for re-creating the table from raw data sets](https://github.com/jaytimm/PubmedMTK/blob/main/build-MeSH-df.md).  
 
 ```{r eval=FALSE, include=FALSE}
 Also, [a useful reference](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5324252/).
@@ -90,9 +86,21 @@ knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 
 ### Search the PubMed database - `pmtk_search_pubmed()`
 
-Find records included in PubMed that match some search term or multiple search terms.  If multiple search terms are specified, independent queries are performed per term. Output, then, includes PMID results per search term -- which can subsequently be used to fetch full records/abstracts.  
+**Important: all we really add here is the crosstab piece -- which is fine -- just simplify accordingly **
 
-Search terms are by default translated into NCBI syntax; for simplicity, search is focused on *MeSH headings* ([MH]) and *titles & abstracts* ([TIAB]).  So: a search for `aging` is translated as `aging[MH] OR aging[TIAB]`.
+Get record ids for multiple search terms -- 
+
+For searches that one would typically perform using the PubMed online interface, the `PubmedMTK` package facilitates (adds some exploratory functionality to) -- 
+
+~ ish -- 
+(1) a vector of record IDs ready to go for subsequent custom corpus-building tasks; 
+(2) the capacity to query multiple terms simultaneously, and, importantly, view/compare results; 
+(3) investigate high-level co-occurrence associations among a set of search terms.
+
+
+**Identify PubMed records that match some search term or multiple search terms**.  If multiple search terms are specified, independent queries are performed per term. Output includes PMID results per search term -- which can subsequently be used to fetch full records/abstracts.  
+
+Search terms are by default translated into NCBI syntax; for simplicity, search is focused on *MeSH headings* ([MH]) and *titles & abstracts* ([TIAB]).  So: a search for `aging` is translated as `aging[MH] OR aging[TIAB]`.  The user can specify their own PubMed-ready queries by setting the `translate_syntax` parameter to FALSE.
 
 ```{r message=FALSE, warning=FALSE}
 pmed_search <- c('human life span',
@@ -121,7 +129,7 @@ search_results1 <- readRDS('search_results1.rds')
 
 
 
-> Summary of record counts returned by PubMed query
+#### Summary of record counts returned by PubMed query
 
 ```{r message=FALSE, warning=FALSE}
 # ## Total citations per search term are summarized below:
@@ -134,7 +142,7 @@ search_results1 %>%
 ```
 
 
-> Unique records
+#### Unique records
 
 ```{r}
 length(unique(search_results1$pmid))
@@ -144,7 +152,9 @@ length(unique(search_results1$pmid))
 
 ### Advanced counting - `pmtk_crosstab_query()`
 
-Quick analysis of search term co-occurrence based on results from `pmtk_search_pubmed()`.  Here, *term-A* and *term-B* are said to co-occur in *abstract-X* if independent PubMed queries for *term-A* and *term-B* both return *abstract-X*.  Ideal for quick exploration.
+Based simply on the table of record IDs returned from `pmtk_search_pubmed()`, we can quickly investigate co-occurrence among our set of search terms.  Here, *term-A* and *term-B* are said to co-occur in *abstract-X* if independent PubMed queries for *term-A* and *term-B* both return *abstract-X*.  Ideal for quick exploration.  The table below details co-occurrence among `senescence`-based search pairs.  
+
+`n1` is the count of `term1` PubMed citations; same for `n2`.  Column `n1n2` specifies the count of citations returned by both terms 1 & 2.  Lastly, `pmi` (pointwise mutual information) approximates the strength of the association between `term1` & `term2`: derived from actual vs. expected co-occurrence frequencies.
 
 ```{r}
 search_tab <- PubmedMTK::pmtk_crosstab_query(search_results1) %>%
@@ -153,6 +163,9 @@ search_tab <- PubmedMTK::pmtk_crosstab_query(search_results1) %>%
 search_tab %>% filter(term1 == 'senescence') %>% knitr::kable()
 ```
 
+
+
+The plot below details PMI-based associative strengths among search terms.  Labels specify co-occurrence in terms of citation counts; color demotes PMI value.
 
 ```{r fig.height=5, message=FALSE, warning=FALSE}
 search_tab %>%
@@ -181,11 +194,9 @@ search_tab %>%
 
 ### Fetch abstract data from PubMed
 
-As a two-step process: using functions `pmtk_download_abs()` and `pmtk_loadr_abs(()`. 
+As a two-step process: (1) `pmtk_download_abs()` and (2) `pmtk_loadr_abs()`.  Other R packages provide access to NCBI-PubMed data via the `Eutils` API (most notable being `rentrez`); however, none of them are perfectly suited for fetching PubMed abstracts in bulk, or building text corpora.  
 
-`rentrez` is a lovely package (and maintained by [rOpenSci](https://github.com/ropensci/rentrez)); however, in my experience it is not especially well-designed for fetching PubMed abstracts in bulk or building text corpora.  API rate-limits being most problematic.
-
-While `rentrez` is still employed here, our approach utilizes a combination of local storage and "more + smaller" API queries to make the most of rate limits.  Each "batch" contains n = 199 records; batch files are converted from XML to a data frame in RDS format and stored locally in a user-specified file path.   
+**The approach utilized here** is not the most elegant, but it makes the most out of rate-limits by utilizing a combination of local storage and "more + smaller" API batch queries.  Each "batch" contains n = 199 records; batch files are converted from XML to a data frame in RDS format and stored locally in a user-specified file path.   
 
 
 
@@ -206,6 +217,7 @@ PubmedMTK::pmtk_download_abs(pmids = unique(search_results1$pmid),
 The `pmtk_loadr_abs()` function loads batch files as two data frames: the first, a corpus object containing the record id and abstract, and the second, a metadata object including record id and all other record details, eg, article name, MeSH terms, Pub Date, etc.
 
 ```{r message=FALSE, warning=FALSE}
+# batch_dir <- dr
 batch_dir <- paste0(working_dir, 'batches/')
 sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir, 
                                     file_prefix = 'sen')
@@ -213,7 +225,9 @@ sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir,
 
 
 
-#### Corpus details 
+#### ~ Corpus details 
+
+Some descriptives for the resulting corpus of abstracts are detailed below:   
 
 ```{r}
 sen_df$tif %>%
@@ -226,8 +240,16 @@ sen_df$tif %>%
 
 
 
+```{r}
+sen_df$tif$text[1191]
+```
 
-#### Record details 
+
+
+
+#### ~ Record details 
+
+Each PubMed record returned from batch download included some or all of the following attributes:
 
 ```{r}
 sen_df$meta %>%
@@ -243,24 +265,15 @@ sen_df$meta %>%
 
 ### PubMed search results trend data
 
-```{r eval=FALSE, include=FALSE}
-As function -- and (time permitting) -- historical associations among search terms -- also relevant for MeSH terms -- !! -- ideally a generic solution -- 
+**Investigate and compare historical citation frequencies for a set of search terms**.  Analysis is based on (1) search results from the `pubmed_get_ids` function, and (2) the metadata table returned from `pmtk_loadr_abs()`, namely "data of publication."  
 
-Parameter -- `raw` or `relative` counts --
-
-**Investigate how PubMed search results change over time**.  A relative frequency-based perspective.  Based on search results from the `pubmed_get_ids` function, the metadata included in the output of the `batch` functions, 
-
-and a yearly summary of total Medline citations made available [here](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html).
-```
-
-
+The package includes a table named `pmtk_tbl_citations`, which summarizes total Medline citation counts by year -- made available by NCBI [here](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html).  Based on these historical values as denominators, we can approximate changes in relative citation frequency over time for some set of search terms. 
 
 
 ```{r}
 ## in theory, this could be used for other things -- 
 tr <- subset(sen_df$meta, !grepl('[a-z]', year))
 tr$year <- as.Date(paste(tr$year, '01', '01', sep = '-'))
-## 
 tr1 <- tr[search_results1, on = 'pmid']
 
 ## 
@@ -268,22 +281,21 @@ meds <- data.table::data.table(PubmedMTK::pmtk_tbl_citations)
 tr2 <-  tr1[, list(n = .N), by = list(search, year)]
 tr3 <- subset(tr2, year > as.Date('1969', format = '%Y') &
                 year < as.Date('2019', format = '%Y') )
-
 tr4 <- meds[tr3, on = 'year']
 tr4$per_100k = round(tr4$n / tr4$total * 100000, 3)
 ```
 
 
 
-*FACET on absolute versus relative !!!*
+#### Citation frequencies (per 100K total citations) for `senescence`related search terms from 1970 to 2018. 
 
 ```{r fig.height=6, message=FALSE, warning=FALSE}
 ## Via ggplot --
 tr4 %>%
   ggplot() +
   geom_line(aes(x = year,
-                #y = n, 
-                y = per_100k,
+                #y = n,  ## RAW Citation counts
+                y = per_100k, ## Relative citation counts -- 
                 group = search,
                 color = search),
             size = 1
@@ -293,7 +305,7 @@ tr4 %>%
   theme(legend.position = 'right',
         legend.title = element_blank())  +
   ylab('Per 100,000 Medline citations') +
-  ggtitle('wrong')
+  ggtitle('Relative frequencies of search term citations historically')
 ```
 
 
@@ -302,7 +314,7 @@ tr4 %>%
 
 ### Extract MeSH classifications - `pmtk_gather_mesh()`
 
-Extract KEYWORDS, MeSH HEADINGS & CHEM-NAMES -- output is a MeSH-comprised text representation.
+Subject terms/headings in metadata table include `MeSH` terms, as well as (some) `keywords` & `chem-names`.   The `pmtk_gather_mesh` function extracts these attributes from metadata, and outputs them in structured format.  The resulting table amounts to a document-term matrix (DTM), in which each PubMed abstract is represented as a vector of MeSH terms.  
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 ## this takes too long --based
@@ -330,7 +342,8 @@ meshes1 <- readRDS('meshes1.rds')
 
 
 
-> Example vector representations:
+
+Vector representations for a sample set of PubMed records is detailed below: 
 
 ```{r message=FALSE, warning=FALSE}
 set.seed(999)
@@ -344,12 +357,20 @@ meshes1 %>%
 
 
 
+### Subject-based lexicon
+
+Reference corpora, key-ness, and the [PMC Open Access Subset](https://www.ncbi.nlm.nih.gov/pmc/tools/openftlist/).  
+
+
+
 ### MeSH-based topic model
 
-> Latent Dirichlet allocation: a topic modeling algorithm that models **each document** in corpus as 
-a composite of topics, and **each topic** as a composite of terms.  
+We then use these MeSH-based abstract representations to explore the conceptual/semantic structure of abstracts included in the `senescence` corpus via topic modeling.
 
-Here, we utilize the MeSH-based abstract representations to build a topic model.  *Exploratory utility*: (1) no real text processing, (2) information-dense, ie, no fluff, just MeSH.  Topic composition can be interpreted as sets of MeSH terms that frequently co-occur.
+> Latent Dirichlet allocation: a topic modeling algorithm that models **each document** in corpus as a composite of topics, and **each topic** as a composite of terms.  
+
+Topic composition can be interpreted as sets of MeSH terms that frequently co-occur.
+
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 mesh_dtm <- tidytext::cast_sparse(data = meshes1,
@@ -388,7 +409,13 @@ tm_summary$topic_summary %>% slice(1:10) %>% knitr::kable()
 
 
 
+<br>
+
+---
+
 ### Topic model summary - html widget
+
+An interactive html widget for exploration of topic model results, and underlying conceptual structure. Presently only view-able via RStudio; a more generic solution in progress.
 
 ```{r eval=FALSE}
 ## topic model html widget
@@ -398,17 +425,16 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 
 ![](README_files/figure-markdown_github/demo-tm-viz.png)
 
-```{r eval=FALSE, include=FALSE}
-This likely goes elsewhere -- but next step -- 
 
-### annotation and dependencies--
-
-### Custom NER -- Pubtator files etc. --
-```
+<br>
 
 
+---
 
-### Image summary
+### Google image summary
+
+Lastly, some fairly simple functionality (not detailed here) for building collages based on a Google image search.  Below, results from a Google Image search for `human senescence` -- 
+
 
 ![](README_files/figure-markdown_github/summary.png)
 
