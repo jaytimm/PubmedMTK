@@ -1,25 +1,30 @@
-## PubMed Mining Toolkit - an overview
+# PubMed Mining Toolkit - an overview
 
-Two general sets of utility. — in increasing order of \~effort –
+A collection of functions and resources for accessing, manipulating, and
+visualizing data made available on PubMed using R, including (1) PubMed
+query tools, (2) query exploration tools, and (3) abstract-level data
+acquisition tools for metadata extraction and custom corpus creation.
 
-1.  Exploratory tools for investigating and visualizing high-level
-    patterns/trends based on PubMed search results; — searches that one
-    would typically perform using the PubMed online interface —
+Included here is a set of example applications, including:
 
-2.  Extract metadata, including MeSH terms and publication info, etc.,
-    for trend analyses and some …
+-   Automated, independent searches for multiple (& complex) search
+    queries;
 
-3.  Build custom corpora based on PubMed abstracts —
+-   More in-depth exploration of PubMed search results; namely, the
+    investigation of high-level co-occurrence associations among a set
+    of search terms;
 
-The latter which can serve as the basis for subsequent/downstream NLP
-tasks – eg – word sense disambiguation, custom named entity recognition,
-association extraction, etc. Which we do not here —
+-   Extraction of abstract-level metadata for (1) comparing citation
+    trends historically and (2) investigating topic structure among
+    abstracts; and
 
-*Exploratory utility*: (1) no real text processing, (2)
-information-dense.
+-   Lastly, streamlining the creation of custom, abstract-based corpora
+    for subsequent NLP tasks.
 
 -   [Installation](#installation)
+
 -   [Usage](#usage)
+
     -   [MeSH vocabulary](#mesh-vocabulary)
     -   [Search the PubMed database -
         `pmtk_search_pubmed()`](#search-the-pubmed-database---%60pmtk_search_pubmed()%60)
@@ -91,17 +96,6 @@ knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 | D000001      | calcimycin     | a23187, antibiotic | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
 
 ### Search the PubMed database - `pmtk_search_pubmed()`
-
-**Important: all we really add here is the crosstab piece – which is
-fine – just simplify accordingly **
-
-Get record ids for multiple search terms –
-
-For searches that one would typically perform using the PubMed online interface, the `PubmedMTK` package facilitates (adds some exploratory functionality to) –  
-ish – (1) a vector of record IDs ready to go for subsequent custom
-corpus-building tasks; (2) the capacity to query multiple terms
-simultaneously, and, importantly, view/compare results; (3) investigate
-high-level co-occurrence associations among a set of search terms.
 
 **Identify PubMed records that match some search term or multiple search
 terms**. If multiple search terms are specified, independent queries are
@@ -201,7 +195,7 @@ search_tab %>% filter(term1 == 'senescence') %>% knitr::kable()
 | senescence | stem cell exhaustion      | 278659 |    162 |    88 |  0.668 |
 | senescence | telomere attrition        | 278659 |    853 |   443 |  0.623 |
 
-The plot below details PMI-based associative strengths among search
+**The plot below** details PMI-based associative strengths among search
 terms. Labels specify co-occurrence in terms of citation counts; color
 demotes PMI value.
 

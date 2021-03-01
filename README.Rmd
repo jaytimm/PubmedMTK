@@ -5,19 +5,17 @@ output:
 ---
 
 
-## PubMed Mining Toolkit - an overview
+# PubMed Mining Toolkit - an overview
 
-Two general sets of utility.  --- in increasing order of ~effort --
+A collection of functions and resources for accessing, manipulating, and visualizing data made available on PubMed using R, including (1) PubMed query tools, (2) query exploration tools, and (3) abstract-level data acquisition tools for metadata extraction and custom corpus creation.  
 
-(1) Exploratory tools for investigating and visualizing high-level patterns/trends based on PubMed search results; --- searches that one would typically perform using the PubMed online interface --- 
+Included here is a set of example applications, including: 
 
-(2) Extract metadata, including MeSH terms and publication info, etc., for trend analyses and some ... 
+* Automated, independent searches for multiple (& complex) search queries;
+* More in-depth exploration of PubMed search results; namely, the investigation of high-level co-occurrence associations among a set of search terms;
+* Extraction of abstract-level metadata for (1) comparing citation trends historically and (2) investigating topic structure among abstracts; and
+* Lastly, streamlining the creation of custom, abstract-based corpora for subsequent NLP tasks.
 
-(3) Build custom corpora based on PubMed abstracts --- 
-
-The latter which can serve as the basis for subsequent/downstream NLP tasks -- eg -- word sense disambiguation, custom named entity recognition, association extraction, etc.  Which we do not here ---
-
-*Exploratory utility*: (1) no real text processing, (2) information-dense.  
 
 
 ```{r setup, include=FALSE}
@@ -86,18 +84,6 @@ knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 
 ### Search the PubMed database - `pmtk_search_pubmed()`
 
-**Important: all we really add here is the crosstab piece -- which is fine -- just simplify accordingly **
-
-Get record ids for multiple search terms -- 
-
-For searches that one would typically perform using the PubMed online interface, the `PubmedMTK` package facilitates (adds some exploratory functionality to) -- 
-
-~ ish -- 
-(1) a vector of record IDs ready to go for subsequent custom corpus-building tasks; 
-(2) the capacity to query multiple terms simultaneously, and, importantly, view/compare results; 
-(3) investigate high-level co-occurrence associations among a set of search terms.
-
-
 **Identify PubMed records that match some search term or multiple search terms**.  If multiple search terms are specified, independent queries are performed per term. Output includes PMID results per search term -- which can subsequently be used to fetch full records/abstracts.  
 
 Search terms are by default translated into NCBI syntax; for simplicity, search is focused on *MeSH headings* ([MH]) and *titles & abstracts* ([TIAB]).  So: a search for `aging` is translated as `aging[MH] OR aging[TIAB]`.  The user can specify their own PubMed-ready queries by setting the `translate_syntax` parameter to FALSE.
@@ -165,9 +151,9 @@ search_tab %>% filter(term1 == 'senescence') %>% knitr::kable()
 
 
 
-The plot below details PMI-based associative strengths among search terms.  Labels specify co-occurrence in terms of citation counts; color demotes PMI value.
+**The plot below** details PMI-based associative strengths among search terms.  Labels specify co-occurrence in terms of citation counts; color demotes PMI value.
 
-```{r fig.height=5, message=FALSE, warning=FALSE}
+```{r fig.height=6, message=FALSE, warning=FALSE}
 search_tab %>%
   mutate(pmi = ifelse(pmi < 0, 0, pmi),
          term2 = as.character(term2)) %>%
