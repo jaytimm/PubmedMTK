@@ -26,8 +26,11 @@ pmtk_crosstab_query <- function(search_results){
   colnames(v2) <- c('term1', 'term2', 'n1n2')
 
   v3 <- subset(v2, term1 == term2)
-  v4 <- merge(v2, data.frame(term1 = v3$term1, n1 = v3$n))
-  v5 <- merge(v4, data.frame(term2 = v3$term1, n2 = v3$n))
+  v4 <- merge(v2, data.frame(term1 = v3$term1, n1 = v3$n),
+              by = 'term1')
+
+  v5 <- merge(v4, data.frame(term2 = v3$term1, n2 = v3$n),
+              by = "term2")
   
   v5$term2 <- as.character(v5$term2)
   v5 <- v5[order(v5$term1),]
