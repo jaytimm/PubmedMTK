@@ -22,12 +22,11 @@ pmtk_loadr_abs <- function (in_file,
     ifelse(x %in% c(' ', 'NA', 'n/a', 'n/a.') | is.na(x), NA, x) }
   
   cols <- colnames(ref)
-   ref[, c(cols) := lapply(.SD, clean_nas), .SDcols = cols]
+  ref[, c(cols) := lapply(.SD, clean_nas), .SDcols = cols]
   
   tif <- ref[, c('pmid', 'text')]  #}
   
-  meta <- ref[, c(setdiff(colnames(ref), colnames(tif)[-1])), 
-              with = F]  
+  meta <- ref[, c(setdiff(colnames(ref), colnames(tif)[-1])), with = F]  
   
   list("meta" = meta, "tif" = tif)
 }

@@ -23,9 +23,12 @@ Included here is a set of example applications, including:
 usethis::use_package('rentrez')
 usethis::use_package('RCurl')
 usethis::use_package('xml2')
-usethis::use_package('data.table')
 usethis::use_package('XML')
 usethis::use_package('Matrix')
+
+usethis::use_data_table()
+
+devtools::document()
 ```
 
 
