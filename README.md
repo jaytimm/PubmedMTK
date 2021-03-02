@@ -219,7 +219,7 @@ search_tab %>%
         axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 ### Fetch abstract data from PubMed
 
@@ -381,7 +381,7 @@ tr4 %>%
   ggtitle('Relative frequencies of search term citations historically')
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-21-1.png)
 
 ### Extract MeSH classifications - `pmtk_gather_mesh()`
 
