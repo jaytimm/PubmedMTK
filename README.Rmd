@@ -12,7 +12,7 @@ A collection of functions and resources for accessing, manipulating, and visuali
 Included here is a set of example applications, including: 
 
 * Automated, independent searches for multiple (& complex) search queries;
-* More in-depth exploration of PubMed search results; namely, the investigation of high-level co-occurrence associations among a query terms;
+* More in-depth exploration of PubMed search results; namely, the investigation of high-level co-occurrence associations among query terms;
 * Extraction of abstract-level metadata for (1) comparing citation trends historically and (2) investigating annotation-based topic structure within a set abstracts; and
 * Creation of custom text corpora based on PubMed abstracts.
 

@@ -10,7 +10,7 @@ Included here is a set of example applications, including:
 -   Automated, independent searches for multiple (& complex) search
     queries;
 -   More in-depth exploration of PubMed search results; namely, the
-    investigation of high-level co-occurrence associations among a query
+    investigation of high-level co-occurrence associations among query
     terms;
 -   Extraction of abstract-level metadata for (1) comparing citation
     trends historically and (2) investigating annotation-based topic
