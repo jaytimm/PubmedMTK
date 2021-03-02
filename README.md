@@ -22,8 +22,8 @@ Included here is a set of example applications, including:
 -   [Installation](#installation)
 -   [Usage](#usage)
     -   [MeSH vocabulary](#mesh-vocabulary)
-    -   [Search the PubMed database -
-        `pmtk_search_pubmed()`](#search-the-pubmed-database---%60pmtk_search_pubmed()%60)
+    -   [PubMed search -
+        `pmtk_search_pubmed()`](#pubmed-search---%60pmtk_search_pubmed()%60)
     -   [Advanced counting -
         `pmtk_crosstab_query()`](#advanced-counting---%60pmtk_crosstab_query()%60)
     -   [Fetch abstract data from
@@ -89,15 +89,14 @@ knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
 | D000001      | calcimycin     | antibiotic a23187  | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
 | D000001      | calcimycin     | a23187, antibiotic | D    | Chemicals and Drugs | Heterocyclic Compounds | Heterocyclic Compounds, Fused-Ring | D03.633.100.221.173 | D03   | D03.633 |
 
-### Search the PubMed database - `pmtk_search_pubmed()`
+### PubMed search - `pmtk_search_pubmed()`
 
-For searches typically performed using the [PubMed online
-interface](https://pubmed.ncbi.nlm.nih.gov/).
-
-Identify PubMed records that match some search term or multiple search
-terms. If multiple search terms are specified, independent queries are
-performed per term. Output includes PMID results per search term – which
-can subsequently be used to fetch full records/abstracts.
+The `pmtk_search_pubmed()` function is meant for record-matching
+searches typically performed using the [PubMed online
+interface](https://pubmed.ncbi.nlm.nih.gov/). If multiple search terms
+are specified, independent queries are performed per term. Output
+includes record IDs per search term – which can subsequently be used to
+fetch full records/abstracts.
 
 Search terms are by default translated into NCBI syntax; for simplicity,
 search is focused on *MeSH headings* (\[MH\]) and *titles & abstracts*
@@ -161,16 +160,18 @@ length(unique(search_results1$pmid))
 
 Based simply on the table of record IDs returned from
 `pmtk_search_pubmed()`, we can quickly investigate co-occurrence among
-our set of search terms. Here, *term-A* and *term-B* are said to
-co-occur in *abstract-X* if independent PubMed queries for *term-A* and
-*term-B* both return *abstract-X*. Ideal for quick exploration. The
-table below details co-occurrence among `senescence`-based search pairs.
+our set of search terms. Here, `term1` and `term2` are said to co-occur
+in *abstract X* if independent PubMed queries for `term1` and `term2`
+both return *abstract X*. Ideal for quick exploration.
 
-`n1` is the count of `term1` PubMed citations; same for `n2`. Column
-`n1n2` specifies the count of citations returned by both terms 1 & 2.
-Lastly, `pmi` (pointwise mutual information) approximates the strength
-of the association between `term1` & `term2`: derived from actual
-vs. expected co-occurrence frequencies.
+The table below details co-occurrence patterns among `senescence`-based
+search pairs. Columns `n1` and `n2` specify citation counts for `term1`
+and `term2`, respectively; column `n1n2` specifies the count of
+citations returned by both `term1` & `term2`, ie, the intersect between
+the two sets of record IDs. The strength of association between `term1`
+& `term2`, then, is approximated via pointwise mutual information
+(`pmi`), which is computed as the log difference of actual vs. expected
+co-occurrence probabilities.
 
 ``` r
 search_tab <- PubmedMTK::pmtk_crosstab_query(search_results1) %>%
@@ -193,8 +194,8 @@ search_tab %>% filter(term1 == 'senescence') %>% knitr::kable()
 | senescence | telomere attrition        | 278659 |    853 |   443 |  0.623 |
 
 **The plot below** details PMI-based associative strengths among search
-terms. Labels specify co-occurrence in terms of citation counts; color
-denotes PMI value.
+terms (as \~heatmap). Labels specify co-occurrence in terms of citation
+counts; color denotes PMI value.
 
 ``` r
 search_tab %>%
@@ -260,7 +261,7 @@ sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir,
                                     file_prefix = 'sen')
 ```
 
-#### \~ Corpus details
+#### CORPUS details
 
 Some descriptives for the resulting corpus of abstracts are detailed
 below:
@@ -302,9 +303,9 @@ sen_df$tif$text[1191] %>% strwrap()
     ## [17] "to rely more on the in-vehicle assist system when presented with an"    
     ## [18] "extraneous additional task."
 
-#### \~ Record details
+#### RECORD details
 
-Each PubMed record returned from batch download included some or all of
+Each PubMed record returned from batch download includes some or all of
 the following attributes:
 
 ``` r
@@ -336,17 +337,13 @@ sen_df$meta %>%
 
 ### Citation trends historically
 
-**Investigate and compare historical citation frequencies for a set of
-search terms**. Analysis is based on (1) search results from the
-`pubmed_get_ids` function, and (2) the metadata table returned from
-`pmtk_loadr_abs()`, namely “data of publication.”
-
-The package includes a table named `pmtk_tbl_citations`, which
-summarizes total Medline citation counts by year – made available by
-NCBI [here](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html).
-Based on these historical values as denominators, we can approximate
-changes in relative citation frequency over time for some set of search
-terms.
+Based on (1) search results from the `pubmed_get_ids` function, and (2)
+the metadata returned from `pmtk_loadr_abs()`, we can investigate &
+compare historical citation frequencies for our set of search terms. The
+package ships with a table summarizing [total Medline citation counts by
+year](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html), which
+facilitates straightforward computation of relative citation frequency
+for search term(s) by year (here, per 100K citations).
 
 ``` r
 ## in theory, this could be used for other things -- 
