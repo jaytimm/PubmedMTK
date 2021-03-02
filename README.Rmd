@@ -19,11 +19,23 @@ Included here is a set of example applications, including:
 
 ---
 
+```{r eval=FALSE, include=FALSE}
+usethis::use_package('rentrez')
+usethis::use_package('RCurl')
+usethis::use_package('xml2')
+usethis::use_package('data.table')
+usethis::use_package('XML')
+usethis::use_package('Matrix')
+```
+
 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 source("/home/jtimm/jt_work/GitHub/packages/render_toc.R")
+
+#Warning message:
+# replacing previous import ‘data.table::melt’ by ‘reshape2::melt’ when loading ‘PubmedMTK’
 ```
 
 

@@ -1,10 +1,9 @@
 #' Aggregate search results by query term combinations.
 #'
 #' @name pmtk_crosstab_query
-#' @param search_results
+#' @param search_results A data frame returned from `pmtk_search_pubmed`
 #' @return A data frame  
 #' 
-#' @importFrom reshape2 melt
 #' 
 #' @export
 #' @rdname pmtk_crosstab_query
@@ -20,14 +19,12 @@ pmtk_crosstab_query <- function(search_results){
   v0 <- PubmedMTK::mtk_dtm_tcm(pmatrix)
   
   v1 <- cbind('search' = unique(search_results$search),
-              as.data.frame(as.matrix(v0), 
-                            row.names = NA))
+              data.table::data.table(as.matrix(v0)))
   
-  v2 <- reshape2::melt(v1, 'search', c(2:ncol(v1)))
+  v2 <- data.table::melt.data.table(v1, 'search', c(2:ncol(v1)))
+  ## v2 <- reshape2::melt(v1, 'search', c(2:ncol(v1)))
   colnames(v2) <- c('term1', 'term2', 'n1n2')
-  
-  v2
-  ## 
+
   v3 <- subset(v2, term1 == term2)
   v4 <- merge(v2, data.frame(term1 = v3$term1, n1 = v3$n))
   v5 <- merge(v4, data.frame(term2 = v3$term1, n2 = v3$n))

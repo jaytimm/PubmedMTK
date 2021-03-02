@@ -4,11 +4,6 @@
 #' @param meta_df A vector of PMIDs 
 #' @return A data frame 
 #' 
-#' @import data.table
-#' 
-
-## Extract KEYWORDS, MeSH HEADINGS & CHEM-NAMES from columns included in metadata as a clean data table. 
-
 #' @export
 #' @rdname pmtk_gather_mesh
 #' 

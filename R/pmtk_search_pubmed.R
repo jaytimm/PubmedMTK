@@ -8,11 +8,6 @@
 #' 
 #' @return A data frame of PMIDs   
 #' 
-#' @importFrom rentrez entrez_search
-#' @importFrom RCurl getURL
-#' @import data.table xml2 
-#' 
-#' 
 #' @export
 #' @rdname pmtk_search_pubmed
 #' 

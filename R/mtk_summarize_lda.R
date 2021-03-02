@@ -3,10 +3,7 @@
 #' 
 #' @param per parameter
 #' @return 
-#' @import data.table
-#' @importFrom reshape2 melt
-
-
+#' 
 #' @export
 #' @rdname mtk_summarize_lda
 #' 
@@ -18,7 +15,7 @@ mtk_summarize_lda <- function (lda, topic_feats_n = 10){
   n_topics <- nrow(twd)
   
   twd$topic_id <- 1:n_topics
-  twd <- reshape2::melt(twd, id.vars = 'topic_id')
+  twd <- data.table::melt.data.table(twd, id.vars = 'topic_id')
   twd <- twd[order(twd$value, decreasing = TRUE), ]
   
   twd <- data.table::setorder(setDT(twd), -value)[, head(.SD, topic_feats_n), 

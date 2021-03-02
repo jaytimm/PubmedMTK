@@ -7,10 +7,6 @@
 #' @param file_prefix String specifying batch name
 #' @return A set of data frames as .RDS files  
 #' 
-#' @importFrom rentrez entrez_fetch
-#' @import XML
-#' 
-
 #' @export
 #' @rdname pmtk_download_abs
 #' 

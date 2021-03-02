@@ -6,6 +6,9 @@
 \usage{
 pmtk_crosstab_query(search_results)
 }
+\arguments{
+\item{search_results}{A data frame returned from `pmtk_search_pubmed`}
+}
 \value{
 A data frame
 }

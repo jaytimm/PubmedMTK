@@ -4,8 +4,6 @@
 #' @param dtm 
 #' @return A sparse matrix  
 #' 
-#' @importFrom Matrix t
-#' 
 
 #' @export
 #' @rdname mtk_dtm_tcm

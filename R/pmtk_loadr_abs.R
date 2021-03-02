@@ -4,8 +4,6 @@
 #' @param in_file File path to batches
 #' @param file_prefix  String specifying batch name
 #' @return A data.frame  
-#' @importFrom data.table rbindlist
-#' 
 #' 
 #' @export
 #' @rdname pmtk_loadr_abs
