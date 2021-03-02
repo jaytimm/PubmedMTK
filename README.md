@@ -37,6 +37,8 @@ Included here is a set of example applications, including:
         widget](#topic-model-summary---html-widget)
     -   [Google image analysis](#google-image-analysis)
 
+------------------------------------------------------------------------
+
 ## Installation
 
 ``` r
@@ -437,14 +439,11 @@ Forthcoming.
 
 We then use these MeSH-based abstract representations to explore the
 conceptual/semantic structure of abstracts included in the `senescence`
-corpus via topic modeling.
-
-> Latent Dirichlet allocation: a topic modeling algorithm that models
-> **each document** in corpus as a composite of topics, and **each
-> topic** as a composite of terms.
-
-Topic composition can be interpreted as sets of MeSH terms that
-frequently co-occur.
+corpus via topic modeling. Here we implement **Latent Dirichlet
+allocation**, which is a topic modeling algorithm that models *each
+document* in corpus as a composite of topics, and *each topic* as a
+composite of terms. Topic composition can be interpreted as sets of MeSH
+terms that frequently co-occur.
 
 ``` r
 mesh_dtm <- tidytext::cast_sparse(data = meshes1,

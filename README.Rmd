@@ -48,6 +48,8 @@ render_toc("/home/jtimm/jt_work/GitHub/PubmedMTK/README.Rmd",
            toc_depth = 2)
 ```
 
+---
+
 
 ## Installation
 
@@ -367,11 +369,7 @@ Reference corpora, key-ness, and the [PMC Open Access Subset](https://www.ncbi.n
 
 ### MeSH-based topic model
 
-We then use these MeSH-based abstract representations to explore the conceptual/semantic structure of abstracts included in the `senescence` corpus via topic modeling.
-
-> Latent Dirichlet allocation: a topic modeling algorithm that models **each document** in corpus as a composite of topics, and **each topic** as a composite of terms.  
-
-Topic composition can be interpreted as sets of MeSH terms that frequently co-occur.
+We then use these MeSH-based abstract representations to explore the conceptual/semantic structure of abstracts included in the `senescence` corpus via topic modeling. Here we implement **Latent Dirichlet allocation**, which is a topic modeling algorithm that models *each document* in corpus as a composite of topics, and *each topic* as a composite of terms.  Topic composition can be interpreted as sets of MeSH terms that frequently co-occur.
 
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
