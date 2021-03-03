@@ -32,10 +32,7 @@ Included here is a set of example applications, including:
     -   [Citation trends historically](#citation-trends-historically)
     -   [Extract MeSH classifications -
         `pmtk_gather_mesh()`](#extract-mesh-classifications---%60pmtk_gather_mesh()%60)
-    -   [Subject-based lexicon](#subject-based-lexicon)
     -   [MeSH-based topic model](#mesh-based-topic-model)
-    -   [Topic model summary - html
-        widget](#topic-model-summary---html-widget)
     -   [Google image analysis](#google-image-analysis)
 
 ------------------------------------------------------------------------
@@ -424,12 +421,6 @@ meshes1 %>%
 | 30484227 | adult stem cells \| biological evolution \| cell differentiation \| induced pluripotent stem cells \| pluripotent stem cells                                                                                                                                                                                                                                                                                                                                                                         |
 | 30810280 | lifespan \| metabolism \| proteostasis \| drosophila \| drosophila proteins \| gene ontology \| glucose \| glucosephosphate dehydrogenase \| glycolysis \| jnk mitogen-activated protein kinases \| lysine \| mass spectrometry \| pentose phosphate pathway \| phosphoprotein phosphatases \| proteome \| proteostasis \| rna-seq \| drosophila proteins \| proteome \| glucosephosphate dehydrogenase \| jnk mitogen-activated protein kinases \| phosphoprotein phosphatases \| glucose \| lysine |
 
-### Subject-based lexicon
-
-Reference corpora, key-ness, and the [PMC Open Access
-Subset](https://www.ncbi.nlm.nih.gov/pmc/tools/openftlist/).
-Forthcoming.
-
 ### MeSH-based topic model
 
 We then use these MeSH-based abstract representations to explore the
@@ -478,9 +469,7 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 
 <br>
 
-------------------------------------------------------------------------
-
-### Topic model summary - html widget
+#### Topic model summary - html widget
 
 An interactive html widget for exploration of topic model results, and
 underlying conceptual structure. Presently only view-able via RStudio; a

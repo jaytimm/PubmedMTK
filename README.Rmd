@@ -364,9 +364,14 @@ meshes1 %>%
 
 
 
+
+
+```{r eval=FALSE, include=FALSE}
 ### Subject-based lexicon
 
 Reference corpora, key-ness, and the [PMC Open Access Subset](https://www.ncbi.nlm.nih.gov/pmc/tools/openftlist/).  Forthcoming.
+```
+
 
 
 
@@ -411,12 +416,9 @@ tm_summary$topic_summary %>% slice(1:10) %>% knitr::kable()
 ```
 
 
-
 <br>
 
----
-
-### Topic model summary - html widget
+#### Topic model summary - html widget
 
 An interactive html widget for exploration of topic model results, and underlying conceptual structure. Presently only view-able via RStudio; a more generic solution in progress.
 
