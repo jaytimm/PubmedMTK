@@ -1,6 +1,6 @@
 # PubmedMTK
 
-\*\* *PubMed Mining Toolkit* \*\*
+***PubMed Mining Toolkit***
 
 An R package for accessing, manipulating, and visualizing data made
 available on PubMed using R, including (1) PubMed query tools, (2) query
