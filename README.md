@@ -334,7 +334,7 @@ compare historical citation frequencies for our set of search terms. The
 package ships with a table summarizing [total Medline citation counts by
 year](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html), which
 facilitates straightforward computation of relative citation frequency
-for search term(s) by year (here, per 100K citations). [See table
+for search term(s) by year (here, per 100K citations). [See table build
 details](https://github.com/jaytimm/PubmedMTK/blob/main/mds/medline_citations.md).
 
 ``` r
