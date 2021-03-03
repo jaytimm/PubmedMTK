@@ -15,6 +15,8 @@ pmtk_search_pubmed <- function (pmed_search,
                                 translate_syntax = T,
                                 verbose = T) {
   
+  ## good eg: "violent depression"
+  
   ## we need to clean up these parameters -- too many -- 
   db <- 'pubmed'
   #convert_syntax = T
@@ -27,34 +29,33 @@ pmtk_search_pubmed <- function (pmed_search,
     if (!translate_syntax) {s2 <- s1} else{
       s2 <- paste0(s1, '[MH]', ' OR ', s1, '[TIAB]')
       }
-    # depression[MH] OR depression[tIAB]
-    rentrez_search <- rentrez::entrez_search(term = s2, db = db)
-    
-    # url_count <- min(max_url, rentrez_search$count) 
-    url_count <- rentrez_search$count 
+    # Returns the number of search results via rentrez --
+    rentrez_n <- rentrez::entrez_search(term = s2, db = db)$count
     
     if(verbose){
       finally =  print(paste0(y, ' / ', length(pmed_search), ' ',
-                              s2, ': ', url_count, ' records'))}
+                              s2, ': ', rentrez_n, ' records'))}
     
-    if (url_count == 0) { 
+    if (url_count == 0) {
       
       data.table::data.table(search = s1, pmid = NA)} else{ 
-                   
+        
         ## below is different than rentrez_search
           url_term_query <- gsub(" ", "+", s1, fixed = TRUE)
           
-          pmids <- paste0 (pre_url, 
-                           "db=", db, "&retmax=", 
-                           url_count, 
-                           "&term=", 
-                           url_term_query,
-                           '%5BMH%5D+OR+',
-                           url_term_query,
-                           '%5BTIAB%5D')
-                           #"&usehistory=n" 
+          ## Make url
+          full_url <- paste0 (pre_url, 
+                              "db=", db, "&retmax=", 
+                              rentrez_n, 
+                              "&term=", 
+                              url_term_query,
+                              '%5BMH%5D+OR+',
+                              url_term_query,
+                              '%5BTIAB%5D')
+                              #"&usehistory=n" 
           
-          x <- RCurl::getURL(pmids)
+          # x <- RCurl::getURL(full_url) ## breaks Windows --
+          x <- httr::GET(full_url)
           
           ## for search = induced senescence --??
           x1 <- xml2::read_xml(x) 
