@@ -5,9 +5,12 @@ output:
 ---
 
 
-# PubMed Mining Toolkit
+# PubmedMTK
 
-A collection of functions and resources for accessing, manipulating, and visualizing data made available on PubMed using R, including (1) PubMed query tools, (2) query exploration tools, and (3) abstract-level data acquisition tools.  
+** *PubMed Mining Toolkit* **
+
+
+An R package for accessing, manipulating, and visualizing data made available on PubMed using R, including (1) PubMed query tools, (2) query exploration tools, and (3) abstract-level data acquisition tools.  
 
 Included here is a set of example applications, including: 
 
@@ -44,7 +47,7 @@ source("/home/jtimm/jt_work/GitHub/packages/render_toc.R")
 
 ```{r echo=FALSE}
 render_toc("/home/jtimm/jt_work/GitHub/PubmedMTK/README.Rmd",
-           toc_header_name = "PubMed Mining Toolkit - an overview",
+           toc_header_name = "PubmedMTK",
            toc_depth = 2)
 ```
 

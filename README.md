@@ -1,9 +1,10 @@
-# PubMed Mining Toolkit
+# PubmedMTK
 
-A collection of functions and resources for accessing, manipulating, and
-visualizing data made available on PubMed using R, including (1) PubMed
-query tools, (2) query exploration tools, and (3) abstract-level data
-acquisition tools.
+\*\* *PubMed Mining Toolkit* \*\*
+
+An R package for accessing, manipulating, and visualizing data made
+available on PubMed using R, including (1) PubMed query tools, (2) query
+exploration tools, and (3) abstract-level data acquisition tools.
 
 Included here is a set of example applications, including:
 
@@ -19,9 +20,23 @@ Included here is a set of example applications, including:
 
 ------------------------------------------------------------------------
 
--   [PubMed Mining Toolkit](#pubmed-mining-toolkit)
-    -   [Installation](#installation)
-    -   [Usage](#usage)
+-   [Installation](#installation)
+-   [Usage](#usage)
+    -   [MeSH vocabulary](#mesh-vocabulary)
+    -   [PubMed search -
+        `pmtk_search_pubmed()`](#pubmed-search---%60pmtk_search_pubmed()%60)
+    -   [Advanced counting -
+        `pmtk_crosstab_query()`](#advanced-counting---%60pmtk_crosstab_query()%60)
+    -   [Fetch abstract data from
+        PubMed](#fetch-abstract-data-from-pubmed)
+    -   [Citation trends historically](#citation-trends-historically)
+    -   [Extract MeSH classifications -
+        `pmtk_gather_mesh()`](#extract-mesh-classifications---%60pmtk_gather_mesh()%60)
+    -   [Subject-based lexicon](#subject-based-lexicon)
+    -   [MeSH-based topic model](#mesh-based-topic-model)
+    -   [Topic model summary - html
+        widget](#topic-model-summary---html-widget)
+    -   [Google image analysis](#google-image-analysis)
 
 ------------------------------------------------------------------------
 
