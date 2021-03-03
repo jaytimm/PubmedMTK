@@ -51,7 +51,7 @@ working_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/data-raw/'
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(data.table, # quanteda, 
                rentrez, 
-               XML, xml2, RCurl,
+               XML, xml2, httr,
                reshape2, #text2vec,  
                tokenizers, 
                tm,
@@ -218,16 +218,13 @@ search_tab %>%
 ### Fetch abstract data from PubMed
 
 As a two-step process: (1) `pmtk_download_abs()` and (2)
-`pmtk_loadr_abs()`. Other R packages provide access to NCBI-PubMed data
-via the `Eutils` API (most notable being `rentrez`); however, none of
-them are perfectly suited for fetching PubMed abstracts in bulk, or
-building text corpora.
-
-**The approach utilized here** is not the most elegant, but it makes the
-most out of rate-limits by utilizing a combination of local storage and
-“more + smaller” API batch queries. Each “batch” contains n = 199
-records; batch files are converted from XML to a data frame in RDS
-format and stored locally in a user-specified file path.
+`pmtk_loadr_abs()`. The approach utilized here is not the most elegant,
+but it makes the most out of rate-limits by utilizing a combination of
+local storage and “more + smaller” API batch queries (via the
+`rentrez::entrez_fetch` package). Each “batch” contains n = 199 records;
+batch files are converted from [XML to a data
+frame](https://github.com/christopherBelter/pubmedXML) in RDS format and
+stored locally in a user-specified file path.
 
 #### Download batch data - `pmtk_download_abs()`
 

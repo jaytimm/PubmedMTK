@@ -17,4 +17,5 @@ Imports:
     xml2,
     data.table,
     XML,
-    Matrix
+    Matrix,
+    httr
