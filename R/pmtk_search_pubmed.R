@@ -27,10 +27,10 @@ pmtk_search_pubmed <- function (pmed_search,
       s2 <- paste0(s1, '[MH]', ' OR ', s1, '[TIAB]')
     }
     
-    #rentrez_n <- rentrez::entrez_search(term = s2, db = 'pubmed')$count
-    rentrez_n = format(retmax, scientific = F)
+    #nns <- rentrez::entrez_search(term = s2, db = 'pubmed')$count
+    nns = format(retmax, scientific = F)
   
-    if (rentrez_n == 0) {
+    if (nns == 0) {
       
       data.table::data.table(search = s1, pmid = NA)} else{ 
         
@@ -39,7 +39,7 @@ pmtk_search_pubmed <- function (pmed_search,
           ## Make url
           full_url <- paste0 (pre_url, 
                               "db=pubmed", 
-                              "&retmax=", rentrez_n, 
+                              "&retmax=", nns, 
                               "&term=", 
                               url_term_query,
                               '%5BMH%5D+OR+',
