@@ -1,7 +1,7 @@
 #' Convet DTM to TCM; ie, treat document as context.
 #'
 #' @name mtk_dtm_tcm
-#' @param dtm 
+#' @param dtm A document-term matrix
 #' @return A sparse matrix  
 #' 
 

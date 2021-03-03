@@ -1,7 +1,7 @@
 #' Download abstract and meta data for research articles included in PubMed.
 #'
 #' @name pmtk_gather_mesh
-#' @param meta_df A vector of PMIDs 
+#' @param meta_df Metadata data frame returned from `pmtk_loadr_abs'` 
 #' @return A data frame 
 #' 
 #' @export

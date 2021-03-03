@@ -7,7 +7,7 @@
 mtk_dtm_tcm(dtm)
 }
 \arguments{
-\item{dtm}{}
+\item{dtm}{A document-term matrix}
 }
 \value{
 A sparse matrix

@@ -7,7 +7,7 @@
 pmtk_gather_mesh(meta_df)
 }
 \arguments{
-\item{meta_df}{A vector of PMIDs}
+\item{meta_df}{Metadata data frame returned from `pmtk_loadr_abs'`}
 }
 \value{
 A data frame

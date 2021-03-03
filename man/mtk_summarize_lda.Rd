@@ -2,18 +2,20 @@
 % Please edit documentation in R/mtk_summarize_lda.R
 \name{mtk_summarize_lda}
 \alias{mtk_summarize_lda}
-\title{Quick:
-Summary:}
+\title{Summarize topic model output
+LDA model returned from `text2vec::LDA` - a fast/efficient LDA implementation - excellent for exploration -}
 \usage{
 mtk_summarize_lda(lda, topic_feats_n = 10)
 }
 \arguments{
-\item{per}{parameter}
+\item{lda}{An lda object returned from `text2vec::LDA`}
+
+\item{topic_feats_n}{Number of features to include in topic summary}
 }
 \value{
 
 }
 \description{
-Quick:
-Summary:
+Summarize topic model output
+LDA model returned from `text2vec::LDA` - a fast/efficient LDA implementation - excellent for exploration -
 }

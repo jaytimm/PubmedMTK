@@ -1,7 +1,9 @@
-#' Quick:
-#' Summary:
+#' Summarize topic model output
+#' LDA model returned from `text2vec::LDA` - a fast/efficient LDA implementation - excellent for exploration -
 #' 
-#' @param per parameter
+#' @name mtk_summarize_lda
+#' @param lda An lda object returned from `text2vec::LDA`
+#' @param topic_feats_n Number of features to include in topic summary
 #' @return 
 #' 
 #' @export

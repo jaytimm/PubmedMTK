@@ -4,14 +4,19 @@
 \alias{pmtk_search_pubmed}
 \title{Perform basic PubMed search.}
 \usage{
-pmtk_search_pubmed(pmed_search, translate_syntax = T, verbose = T)
+pmtk_search_pubmed(
+  pmed_search,
+  translate_syntax = T,
+  verbose = T,
+  retmax = 5e+06
+)
 }
 \arguments{
-\item{pmids}{A vector of PMIDs}
+\item{pmed_search}{A character string, or list of character strings}
 
-\item{out_file}{File path for output}
+\item{translate_syntax}{boolean: T to translate term to NCBI/mesh+tiab}
 
-\item{file_prefix}{String specifying how batch file name}
+\item{verbose}{boolean: T to output progress}
 }
 \value{
 A data frame of PMIDs
