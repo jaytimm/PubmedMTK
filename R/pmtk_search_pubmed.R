@@ -36,7 +36,7 @@ pmtk_search_pubmed <- function (pmed_search,
       finally =  print(paste0(y, ' / ', length(pmed_search), ' ',
                               s2, ': ', rentrez_n, ' records'))}
     
-    if (url_count == 0) {
+    if (rentrez_n == 0) {
       
       data.table::data.table(search = s1, pmid = NA)} else{ 
         
