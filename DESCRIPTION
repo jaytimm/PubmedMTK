@@ -13,7 +13,6 @@ Depends:
     R (>= 2.10)
 Imports: 
     rentrez,
-    RCurl,
     xml2,
     data.table,
     XML,
