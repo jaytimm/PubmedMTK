@@ -1,4 +1,4 @@
-# PubMed Mining Toolkit - an overview
+# PubMed Mining Toolkit
 
 A collection of functions and resources for accessing, manipulating, and
 visualizing data made available on PubMed using R, including (1) PubMed
@@ -19,23 +19,9 @@ Included here is a set of example applications, including:
 
 ------------------------------------------------------------------------
 
--   [Installation](#installation)
--   [Usage](#usage)
-    -   [MeSH vocabulary](#mesh-vocabulary)
-    -   [PubMed search -
-        `pmtk_search_pubmed()`](#pubmed-search---%60pmtk_search_pubmed()%60)
-    -   [Advanced counting -
-        `pmtk_crosstab_query()`](#advanced-counting---%60pmtk_crosstab_query()%60)
-    -   [Fetch abstract data from
-        PubMed](#fetch-abstract-data-from-pubmed)
-    -   [Citation trends historically](#citation-trends-historically)
-    -   [Extract MeSH classifications -
-        `pmtk_gather_mesh()`](#extract-mesh-classifications---%60pmtk_gather_mesh()%60)
-    -   [Subject-based lexicon](#subject-based-lexicon)
-    -   [MeSH-based topic model](#mesh-based-topic-model)
-    -   [Topic model summary - html
-        widget](#topic-model-summary---html-widget)
-    -   [Google image analysis](#google-image-analysis)
+-   [PubMed Mining Toolkit](#pubmed-mining-toolkit)
+    -   [Installation](#installation)
+    -   [Usage](#usage)
 
 ------------------------------------------------------------------------
 
@@ -62,12 +48,6 @@ pacman::p_load(data.table, # quanteda,
                janitor,
                ggplot2, knitr,
                magrittr, dplyr, tidyr)
-```
-
-``` r
-# Set NCBI API key
-# ncbi_key <- '4f47f85a9cc03c4031b3dc274c2840b06108'
-# rentrez::set_entrez_key(ncbi_key)
 ```
 
 ### MeSH vocabulary

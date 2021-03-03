@@ -5,7 +5,7 @@ output:
 ---
 
 
-# PubMed Mining Toolkit - an overview
+# PubMed Mining Toolkit
 
 A collection of functions and resources for accessing, manipulating, and visualizing data made available on PubMed using R, including (1) PubMed query tools, (2) query exploration tools, and (3) abstract-level data acquisition tools.  
 
@@ -78,7 +78,7 @@ pacman::p_load(data.table, # quanteda,
 ```
 
 
-```{r message=FALSE, warning=FALSE}
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 # Set NCBI API key
 # ncbi_key <- '4f47f85a9cc03c4031b3dc274c2840b06108'
 # rentrez::set_entrez_key(ncbi_key)
