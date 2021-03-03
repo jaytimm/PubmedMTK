@@ -68,7 +68,7 @@ For starters, the package includes as a data frame the MeSH thesaurus &
 hierarchically-organized vocabulary – comprised of 2021 versions of
 `descriptor` & `trees` files made available via NLM-NIH. [A workflow for
 re-creating the table from raw data
-sets](https://github.com/jaytimm/PubmedMTK/blob/main/build-MeSH-df.md).
+sets](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md).
 
 ``` r
 knitr::kable(head(PubmedMTK::pmtk_tbl_mesh))
@@ -334,7 +334,8 @@ compare historical citation frequencies for our set of search terms. The
 package ships with a table summarizing [total Medline citation counts by
 year](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html), which
 facilitates straightforward computation of relative citation frequency
-for search term(s) by year (here, per 100K citations).
+for search term(s) by year (here, per 100K citations). [See table
+details](https://github.com/jaytimm/PubmedMTK/blob/main/mds/medline_citations.md).
 
 ``` r
 ## in theory, this could be used for other things -- 
