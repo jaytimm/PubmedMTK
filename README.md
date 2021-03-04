@@ -33,7 +33,7 @@ Included here is a set of example applications, including:
     -   [Extract MeSH classifications -
         `pmtk_gather_mesh()`](#extract-mesh-classifications---%60pmtk_gather_mesh()%60)
     -   [MeSH-based topic model](#mesh-based-topic-model)
-    -   [Google image analysis](#google-image-analysis)
+    -   [Summary](#summary)
 
 ------------------------------------------------------------------------
 
@@ -334,8 +334,8 @@ compare historical citation frequencies for our set of search terms. The
 package ships with a table summarizing [total Medline citation counts by
 year](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html), which
 facilitates straightforward computation of relative citation frequency
-for search term(s) by year (here, per 100K citations). [See table build
-details](https://github.com/jaytimm/PubmedMTK/blob/main/mds/medline_citations.md).
+for search term(s) by year (here, per 100K citations). See table build
+[details](ht%20tps://github.com/jaytimm/PubmedMTK/blob/main/mds/medline_citations.md).
 
 ``` r
 ## in theory, this could be used for other things -- 
@@ -369,11 +369,14 @@ tr4 %>%
   ggthemes::scale_color_stata() +
   theme(legend.position = 'right',
         legend.title = element_blank())  +
-  ylab('Per 100,000 Medline citations') +
-  ggtitle('Relative frequencies of search term citations historically')
+  ylab('Per 100,000 Medline citations')
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-21-1.png)
+
+``` r
+  ##ggtitle('Relative frequencies of search term citations historically')
+```
 
 ### Extract MeSH classifications - `pmtk_gather_mesh()`
 
@@ -465,30 +468,4 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 |        9 | reproduction \| life expectancy \| mortality \| fertility \| research \| population dynamics \| species specificity \| seasons \| biological evolution \| geriatrics \| environment \| demography \| statistics as topic \| models, theoretical \| larva                                                                                                                                  |
 |       10 | infant \| infant, newborn \| kidney \| dogs \| heart rate \| blood pressure \| reference values \| fetus \| swine \| hemodynamics \| species specificity \| gestational age \| sheep \| electrocardiography \| horses                                                                                                                                                                     |
 
-<br>
-
-#### Topic model summary - html widget
-
-An interactive html widget for exploration of topic model results, and
-underlying conceptual structure. Presently only view-able via RStudio; a
-more generic solution in progress.
-
-``` r
-## topic model html widget
-#mesh_lda$plot()
-mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
-```
-
-![](README_files/figure-markdown_github/demo-tm-viz.png)
-
-<br>
-
-------------------------------------------------------------------------
-
-### Google image analysis
-
-Lastly, some fairly simple functionality (not presented in much detail
-here) for building collages based on a Google image search. Below,
-results from a Google Image search for `human senescence` –
-
-![](README_files/figure-markdown_github/summary.png)
+### Summary

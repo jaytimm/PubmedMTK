@@ -178,7 +178,7 @@ search_tab %>% filter(term1 == 'senescence') %>% knitr::kable()
 
 **The plot below** details PMI-based associative strengths among search terms (as ~heatmap).  Labels specify co-occurrence in terms of citation counts; color denotes PMI value.
 
-```{r fig.height=6, message=FALSE, warning=FALSE}
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
 search_tab %>%
   mutate(pmi = ifelse(pmi < 0, 0, pmi),
          term2 = as.character(term2)) %>%
@@ -274,7 +274,7 @@ sen_df$meta %>%
 
 ### Citation trends historically
 
-Based on (1) search results from the `pubmed_get_ids` function, and (2) the metadata returned from `pmtk_loadr_abs()`, we can investigate & compare historical citation frequencies for our set of search terms.  The package ships with a table summarizing [total Medline citation counts by year](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html), which facilitates straightforward computation of relative citation frequency for search term(s) by year (here, per 100K citations). [See table build details](https://github.com/jaytimm/PubmedMTK/blob/main/mds/medline_citations.md).
+Based on (1) search results from the `pubmed_get_ids` function, and (2) the metadata returned from `pmtk_loadr_abs()`, we can investigate & compare historical citation frequencies for our set of search terms.  The package ships with a table summarizing [total Medline citation counts by year](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html), which facilitates straightforward computation of relative citation frequency for search term(s) by year (here, per 100K citations). See table build [details](ht tps://github.com/jaytimm/PubmedMTK/blob/main/mds/medline_citations.md).
 
 
 ```{r}
@@ -296,7 +296,7 @@ tr4$per_100k = round(tr4$n / tr4$total * 100000, 3)
 
 #### Citation frequencies (per 100K total citations) for `senescence`related search terms from 1970 to 2018. 
 
-```{r fig.height=6, message=FALSE, warning=FALSE}
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
 ## Via ggplot --
 tr4 %>%
   ggplot() +
@@ -311,8 +311,8 @@ tr4 %>%
   ggthemes::scale_color_stata() +
   theme(legend.position = 'right',
         legend.title = element_blank())  +
-  ylab('Per 100,000 Medline citations') +
-  ggtitle('Relative frequencies of search term citations historically')
+  ylab('Per 100,000 Medline citations')
+  ##ggtitle('Relative frequencies of search term citations historically')
 ```
 
 
@@ -416,33 +416,5 @@ tm_summary$topic_summary %>% slice(1:10) %>% knitr::kable()
 ```
 
 
-<br>
 
-#### Topic model summary - html widget
-
-An interactive html widget for exploration of topic model results, and underlying conceptual structure. Presently only view-able via RStudio; a more generic solution in progress.
-
-```{r eval=FALSE}
-## topic model html widget
-#mesh_lda$plot()
-mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
-```
-
-![](README_files/figure-markdown_github/demo-tm-viz.png)
-
-
-<br>
-
-
----
-
-### Google image analysis
-
-Lastly, some fairly simple functionality (not presented in much detail here) for building collages based on a Google image search.  Below, results from a Google Image search for `human senescence` -- 
-
-
-![](README_files/figure-markdown_github/summary.png)
-
-
-
-
+### Summary
