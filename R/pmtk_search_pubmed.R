@@ -57,6 +57,7 @@ pmtk_search_pubmed <- function (pmed_search,
           
           out <- data.table::data.table(search = s1, pmid = x3) 
           
+          Sys.time(0.4)
           if(verbose){
             finally =  print(paste0(y, ' / ', length(pmed_search), ' ',
                                     s2, ': ', nrow(out), ' records'))}
