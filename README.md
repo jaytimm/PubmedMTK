@@ -246,7 +246,6 @@ the second, a metadata object including record id and all other record
 details, eg, article name, MeSH terms, Pub Date, etc.
 
 ``` r
-# batch_dir <- dr
 batch_dir <- paste0(working_dir, 'batches/')
 sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir, 
                                     file_prefix = 'sen')
@@ -355,7 +354,6 @@ tr4$per_100k = round(tr4$n / tr4$total * 100000, 3)
 #### Citation frequencies (per 100K total citations) for `senescence`related search terms from 1970 to 2018.
 
 ``` r
-## Via ggplot --
 tr4 %>%
   ggplot() +
   geom_line(aes(x = year,
@@ -369,14 +367,11 @@ tr4 %>%
   ggthemes::scale_color_stata() +
   theme(legend.position = 'right',
         legend.title = element_blank())  +
-  ylab('Per 100,000 Medline citations')
+  ylab('Per 100,000 Medline citations') +
+  ggtitle('Relative frequencies of search term citations historically')
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-21-1.png)
-
-``` r
-  ##ggtitle('Relative frequencies of search term citations historically')
-```
 
 ### Extract MeSH classifications - `pmtk_gather_mesh()`
 
