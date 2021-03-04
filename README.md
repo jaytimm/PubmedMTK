@@ -152,11 +152,11 @@ length(unique(search_results1$pmid))
 
 ### Advanced counting - `pmtk_crosstab_query()`
 
-Based simply on the table of record IDs returned from
-`pmtk_search_pubmed()`, we can quickly investigate co-occurrence among
-our set of search terms. Here, `term1` and `term2` are said to co-occur
-in *abstract X* if independent PubMed queries for `term1` and `term2`
-both return *abstract X*. Ideal for quick exploration.
+Based on the table of record IDs returned from `pmtk_search_pubmed()`,
+we can quickly investigate co-occurrence among our set of search terms.
+Here, `term1` and `term2` are said to co-occur in *abstract X* if
+independent PubMed queries for `term1` and `term2` both return *abstract
+X*. Ideal for quick exploration.
 
 The table below details co-occurrence patterns among `senescence`-based
 search pairs. Columns `n1` and `n2` specify citation counts for `term1`

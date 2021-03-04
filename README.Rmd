@@ -163,7 +163,7 @@ length(unique(search_results1$pmid))
 
 ### Advanced counting - `pmtk_crosstab_query()`
 
-Based simply on the table of record IDs returned from `pmtk_search_pubmed()`, we can quickly investigate co-occurrence among our set of search terms.  Here, `term1` and `term2` are said to co-occur in *abstract X* if independent PubMed queries for `term1` and `term2` both return *abstract X*.  Ideal for quick exploration.  
+Based on the table of record IDs returned from `pmtk_search_pubmed()`, we can quickly investigate co-occurrence among our set of search terms.  Here, `term1` and `term2` are said to co-occur in *abstract X* if independent PubMed queries for `term1` and `term2` both return *abstract X*.  Ideal for quick exploration.  
 
 The table below details co-occurrence patterns among `senescence`-based search pairs. Columns `n1` and `n2` specify citation counts for `term1` and `term2`, respectively; column `n1n2` specifies the count of citations returned by both `term1` & `term2`, ie, the intersect between the two sets of record IDs.  The strength of association between `term1` & `term2`, then, is approximated via pointwise mutual information (`pmi`), which is computed as the log difference of actual vs. expected co-occurrence probabilities.
 
@@ -416,3 +416,11 @@ tm_summary$topic_summary %>% slice(1:10) %>% knitr::kable()
 
 
 ### Summary
+
+
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+# Set NCBI API key
+ncbi_key <- '4f47f85a9cc03c4031b3dc274c2840b06108'
+rentrez::set_entrez_key(ncbi_key)
+```
