@@ -464,3 +464,9 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 |       10 | infant \| infant, newborn \| kidney \| dogs \| heart rate \| blood pressure \| reference values \| fetus \| swine \| hemodynamics \| species specificity \| gestational age \| sheep \| electrocardiography \| horses                                                                                                                                                                     |
 
 ### Summary
+
+``` r
+# Set NCBI API key
+ncbi_key <- '4f47f85a9cc03c4031b3dc274c2840b06108'
+rentrez::set_entrez_key(ncbi_key)
+```
