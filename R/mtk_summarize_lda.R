@@ -22,7 +22,7 @@ mtk_summarize_lda <- function (lda, topic_feats_n = 10){
   twd3 <- twd2[, head(.SD, topic_feats_n), keyby = topic_id]
   tws <- twd3[ , .(topic_features = paste0(feature, collapse = ' | ')), by = topic_id]
   
-  out <- list("topic_word_dist" = twd3, "topic_summary" = tws)
+  out <- list("topic_word_dist" = twd2, "topic_summary" = tws)
   out
 }
 
