@@ -13,28 +13,21 @@ mtk_summarize_lda <- function (lda, topic_feats_n = 10){
   
   ## Extract topic_word_distributions
   twd <- data.table::data.table(lda$.__enclos_env__$private$topic_word_distribution_with_prior())
+
+  twd$topic_id <- 1:nrow(twd)
+  twd1 <- data.table::melt.data.table(twd, id.vars = 'topic_id')
+  data.table::setnames(twd1, old = "value", new = "beta")
+  data.table::setnames(twd1, old = "variable", new = "feature")
+  twd2 <- data.table::setorder(twd1,topic_id, -beta)
+  twd3 <- twd2[, head(.SD, topic_feats_n), keyby = topic_id]
+  tws <- twd3[ , .(topic_features = paste0(feature, collapse = ' | ')), by = topic_id]
   
-  n_topics <- nrow(twd)
-  
-  twd$topic_id <- 1:n_topics
-  twd <- data.table::melt.data.table(twd, id.vars = 'topic_id')
-  twd <- twd[order(twd$value, decreasing = TRUE), ]
-  
-  twd <- data.table::setorder(setDT(twd), -value)[, head(.SD, topic_feats_n), 
-                                                  keyby = topic_id]
-  data.table::setnames(twd, old = "value", new = "beta")
-  data.table::setnames(twd, old = "variable", new = "feature")
-  
-  tws <- twd[ , .(topic_features = paste0(feature, collapse = ' | ')), by = topic_id]
-  
-  out <- list("topic_word_dist" = twd, "topic_summary" = tws)
+  out <- list("topic_word_dist" = twd3, "topic_summary" = tws)
   out
 }
 
   
 
-
-  
   # ## Extract document_topic_distributions
   # dtds <- data.frame(lda$.__enclos_env__$private$doc_topic_distribution(), 
   #                    stringsAsFactors = FALSE) 
