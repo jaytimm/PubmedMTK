@@ -15,8 +15,8 @@ pmtk_get_records <- function (pmids, cores) {
   
   clust <- parallel::makeCluster(cores)
   parallel::clusterExport(cl = clust, 
-                          varlist = c('PubmedMTK::x_get_records', 
-                                      'PubmedMTK::x_strip_xml')) ## -- ??
+                          varlist = c('x_get_records', 
+                                      'x_strip_xml')) ## -- ??
   mess2 <- pbapply::pblapply(X = batches,
                              FUN = x_get_records,
                              cl = clust)
