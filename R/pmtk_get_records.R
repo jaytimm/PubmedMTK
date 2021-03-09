@@ -14,12 +14,14 @@ pmtk_get_records <- function (pmids, cores) {
   batches <- split(pmids, ceiling(seq_along(pmids)/199)) 
   
   clust <- parallel::makeCluster(cores)
-  parallel::clusterExport(clust) ## -- ??
+  parallel::clusterExport(cl = clust, 
+                          varlist = c('PubmedMTK::x_get_records', 
+                                      'PubmedMTK::x_strip_xml')) ## -- ??
   mess2 <- pbapply::pblapply(X = batches,
                              FUN = x_get_records,
                              cl = clust)
   parallel::stopCluster(clust)
-  
+  return(mess2)
 }
 
 
@@ -32,9 +34,9 @@ x_get_records <- function (x) {
                                         parsed = T)
   
   x1 <- as(fetch.pubmed, "character")
-  x2 <- x_strip_xml(yy)
+  x2 <- x_strip_xml(x1)
   Encoding(rownames(x2)) <- 'UTF-8'    
-  return(xx)
+  return(x2)
 }
 
 
