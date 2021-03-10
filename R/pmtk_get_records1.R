@@ -15,20 +15,19 @@ pmtk_get_records1 <- function (x) {
                                         parsed = T)
   
   pmtk_strip_xml1(as(fetch.pubmed, "character"))
+  ## Sys.sleep(1)  ## this does not work -- 
+  
   }
   
-
 
 pmtk_strip_xml1 <- function (x) {
   
   newData <- XML::xmlParse(x)
   records <- XML::getNodeSet(newData, "//PubmedArticle")
   
-  pmid <- XML::xpathSApply(newData,"//MedlineCitation/PMID", 
-                           XML::xmlValue)
+  pmid <- XML::xpathSApply(newData,"//MedlineCitation/PMID", XML::xmlValue)
   
-  year <- lapply(records, XML::xpathSApply, ".//PubDate/Year", 
-                 XML::xmlValue) 
+  year <- lapply(records, XML::xpathSApply, ".//PubDate/Year", XML::xmlValue) 
   year[sapply(year, is.list)] <- NA
   year[which(sapply(year, is.na) == TRUE)] <- lapply(records[which(sapply(year, is.na) == TRUE)], 
                                                      XML::xpathSApply, ".//PubDate/MedlineDate", XML::xmlValue)

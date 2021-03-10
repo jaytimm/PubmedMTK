@@ -4,7 +4,7 @@
 \alias{pmtk_get_records2}
 \title{Download abstract and meta data for research articles included in PubMed.}
 \usage{
-pmtk_get_records2(pmids, cores)
+pmtk_get_records2(pmids, cores, ncbi_key = NULL)
 }
 \arguments{
 \item{pmids}{A vector of PMIDs}

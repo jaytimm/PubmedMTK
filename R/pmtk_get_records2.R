@@ -9,7 +9,12 @@
 #' @rdname pmtk_get_records2
 #' 
 #' 
-pmtk_get_records2 <- function (pmids, cores) {
+pmtk_get_records2 <- function (pmids, 
+                               cores, 
+                               ncbi_key = NULL) {
+  
+  if(is.null(ncbi_key) & cores > 3) cores <- min(parallel::detectCores() - 1, 3)
+  if(!is.null(ncbi_key)) rentrez::set_entrez_key(ncbi_key)
   
   batches <- split(pmids, ceiling(seq_along(pmids)/199)) 
   
