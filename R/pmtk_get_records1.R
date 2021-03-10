@@ -8,21 +8,20 @@
 #' @export
 #' @rdname pmtk_get_records1
 pmtk_get_records1 <- function (x) {
-
-  fetch.pubmed <- rentrez::entrez_fetch(db = "pubmed", 
-                                        id = x,
-                                        rettype = "xml", 
-                                        parsed = T)
   
-  pmtk_strip_xml1(as(fetch.pubmed, "character"))
+  x1 <- rentrez::entrez_fetch(db = "pubmed", 
+                              id = x,
+                              rettype = "xml", 
+                              parsed = T)
+  
+  pmtk_strip_xml1(x1)
   ## Sys.sleep(1)  ## this does not work -- 
-  
   }
   
-
+## note that the local-storage method never tripped any cluster errors as we did not use clusters, and mini-queries less than 200 --
 pmtk_strip_xml1 <- function (x) {
   
-  newData <- XML::xmlParse(x)
+  newData <- XML::xmlParse(as(x, "character"))
   records <- XML::getNodeSet(newData, "//PubmedArticle")
   
   pmid <- XML::xpathSApply(newData,"//MedlineCitation/PMID", XML::xmlValue)

@@ -19,13 +19,11 @@ pmtk_get_records2 <- function (pmids,
   batches <- split(pmids, ceiling(seq_along(pmids)/199)) 
   
   clust <- parallel::makeCluster(cores)
-  #parallel::clusterEvalQ(cl = clust, library(PubmedMTK))
   parallel::clusterExport(cl = clust, 
                           varlist = c('batches'))
   
-  
   mess2 <- pbapply::pblapply(X = batches,
-                             FUN = pmtk_get_records1,
+                             FUN = PubmedMTK::pmtk_get_records1,
                              cl = clust)
   
   parallel::stopCluster(clust)
