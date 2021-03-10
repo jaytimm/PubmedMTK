@@ -20,7 +20,7 @@ pmtk_get_records2 <- function (pmids, cores) {
   
   
   mess2 <- pbapply::pblapply(X = batches,
-                             FUN = PubmedMTK::pmtk_get_records1,
+                             FUN = pmtk_get_records1,
                              cl = clust)
   
   parallel::stopCluster(clust)
