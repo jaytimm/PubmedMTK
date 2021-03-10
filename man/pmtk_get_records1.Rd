@@ -10,7 +10,7 @@ pmtk_get_records1(x)
 \item{x}{A character vector of PMIDs}
 }
 \value{
-A data frame.
+A data frame
 }
 \description{
 Download abstract and meta data for research articles included in PubMed.
