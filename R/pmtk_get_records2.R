@@ -10,7 +10,7 @@
 #' 
 #' 
 pmtk_get_records2 <- function (pmids, 
-                               cores, 
+                               cores = 3, 
                                ncbi_key = NULL) {
   
   if(is.null(ncbi_key) & cores > 3) cores <- min(parallel::detectCores() - 1, 3)
