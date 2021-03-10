@@ -4,6 +4,9 @@ output:
     variant: markdown_github
 ---
 
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.com/jaytimm/PubmedMTK.svg?branch=main)](https://travis-ci.com/jaytimm/PubmedMTK)
+<!-- badges: end -->
 
 # PubmedMTK
 
@@ -28,6 +31,7 @@ usethis::use_package('httr')
 usethis::use_package('xml2')
 usethis::use_package('XML')
 usethis::use_package('Matrix')
+usethis::use_package('pbapply')
 
 usethis::use_data_table()
 
@@ -40,15 +44,12 @@ devtools::document()
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-source("/home/jtimm/jt_work/GitHub/packages/render_toc.R")
-
-#Warning message:
-# replacing previous import ‘data.table::melt’ by ‘reshape2::melt’ when loading ‘PubmedMTK’
+source("resources/render_toc.R")
 ```
 
 
 ```{r echo=FALSE}
-render_toc("/home/jtimm/jt_work/GitHub/PubmedMTK/README.Rmd",
+render_toc("README.Rmd",
            toc_header_name = "PubmedMTK",
            toc_depth = 2)
 ```
@@ -66,20 +67,25 @@ devtools::install_github("jaytimm/PubmedMTK")
 ## Usage
 
 ```{r message=FALSE, warning=FALSE}
-working_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/data-raw/'
+working_dir <- 'data-raw/'
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(data.table, # quanteda, 
+pacman::p_load(data.table,  
                rentrez, 
-               XML, xml2, httr,
-               reshape2, #text2vec,  
+               XML,
+               xml2, 
+               httr,
+               text2vec,  
                tokenizers, 
                tm,
                tidytext,
                Matrix.utils,
                janitor,
-               ggplot2, knitr,
-               magrittr, dplyr, tidyr)
+               ggplot2, 
+               knitr,
+               magrittr, 
+               dplyr, 
+               tidyr)
 ```
 
 
@@ -226,10 +232,14 @@ PubmedMTK::pmtk_download_abs(pmids = unique(search_results1$pmid),
 The `pmtk_loadr_abs()` function loads batch files as two data frames: the first, a corpus object containing the record id and abstract, and the second, a metadata object including record id and all other record details, eg, article name, MeSH terms, Pub Date, etc.
 
 ```{r message=FALSE, warning=FALSE}
-batch_dir <- paste0(working_dir, 'batches/')
+batch_dir <- '/home/jtimm/jt_work/GitHub/packages/PubmedMTK/data-raw/batches'
 sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir, 
                                     file_prefix = 'sen')
+
+# setwd(working_dir)
+# saveRDS(sen_df, 'sen_df.rds')
 ```
+
 
 
 
@@ -401,6 +411,8 @@ mesh_lda <- readRDS('mesh_lda.rds')
 The `mtk_summarize_lda` function summarizes and extracts topic composition from the `text2vec::LDA` output. For each possible topic-feature pair, the model computes the likelihood a given topic generated a given feature.  Output is filtered to the highest scoring features per topic using the `topic_feats_n`.
 
 ```{r message=FALSE, warning=FALSE}
+
+## this is not great -- as it filters full df as well -- 
 tm_summary <- PubmedMTK::mtk_summarize_lda(
   lda = mesh_lda, topic_feats_n = 15)
 ```
@@ -415,7 +427,18 @@ tm_summary$topic_summary %>% slice(1:10) %>% knitr::kable()
 
 
 
-### Summary
+
+```{r eval=FALSE, include=FALSE}
+#### Visualize topic model
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(LDAvis)
+
+mesh_lda$plot()
+mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
+
+serVis(json, out.dir = 'ldavis', open.browser = FALSE)
+```
+
 
 
 

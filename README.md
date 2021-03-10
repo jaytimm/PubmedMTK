@@ -1,3 +1,9 @@
+<!-- badges: start -->
+
+[![Travis build
+status](https://travis-ci.com/jaytimm/PubmedMTK.svg?branch=main)](https://travis-ci.com/jaytimm/PubmedMTK)
+<!-- badges: end -->
+
 # PubmedMTK
 
 ***PubMed Mining Toolkit***
@@ -33,7 +39,6 @@ Included here is a set of example applications, including:
     -   [Extract MeSH classifications -
         `pmtk_gather_mesh()`](#extract-mesh-classifications---%60pmtk_gather_mesh()%60)
     -   [MeSH-based topic model](#mesh-based-topic-model)
-    -   [Summary](#summary)
 
 ------------------------------------------------------------------------
 
@@ -46,20 +51,25 @@ devtools::install_github("jaytimm/PubmedMTK")
 ## Usage
 
 ``` r
-working_dir <- '/home/jtimm/jt_work/GitHub/PubmedMTK/data-raw/'
+working_dir <- 'data-raw/'
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(data.table, # quanteda, 
+pacman::p_load(data.table,  
                rentrez, 
-               XML, xml2, httr,
-               reshape2, #text2vec,  
+               XML,
+               xml2, 
+               httr,
+               text2vec,  
                tokenizers, 
                tm,
                tidytext,
                Matrix.utils,
                janitor,
-               ggplot2, knitr,
-               magrittr, dplyr, tidyr)
+               ggplot2, 
+               knitr,
+               magrittr, 
+               dplyr, 
+               tidyr)
 ```
 
 ### MeSH vocabulary
@@ -246,9 +256,12 @@ the second, a metadata object including record id and all other record
 details, eg, article name, MeSH terms, Pub Date, etc.
 
 ``` r
-batch_dir <- paste0(working_dir, 'batches/')
+batch_dir <- '/home/jtimm/jt_work/GitHub/packages/PubmedMTK/data-raw/batches'
 sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir, 
                                     file_prefix = 'sen')
+
+# setwd(working_dir)
+# saveRDS(sen_df, 'sen_df.rds')
 ```
 
 #### CORPUS details
@@ -267,8 +280,8 @@ sen_df$tif %>%
 
 | includes_abstract |      n |    tokens |
 |:------------------|-------:|----------:|
-| N                 | 127898 |        NA |
-| Y                 | 820756 | 172358760 |
+| N                 | 127700 |        NA |
+| Y                 | 820755 | 172358550 |
 
 ``` r
 sen_df$tif$text[1191] %>% strwrap()
@@ -444,6 +457,7 @@ generated a given feature. Output is filtered to the highest scoring
 features per topic using the `topic_feats_n`.
 
 ``` r
+## this is not great -- as it filters full df as well -- 
 tm_summary <- PubmedMTK::mtk_summarize_lda(
   lda = mesh_lda, topic_feats_n = 15)
 ```
@@ -462,8 +476,6 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 |        8 | comet assay \| mutagens \| cricetinae \| lymphocytes \| mutagenicity tests \| micronucleus tests \| cho cells \| water pollutants, chemical \| environmental exposure \| cricetulus \| occupational exposure \| environmental monitoring \| genotoxicity \| glutathione transferase \| chromosome aberrations                                                                             |
 |        9 | reproduction \| life expectancy \| mortality \| fertility \| research \| population dynamics \| species specificity \| seasons \| biological evolution \| geriatrics \| environment \| demography \| statistics as topic \| models, theoretical \| larva                                                                                                                                  |
 |       10 | infant \| infant, newborn \| kidney \| dogs \| heart rate \| blood pressure \| reference values \| fetus \| swine \| hemodynamics \| species specificity \| gestational age \| sheep \| electrocardiography \| horses                                                                                                                                                                     |
-
-### Summary
 
 ``` r
 # Set NCBI API key
