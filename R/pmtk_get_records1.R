@@ -9,6 +9,8 @@
 #' @rdname pmtk_get_records1
 pmtk_get_records1 <- function (x) {
   
+  
+  ## this could be removed to stand-alone -- 
   fetch.pubmed <- rentrez::entrez_fetch(db = "pubmed", 
                                         id = x,
                                         rettype = "xml", 
@@ -16,8 +18,8 @@ pmtk_get_records1 <- function (x) {
   
   ########
   
-  x <- as(x, "character")
-  newData <- XML::xmlParse(x)
+  z <- as(fetch.pubmed, "character")
+  newData <- XML::xmlParse(z)
   records <- XML::getNodeSet(newData, "//PubmedArticle")
   
   pmid <- XML::xpathSApply(newData,"//MedlineCitation/PMID", 
