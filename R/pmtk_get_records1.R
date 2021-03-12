@@ -34,8 +34,7 @@ pmtk_get_records1 <- function (x) {
 ## PubMed does not provide a search filter to limit to only peer reviewed articles. For other citations, look up the journal title in the NCBI Journals Database, click on the journal title, find a publisher's website link and go to that website. Look for something on the page that gives details about the journal and then read through it to find if the journal goes through a peer review process. 
 
 
-pmtk_strip_xml1 <- function (x,
-                             include_abstract = F) {
+pmtk_strip_xml1 <- function (x) {
   
   newData <- XML::xmlParse(as(x, "character"))
   records <- XML::getNodeSet(newData, "//PubmedArticle")
@@ -69,15 +68,13 @@ pmtk_strip_xml1 <- function (x,
 
   y <- data.frame(pmid, year, articletitle,
                   meshHeadings, chemNames, 
-                  keywords)
+                  keywords) 
   
-  if(include_abstract) {
-    
-    abstract <- lapply(records, XML::xpathSApply, ".//Abstract/AbstractText", XML::xmlValue)
-    abstract[sapply(abstract, is.list)] <- NA
-    
-    y$abstract <- abstract  }
+  abstract <- lapply(records, XML::xpathSApply, ".//Abstract/AbstractText", XML::xmlValue)
+  abstract[sapply(abstract, is.list)] <- NA
+  y$abstract <- abstract   
   
   Encoding(rownames(y)) <- 'UTF-8'    
   return(y)
 }
+
