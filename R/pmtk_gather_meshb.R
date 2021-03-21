@@ -1,13 +1,13 @@
 #' Extract MeSH terms.
 #'
-#' @name pmtk_gather_mesh
+#' @name pmtk_gather_meshb
 #' @param meta_df Metadata data frame returned from `pmtk_loadr_abs'` 
 #' @return A data frame 
 #' 
 #' @export
-#' @rdname pmtk_gather_mesh
+#' @rdname pmtk_gather_meshb
 #' 
-pmtk_gather_mesh <- function (meta_df) {
+pmtk_gather_meshb <- function (meta_df) {
   # specific to `pubmed_strip_batches` output --
   
   meta_df$keywords <- tolower(trimws(meta_df$keywords))
@@ -29,6 +29,13 @@ pmtk_gather_mesh <- function (meta_df) {
                                   by = list(pmid, type)]
 
   out <- out[, list(cooc =.N), by = list(pmid, type, term)]
-  colnames(out) <- c('pmid', 'type', 'descriptor_name', 'count')
-  out
+  # colnames(out) <- c('pmid', 'type', 'descriptor_name', 'count')
+  # out
+
+  
+  ### need to resolve the TYPE ISSUE -- !! we did somewhere -- 
+  tidytext::cast_sparse(data = out,
+                        row = pmid,
+                        column = descriptor_name, 
+                        value = cooc)
 }

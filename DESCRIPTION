@@ -18,4 +18,5 @@ Imports:
     XML,
     Matrix,
     httr,
-    pbapply
+    pbapply,
+    Rtsne
