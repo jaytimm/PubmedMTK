@@ -15,6 +15,7 @@ mtk_summarize_lda <- function (lda, topic_feats_n = 10){
   twd <- data.table::data.table(lda$.__enclos_env__$private$topic_word_distribution_with_prior())
 
   twd$topic_id <- 1:nrow(twd)
+  
   twd1 <- data.table::melt.data.table(twd, id.vars = 'topic_id')
   data.table::setnames(twd1, old = "value", new = "beta")
   data.table::setnames(twd1, old = "variable", new = "feature")

@@ -36,6 +36,6 @@ pmtk_gather_meshb <- function (meta_df) {
   ### need to resolve the TYPE ISSUE -- !! we did somewhere -- 
   tidytext::cast_sparse(data = out,
                         row = pmid,
-                        column = descriptor_name, 
+                        column = term, 
                         value = cooc)
 }
