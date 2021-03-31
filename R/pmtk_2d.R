@@ -12,7 +12,7 @@ pmtk_2d <- function(mat,
                     c.method = "ward.D") {  
   
   ##### sparse matrix
-  # matx <- tidytext::cast_sparse(data = df,
+  # mat <- tidytext::cast_sparse(data = df,
   #                               row = topic_id,
   #                               column = feature, 
   #                               value = beta)
@@ -23,7 +23,7 @@ pmtk_2d <- function(mat,
                        check_duplicates = T,
                        perplexity = 5)
   
-  tsne1 <- data.frame(topic_id = rownames(matx), tsne$Y)
+  tsne1 <- data.frame(topic_id = rownames(mat), tsne$Y)
   
   ##### PCA
   cormat <- cor(data.frame(t(as.matrix(mat))))
@@ -38,7 +38,7 @@ pmtk_2d <- function(mat,
   pca1 <- pca1[, c(3, 1:2)]
   
   ##### hierarchical cluster -- for dendrogram --
-  disthi <- dist(matx, method = d.method) 
+  disthi <- dist(mat, method = d.method) 
   hc1 <- hclust(disthi, method = c.method) 
   
   ##### output --
