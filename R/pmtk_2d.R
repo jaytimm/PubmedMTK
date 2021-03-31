@@ -7,22 +7,19 @@
 #' @export
 #' @rdname pmtk_2d
 #' 
-pmtk_2d <- function(data,
-                    row,
-                    column, 
-                    value, 
+pmtk_2d <- function(mat,
                     d.method = "euclidean",
                     c.method = "ward.D") {  
   
   ##### sparse matrix
-  matx <- tidytext::cast_sparse(data = data,
-                                row = row,
-                                column = column, 
-                                value = value)
+  # matx <- tidytext::cast_sparse(data = df,
+  #                               row = topic_id,
+  #                               column = feature, 
+  #                               value = beta)
   
   ##### tSNE
   set.seed(999)
-  tsne <- Rtsne::Rtsne(X = as.matrix(matx), 
+  tsne <- Rtsne::Rtsne(X = as.matrix(mat), 
                        check_duplicates = FALSE,
                        perplexity = 5)
   
