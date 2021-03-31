@@ -20,13 +20,13 @@ pmtk_2d <- function(mat,
   ##### tSNE
   set.seed(999)
   tsne <- Rtsne::Rtsne(X = as.matrix(mat), 
-                       check_duplicates = FALSE,
+                       check_duplicates = T,
                        perplexity = 5)
   
   tsne1 <- data.frame(topic_id = rownames(matx), tsne$Y)
   
   ##### PCA
-  cormat <- cor(data.frame(t(as.matrix(matx))))
+  cormat <- cor(data.frame(t(as.matrix(mat))))
   pca <- data.frame(prcomp(dist(cormat), 
                            scale = T, 
                            center = T)$x, 
