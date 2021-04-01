@@ -10,17 +10,13 @@ structure.
 -   [Installation](#installation)
 -   [Usage](#usage)
     -   [MeSH vocabulary](#mesh-vocabulary)
-    -   [PubMed search -
-        `pmtk_search_pubmed()`](#pubmed-search---%60pmtk_search_pubmed()%60)
+    -   [PubMed search](#pubmed-search)
     -   [Retrieve abstract data from
         PubMed](#retrieve-abstract-data-from-pubmed)
-    -   [Extract MeSH classifications -
-        `pmtk_gather_mesh()`](#extract-mesh-classifications---%60pmtk_gather_mesh()%60)
+    -   [Extract MeSH classifications](#extract-mesh-classifications)
     -   [MeSH annotations-based topic
         model](#mesh-annotations-based-topic-model)
     -   [Two-dimensional analyses](#two-dimensional-analyses)
-
-------------------------------------------------------------------------
 
 ## Installation
 
@@ -30,13 +26,6 @@ devtools::install_github("jaytimm/PubmedMTK")
 
 ## Usage
 
-``` r
-working_dir <- 'data-raw/'
-
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(text2vec, ggplot2, knitr, magrittr, dplyr, tidyr)
-```
-
 ### MeSH vocabulary
 
 The package includes as a data frame the MeSH thesaurus &
@@ -45,7 +34,7 @@ hierarchically-organized vocabulary – comprised of 2021 versions of
 re-creating the table from raw data
 sets](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md).
 
-### PubMed search - `pmtk_search_pubmed()`
+### PubMed search
 
 The `pmtk_search_pubmed()` function is meant for record-matching
 searches typically performed using the [PubMed online
@@ -103,7 +92,6 @@ the second, a metadata object including record id and all other record
 details, eg, article name, MeSH terms, Pub Date, etc.
 
 ``` r
-batch_dir <- '/home/jtimm/jt_work/GitHub/packages/PubmedMTK/data-raw/batches'
 sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir, 
                                     file_prefix = 'sen')
 ```
@@ -120,7 +108,7 @@ sen_df <- PubmedMTK::pmtk_get_records2(pmids = unique(search_results1$pmid),
 sen_df <- data.table::rbindlist(sen_df)
 ```
 
-### Extract MeSH classifications - `pmtk_gather_mesh()`
+### Extract MeSH classifications
 
 Subject terms/headings in metadata table include `MeSH` terms, as well
 as (some) `keywords` & `chem-names`. The `pmtk_gather_mesh` function
@@ -183,8 +171,8 @@ mesh_lda <- text2vec::LDA$new(n_topics = 20) ## This is the model
 topic_model_fit <- mesh_lda$fit_transform(mesh_dtm, progressbar = F)
 ```
 
-    ## INFO  [07:00:11.027] early stopping at 140 iteration 
-    ## INFO  [07:00:12.093] early stopping at 20 iteration
+    ## INFO  [07:07:58.934] early stopping at 140 iteration 
+    ## INFO  [07:08:00.009] early stopping at 20 iteration
 
 The `mtk_summarize_lda` function summarizes and extracts topic
 composition from the `text2vec::LDA` output. For each possible
@@ -215,7 +203,6 @@ tm_summary <- PubmedMTK::mtk_summarize_lda(
 ### Two-dimensional analyses
 
 ``` r
-### much easier this way -- flexibility mostly -- 
 tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
                               row = topic_id,
                               column = feature,
@@ -234,7 +221,7 @@ two_ds$hc %>% ggdendro::ggdendrogram(rotate=TRUE)
 
 ![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
-#### PCA
+#### Principal component analysis (PCA)
 
 ``` r
 two_ds$pca %>%
