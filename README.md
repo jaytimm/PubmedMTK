@@ -154,7 +154,7 @@ meshes1 %>%
 ### MeSH annotations-based topic model
 
 We can use these MeSH-based abstract representations to explore the
-conceptua structure of a particular collection of PubMed records via
+conceptual structure of a particular collection of PubMed records via
 topic modeling. Here we implement **Latent Dirichlet allocation**, which
 is a topic modeling algorithm that models *each document* in corpus as a
 composite of topics, and *each topic* as a composite of terms. Topic
@@ -171,8 +171,8 @@ mesh_lda <- text2vec::LDA$new(n_topics = 20) ## This is the model
 topic_model_fit <- mesh_lda$fit_transform(mesh_dtm, progressbar = F)
 ```
 
-    ## INFO  [07:07:58.934] early stopping at 140 iteration 
-    ## INFO  [07:08:00.009] early stopping at 20 iteration
+    ## INFO  [07:11:04.078] early stopping at 140 iteration 
+    ## INFO  [07:11:05.192] early stopping at 20 iteration
 
 The `mtk_summarize_lda` function summarizes and extracts topic
 composition from the `text2vec::LDA` output. For each possible
