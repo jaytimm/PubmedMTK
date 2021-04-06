@@ -20,7 +20,7 @@ mtk_summarize_lda <- function (lda, topic_feats_n = 10){
                                      id.vars = 'doc_id', 
                                      variable.name = 'topic', 
                                      value.name = 'beta')
-  dtd <- subset(dtd, value > 0)
+  dtd <- subset(dtd, beta > 0)
   dtd$variable <- gsub('X', '', dtd$variable)  
   
   
