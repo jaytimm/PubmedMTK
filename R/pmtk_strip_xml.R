@@ -1,11 +1,13 @@
 #' Extract text from xml nodes.
+#' Details.
 #' 
 #' @name pmtk_strip_xml
 #' @param x A character vector of PMIDs
 #' @return A data frame
-
+#' 
 #' @export
 #' @rdname pmtk_strip_xml
+#' 
 pmtk_strip_xml <- function (x) {
   
   newData <- XML::xmlParse(as(x, "character"))

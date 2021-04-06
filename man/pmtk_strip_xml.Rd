@@ -2,7 +2,8 @@
 % Please edit documentation in R/pmtk_strip_xml.R
 \name{pmtk_strip_xml}
 \alias{pmtk_strip_xml}
-\title{Extract text from xml nodes.}
+\title{Extract text from xml nodes.
+Details.}
 \usage{
 pmtk_strip_xml(x)
 }
@@ -14,4 +15,5 @@ A data frame
 }
 \description{
 Extract text from xml nodes.
+Details.
 }
