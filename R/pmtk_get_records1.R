@@ -21,7 +21,7 @@ pmtk_get_records1 <- function (x) {
                               rettype = "xml", 
                               parsed = T)
   
-  PubmedMTK::pmtk_strip_xml(x1)
+  PubmedMTK:::pmtk_strip_xml(x1)
   }
   
 
