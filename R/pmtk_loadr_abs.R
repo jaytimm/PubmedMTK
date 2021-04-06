@@ -10,25 +10,13 @@
 #' 
 pmtk_loadr_abs <- function (in_file,
                             file_prefix) {
-
   setwd(in_file)
   gfiles <- list.files(path = in_file, 
                        pattern = file_prefix, 
                        recursive=TRUE) 
   ref <- lapply(gfiles, readRDS) 
   ref <- data.table::rbindlist(ref)
-  
-  clean_nas <- function(x) {
-    ifelse(x %in% c(' ', 'NA', 'n/a', 'n/a.') | is.na(x), NA, x) }
-  
-  cols <- colnames(ref)
-  ref[, c(cols) := lapply(.SD, clean_nas), .SDcols = cols]
-  
-  tif <- ref[, c('pmid', 'text')]  #}
-  
-  meta <- ref[, c(setdiff(colnames(ref), colnames(tif)[-1])), with = F]  
-  
-  list("meta" = meta, "tif" = tif)
-}
+  return(ref)
+  }
 
 

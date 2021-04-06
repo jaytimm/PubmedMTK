@@ -21,7 +21,7 @@ pmtk_get_records1 <- function (x) {
                               rettype = "xml", 
                               parsed = T)
   
-  pmtk_strip_xml1(x1)
+  PubmedMTK::pmtk_strip_xml(x1)
   }
   
 
@@ -32,49 +32,3 @@ pmtk_get_records1 <- function (x) {
 ## Information found in PubMed that indicates it is "indexed by MEDLINE" is considered peer reviewed. Look for the phrase "indexed by MEDLINE" under the citation or abstract information.
 
 ## PubMed does not provide a search filter to limit to only peer reviewed articles. For other citations, look up the journal title in the NCBI Journals Database, click on the journal title, find a publisher's website link and go to that website. Look for something on the page that gives details about the journal and then read through it to find if the journal goes through a peer review process. 
-
-
-pmtk_strip_xml1 <- function (x) {
-  
-  newData <- XML::xmlParse(as(x, "character"))
-  records <- XML::getNodeSet(newData, "//PubmedArticle")
-  
-  pmid <- XML::xpathSApply(newData,"//MedlineCitation/PMID", XML::xmlValue)
-  
-  year <- lapply(records, XML::xpathSApply, ".//PubDate/Year", XML::xmlValue) 
-  year[sapply(year, is.list)] <- NA
-  year[which(sapply(year, is.na) == TRUE)] <- lapply(records[which(sapply(year, is.na) == TRUE)], 
-                                                     XML::xpathSApply, ".//PubDate/MedlineDate", XML::xmlValue)
-  
-  ## as date formal -- !!! -- 
-  year <- gsub(" .+", "", year)
-  year <- gsub("-.+", "", year)
-  
-  articletitle <- lapply(records, XML::xpathSApply, ".//ArticleTitle", XML::xmlValue) 
-  articletitle[sapply(articletitle, is.list)] <- NA
-  articletitle <- unlist(articletitle)
-  
-  meshHeadings <- lapply(records, XML::xpathSApply, ".//DescriptorName", XML::xmlValue)
-  meshHeadings[sapply(meshHeadings, is.list)] <- NA
-  meshHeadings <- sapply(meshHeadings, paste, collapse = "|")
-  
-  chemNames <- lapply(records, XML::xpathSApply, ".//NameOfSubstance", XML::xmlValue)
-  chemNames[sapply(chemNames, is.list)] <- NA
-  chemNames <- sapply(chemNames, paste, collapse = "|")
-  
-  keywords <- lapply(records, XML::xpathSApply, ".//Keyword", XML::xmlValue)
-  keywords[sapply(keywords, is.list)] <- NA
-  keywords <- sapply(keywords, paste, collapse = "|")
-
-  y <- data.frame(pmid, year, articletitle,
-                  meshHeadings, chemNames, 
-                  keywords) 
-  
-  abstract <- lapply(records, XML::xpathSApply, ".//Abstract/AbstractText", XML::xmlValue)
-  abstract[sapply(abstract, is.list)] <- NA
-  y$abstract <- abstract   
-  
-  Encoding(rownames(y)) <- 'UTF-8'    
-  return(y)
-}
-

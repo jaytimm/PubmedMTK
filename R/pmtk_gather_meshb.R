@@ -24,7 +24,11 @@ pmtk_gather_meshb <- function (meta_df) {
                   rep('chem_name', nrow(meta_df)))
   
   colnames(terms)[2] <- 'term'
-  terms <- subset(terms, !term %in% c('', 'na'))
+  
+  ## -- ??
+  #terms <- subset(terms, !term %in% c('', 'na'))
+  
+  
   out <- data.table::setDT(terms)[, list(term = unlist(strsplit(term, "\\|"))), 
                                   by = list(pmid, type)]
 

@@ -11,37 +11,47 @@
 #' 
 mtk_summarize_lda <- function (lda, topic_feats_n = 10){
   
+  ## Extract document_topic_distributions
+  dtds <- data.frame(lda$.__enclos_env__$private$doc_topic_distribution())
+  dtd <- cbind(doc_id = names(lda$.__enclos_env__$private$doc_len), dtds)
+  
+  data.table::setDT(dtd)
+  dtd <- data.table::melt.data.table(dtd, 
+                                     id.vars = 'doc_id', 
+                                     variable.name = 'topic', 
+                                     value.name = 'beta')
+  dtd <- subset(dtd, value > 0)
+  dtd$variable <- gsub('X', '', dtd$variable)  
+  
+  
   ## Extract topic_word_distributions
   twd <- data.table::data.table(lda$.__enclos_env__$private$topic_word_distribution_with_prior())
-
   twd$topic_id <- 1:nrow(twd)
+  twd1 <- data.table::melt.data.table(twd, id.vars = 'topic_id', 
+                                      variable.name = 'feature', 
+                                      value.name = 'beta')
+  twd2 <- data.table::setorder(twd1, topic_id, -beta)
   
-  twd1 <- data.table::melt.data.table(twd, id.vars = 'topic_id')
-  data.table::setnames(twd1, old = "value", new = "beta")
-  data.table::setnames(twd1, old = "variable", new = "feature")
-  twd2 <- data.table::setorder(twd1,topic_id, -beta)
-  
-  ## FILTER HAPPENS HERE --   
   twd3 <- twd2[, head(.SD, topic_feats_n), keyby = topic_id]
-  
   tws <- twd3[ , .(topic_features = paste0(feature, collapse = ' | ')), by = topic_id]
   
-  out <- list("topic_word_dist" = twd2, "topic_summary" = tws)
-  out
+  list("topic_word_dist" = twd2, 
+       "topic_summary" = tws,
+       "doc_topic_dist" = dtd)
 }
 
   
 
   # ## Extract document_topic_distributions
-  # dtds <- data.frame(lda$.__enclos_env__$private$doc_topic_distribution(), 
-  #                    stringsAsFactors = FALSE) 
+  # dtds <- data.frame(lda$.__enclos_env__$private$doc_topic_distribution(),
+  #                    stringsAsFactors = FALSE)
   # 
   # dtd <- cbind(doc_id = unique(dtm$doc_id), dtds)
   # dtd <- reshape2::melt(dtd, id.vars = 'doc_id')
   # dtd <- subset(dtd, value > 0)
   # dtd$variable <- gsub('X', '', dtd$variable)
   # 
-  # ## setNames business here -- 
+  # ## setNames business here --
   # colnames(dtd)<- c('doc_id', 'topic', 'score')
   # 
   # 
