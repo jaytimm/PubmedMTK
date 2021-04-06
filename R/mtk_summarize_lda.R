@@ -21,7 +21,7 @@ mtk_summarize_lda <- function (lda, topic_feats_n = 10){
                                      variable.name = 'topic', 
                                      value.name = 'beta')
   dtd <- subset(dtd, beta > 0)
-  dtd$variable <- gsub('X', '', dtd$variable)  
+  dtd$topic <- gsub('X', '', dtd$topic)  
   
   
   ## Extract topic_word_distributions
