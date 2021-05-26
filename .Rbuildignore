@@ -1,5 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
+<<<<<<< HEAD
 ^\.github$
 ^LICENSE\.md$
+=======
+^PubmedMTK\.Rcheck$
+^PubmedMTK.*\.tar\.gz$
+^PubmedMTK.*\.tgz$
+>>>>>>> 25b78f1f27ee92f502a070b8d384204ad68e94bd

@@ -2,3 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
+PubmedMTK.Rcheck/
+PubmedMTK*.tar.gz
+PubmedMTK*.tgz

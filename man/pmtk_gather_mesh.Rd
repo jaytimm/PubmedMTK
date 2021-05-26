@@ -4,7 +4,7 @@
 \alias{pmtk_gather_mesh}
 \title{Extract MeSH terms.}
 \usage{
-pmtk_gather_mesh(meta_df)
+pmtk_gather_mesh(x)
 }
 \arguments{
 \item{meta_df}{Metadata data frame returned from `pmtk_loadr_abs'`}

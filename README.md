@@ -11,8 +11,6 @@ structure.
 -   [Usage](#usage)
     -   [MeSH vocabulary](#mesh-vocabulary)
     -   [PubMed search](#pubmed-search)
-    -   [Retrieve abstract data from
-        PubMed](#retrieve-abstract-data-from-pubmed)
     -   [Extract MeSH classifications](#extract-mesh-classifications)
     -   [MeSH annotations-based topic
         model](#mesh-annotations-based-topic-model)
@@ -38,75 +36,44 @@ sets](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md).
 
 The `pmtk_search_pubmed()` function is meant for record-matching
 searches typically performed using the [PubMed online
-interface](https://pubmed.ncbi.nlm.nih.gov/). If multiple search terms
-are specified, independent queries are performed per term. Output
-includes record IDs per search term – which can subsequently be used to
-fetch full records/abstracts.
-
-Search terms are by default translated into NCBI syntax; for simplicity,
-search is focused on *MeSH headings* (\[MH\]) and *titles & abstracts*
-(\[TIAB\]). So: a search for `aging` is translated as
-`aging[MH] OR aging[TIAB]`. The user can specify their own PubMed-ready
-queries by setting the `translate_syntax` parameter to FALSE.
+interface](https://pubmed.ncbi.nlm.nih.gov/). The `search_term`
+parameter specifies the query term; the `fields` parameter can be used
+to specify which fields to query.
 
 ``` r
-pmed_search <- c('proteostasis',
-                 'telomere attrition',
-                 'epigenetic alterations',
-                 #'genomic instability',
-                 'stem cell exhaustion')
+s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'marijuana', fields = c('TIAB','MH'))
 ```
+
+    ## [1] "marijuana: 21962 records"
 
 ``` r
-search_results1 <- PubmedMTK::pmtk_search_pubmed(pmed_search = pmed_search)
+head(s0)
 ```
 
-    ## [1] "1 / 4 proteostasis[MH] OR proteostasis[TIAB]: 3686 records"
-    ## [1] "2 / 4 telomere attrition[MH] OR telomere attrition[TIAB]: 863 records"
-    ## [1] "3 / 4 epigenetic alterations[MH] OR epigenetic alterations[TIAB]: 5103 records"
-    ## [1] "4 / 4 stem cell exhaustion[MH] OR stem cell exhaustion[TIAB]: 165 records"
+    ##    search_term     pmid
+    ## 1:   marijuana 34033378
+    ## 2:   marijuana 34032489
+    ## 3:   marijuana 34028895
+    ## 4:   marijuana 34026421
+    ## 5:   marijuana 34022843
+    ## 6:   marijuana 34018308
 
 ### Retrieve abstract data from PubMed
 
-#### Approach \#1
-
-As a two-step process: (1) `pmtk_download_abs()` and (2)
-`pmtk_loadr_abs()`. The approach utilized here is not the most elegant,
-but it makes the most out of rate-limits by utilizing a combination of
-local storage and “more + smaller” API batch queries (via the
-`rentrez::entrez_fetch` package).
-
-The `out_file` parameter specifies the file path for local batch file
-storage; the `file_prefix` parameter specifies a character string used
-to identify batches (along with a batch \#).
-
 ``` r
-PubmedMTK::pmtk_download_abs(pmids = unique(search_results1$pmid),
-                             out_file = paste0(working_dir, 'batches/'),
-                             file_prefix = 'sen')
-```
-
-The `pmtk_loadr_abs()` function loads batch files as two data frames:
-the first, a corpus object containing the record id and abstract, and
-the second, a metadata object including record id and all other record
-details, eg, article name, MeSH terms, Pub Date, etc.
-
-``` r
-sen_df <- PubmedMTK::pmtk_loadr_abs(in_file = batch_dir, 
-                                    file_prefix = 'sen')
-```
-
-#### Approach \#2
-
-> In one fell swoop – no local storage.
-
-``` r
-sen_df <- PubmedMTK::pmtk_get_records2(pmids = unique(search_results1$pmid), 
+sen_df <- PubmedMTK::pmtk_get_records2(pmids = s0$pmid, 
                                        cores = 6, 
                                        ncbi_key = key) 
 
 sen_df <- data.table::rbindlist(sen_df)
 ```
+
+``` r
+colnames(sen_df)
+```
+
+    ## [1] "pmid"         "year"         "articletitle" "meshHeadings" "chemNames"   
+    ## [6] "keywords"     "abstract"
 
 ### Extract MeSH classifications
 
@@ -117,39 +84,8 @@ table amounts to a document-term matrix (DTM), in which each PubMed
 abstract is represented as a vector of MeSH terms.
 
 ``` r
-## or:: PubmedMTK::pmtk_gather_meshb
-meshes <- PubmedMTK::pmtk_gather_mesh(meta_df = sen_df)
-txts <- length(unique(meshes$pmid))
-
-## get frequencies -- 
-freqs <-  meshes[, list(doc_freq = length(unique(pmid))), 
-                 by = list(descriptor_name)]
-freqs$doc_prop <- freqs$doc_freq/ txts
-freqs1 <- subset(freqs, doc_prop > 0.0001 & doc_prop < 0.02)
-
-meshes1 <- subset(meshes, descriptor_name %in% freqs1$descriptor_name)
-meshes1 <- subset(meshes1, nchar(descriptor_name) > 0)
+m0 <- PubmedMTK::pmtk_gather_mesh(sen_df)
 ```
-
-Vector representations for a sample set of PubMed records is detailed
-below:
-
-``` r
-set.seed(999)
-meshes1 %>%
-  filter(pmid %in% sample(unique(meshes1$pmid), 5)) %>%
-  group_by(pmid) %>%
-  summarize (mesh_reps = paste0(descriptor_name, collapse = ' | ')) %>%
-  knitr::kable()
-```
-
-| pmid     | mesh_reps                                                                                                                                                                                                                                            |
-|:---------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 12112316 | base sequence \| dna \| genes, fos \| keratinocytes \| masoprocol \| phosphorylation \| transcription factor ap-1 \| transcription, genetic \| ultraviolet rays \| transcription factor ap-1 \| masoprocol \| dna                                    |
-| 23954725 | protein misfolding \| protein quality control \| ribosome \| translation \| cytosol \| protein biosynthesis \| proteostasis deficiencies \| quality control \| ribosomes \| ubiquitin-protein ligases \| ubiquitination \| ubiquitin-protein ligases |
-| 28762764 | blood-air barrier \| lung injury \| respiratory distress syndrome                                                                                                                                                                                    |
-| 29708900 | fertility \| fertilization in vitro \| infertility, female \| ovarian diseases \| ovarian reserve                                                                                                                                                    |
-| 30693739 | anorexia nervosa \| chronic disease \| epigenome \| longitudinal studies \| remission induction                                                                                                                                                      |
 
 ### MeSH annotations-based topic model
 
@@ -162,43 +98,53 @@ composition can be interpreted as sets of MeSH terms that frequently
 co-occur.
 
 ``` r
-mesh_dtm <- tidytext::cast_sparse(data = meshes1,
-                                  row = pmid,
-                                  column = descriptor_name,
-                                  value = count)
+as.text <- m0[, list(text = paste(term, collapse = " ")), by = pmid]
+iter <- text2vec::itoken(as.text$text, ids = as.text$pmid)  
+vocab <- text2vec::create_vocabulary(iter)
 
-mesh_lda <- text2vec::LDA$new(n_topics = 20) ## This is the model
-topic_model_fit <- mesh_lda$fit_transform(mesh_dtm, progressbar = F)
+vocab0 <- text2vec::prune_vocabulary(
+  vocab, 
+  # doc_proportion_min = 0.0001,
+  doc_proportion_max = 0.55,
+  doc_count_min = 3) 
+
+vectorizer <- text2vec::vocab_vectorizer(vocab0)
+dtm <- text2vec::create_dtm(iter, vectorizer)
 ```
 
-    ## INFO  [07:11:04.078] early stopping at 140 iteration 
-    ## INFO  [07:11:05.192] early stopping at 20 iteration
-
-The `mtk_summarize_lda` function summarizes and extracts topic
+The `pmtk_summarize_lda` function summarizes and extracts topic
 composition from the `text2vec::LDA` output. For each possible
 topic-feature pair, the model computes the likelihood a given topic
 generated a given feature. Output is filtered to the highest scoring
 features per topic using the `topic_feats_n`.
 
 ``` r
-tm_summary <- PubmedMTK::mtk_summarize_lda(
-  lda = mesh_lda, topic_feats_n = 10)
+lda <- text2vec::LDA$new(n_topics = 20) 
+fit <- lda$fit_transform(dtm, progressbar = F)
+```
+
+    ## INFO  [15:49:43.128] early stopping at 180 iteration 
+    ## INFO  [15:49:44.619] early stopping at 20 iteration
+
+``` r
+tm_summary <- PubmedMTK::pmtk_summarize_lda(
+  lda = lda, topic_feats_n = 10)
 ```
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                                              |
-|---------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | dna repair \| adaptor proteins, signal transducing \| carcinoma, squamous cell \| repressor proteins \| histone deacetylases \| carcinogenesis \| stem cells \| lung neoplasms \| apoptosis regulatory proteins \| cell cycle               |
-|        2 | reactive oxygen species \| phosphorylation \| cell cycle proteins \| muscle, skeletal \| protein-serine-threonine kinases \| up-regulation \| energy metabolism \| proto-oncogene proteins c-akt \| gene deletion \| myocardium             |
-|        3 | liver neoplasms \| carcinoma, hepatocellular \| microrna \| neoplastic stem cells \| histone modification \| epigenetic \| drug resistance, neoplasm \| tumor microenvironment \| biomarker \| epithelial-mesenchymal transition            |
-|        4 | saccharomyces cerevisiae \| protein aggregates \| protein aggregation \| saccharomyces cerevisiae proteins \| mitochondrial proteins \| protein aggregation, pathological \| proteostasis deficiencies \| chaperone \| amyloid \| mitophagy |
-|        5 | prostatic neoplasms \| neoplasm metastasis \| diet \| melanoma \| carcinogens \| immunotherapy \| environment \| skin neoplasms \| placenta \| embryonic development                                                                        |
-|        6 | neoplasm proteins \| molecular targeted therapy \| telomere homeostasis \| telomeres \| telomere length \| genomic instability \| breast cancer \| senescence \| follow-up studies \| cystic fibrosis                                       |
-|        7 | alzheimer disease \| mice, transgenic \| genomics \| nerve tissue proteins \| membrane proteins \| amyloid beta-peptides \| base sequence \| molecular sequence data \| alpha-synuclein \| parkinson disease                                |
-|        8 | polymerase chain reaction \| dna, neoplasm \| neoplasm staging \| down-regulation \| brain neoplasms \| colonic neoplasms \| adenocarcinoma \| loss of heterozygosity \| immunohistochemistry \| glioblastoma                               |
-|        9 | ubiquitination \| protein transport \| ubiquitin-protein ligases \| lysosomes \| hela cells \| cell survival \| tor serine-threonine kinases \| heat shock transcription factors \| cell nucleus \| protein biosynthesis                    |
-|       10 | caenorhabditis elegans proteins \| neurodegeneration \| rna interference \| er stress \| amyotrophic lateral sclerosis \| peptides \| drosophila melanogaster \| metabolism \| alzheimer’s disease \| rna, small interfering                |
+| topic_id | topic_features                                                                                                                                                                            |
+|---------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | male \| adult \| marijuana_abuse \| female \| mental_disorders \| cannabis \| psychoses,\_substance-induced \| schizophrenia \| psychotic_disorders \| psychiatric_status_rating_scales   |
+|        2 | substance-related_disorders \| united_states \| male \| adolescent \| female \| age_factors \| adult \| attitude \| sex_factors \| data_collection                                        |
+|        3 | adolescent \| adolescent_behavior \| child \| substance-related_disorders \| longitudinal_studies \| peer_group \| risk_factors \| social_environment \| violence \| juvenile_delinquency |
+|        4 | male \| adult \| female \| treatment_outcome \| depression \| middle_aged \| anxiety \| cannabis \| analgesics,\_opioid \| opioid-related_disorders                                       |
+|        5 | adolescent \| male \| students \| surveys_and_questionnaires \| female \| alcohol_drinking \| motivation \| universities \| young_adult \| marijuana_smoking                              |
+|        6 | marijuana_abuse \| female \| male \| adult \| follow-up_studies \| alcoholism \| risk_factors \| longitudinal_studies \| cohort_studies \| young_adult                                    |
+|        7 | young_adult \| marijuana_use \| substance_use \| sexual_behavior \| hiv_infections \| risk-taking \| alcohol \| male \| adolescents \| adolescent                                         |
+|        8 | animals \| dronabinol \| rats \| time_factors \| dose-response_relationship,\_drug \| behavior,\_animal \| brain \| motor_activity \| mice \| drug_tolerance                              |
+|        9 | female \| pregnancy \| adult \| child \| prenatal_exposure_delayed_effects \| infant,\_newborn \| cannabis \| prospective_studies \| smoking \| pregnancy_complications                   |
+|       10 | medical_marijuana \| phytotherapy \| united_states \| legislation,\_drug \| drug_and_narcotic_control \| cannabis \| pain \| canada \| public_health \| vomiting                          |
 
 ### Two-dimensional analyses
 
@@ -219,7 +165,7 @@ two_ds <- PubmedMTK::pmtk_2d(mat = tmat)
 two_ds$hc %>% ggdendro::ggdendrogram(rotate=TRUE)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
 #### Principal component analysis (PCA)
 
@@ -235,4 +181,4 @@ two_ds$pca %>%
   ggtitle('Topics in 2d PCA space')
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)

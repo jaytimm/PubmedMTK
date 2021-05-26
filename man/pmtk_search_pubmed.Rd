@@ -4,12 +4,7 @@
 \alias{pmtk_search_pubmed}
 \title{Perform basic PubMed search.}
 \usage{
-pmtk_search_pubmed(
-  pmed_search,
-  translate_syntax = T,
-  verbose = T,
-  retmax = 5e+06
-)
+pmtk_search_pubmed(search_term, fields = c("TIAB", "MH"))
 }
 \arguments{
 \item{pmed_search}{A character string, or list of character strings}
