@@ -4,10 +4,10 @@
 \alias{pmtk_search_pubmed}
 \title{Perform basic PubMed search.}
 \usage{
-pmtk_search_pubmed(search_term, fields = c("TIAB", "MH"))
+pmtk_search_pubmed(search_term, fields = c("TIAB", "MH"), sleep = 1)
 }
 \arguments{
-\item{pmed_search}{A character string, or list of character strings}
+\item{search_term}{A character string, or list of character strings}
 
 \item{translate_syntax}{boolean: T to translate term to NCBI/mesh+tiab}
 

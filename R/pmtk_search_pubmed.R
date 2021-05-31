@@ -2,7 +2,7 @@
 #'
 #' @name pmtk_search_pubmed
 #' 
-#' @param pmed_search A character string, or list of character strings 
+#' @param search_term A character string, or list of character strings 
 #' @param translate_syntax boolean: T to translate term to NCBI/mesh+tiab
 #' @param verbose boolean: T to output progress
 #' 
@@ -14,7 +14,8 @@
 #' 
 
 pmtk_search_pubmed <- function (search_term, 
-                                fields = c('TIAB','MH')) { #
+                                fields = c('TIAB','MH'),
+                                sleep = 1) { #
   
   ## good eg: "violent depression"
   pre_url1 <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?"
@@ -44,7 +45,7 @@ pmtk_search_pubmed <- function (search_term,
   
   out <- data.table::data.table(search_term = search_term, pmid = x3) 
   
-  Sys.sleep(1)
+  Sys.sleep(sleep)
   finally =  print(paste0(search_term, ': ', nrow(out), ' records'))
   out
 }
