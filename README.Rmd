@@ -175,10 +175,10 @@ two_ds$hc %>% ggdendro::ggdendrogram(rotate=TRUE)
 ```
 
 
-#### Principal component analysis (PCA)
+#### tSNE
 
 ```{r}
-two_ds$pca %>%
+two_ds$tSNE %>%
   ggplot(aes(x = X1,
              y = X2,
              label = topic_id)) +
