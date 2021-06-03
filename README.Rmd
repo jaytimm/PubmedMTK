@@ -58,7 +58,8 @@ The package includes as a data frame the MeSH thesaurus & hierarchically-organiz
 The `pmtk_search_pubmed()` function is meant for record-matching searches typically performed using the [PubMed online interface](https://pubmed.ncbi.nlm.nih.gov/).  The `search_term` parameter specifies the query term; the `fields` parameter can be used to specify which fields to query. 
 
 ```{r}
-s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'marijuana', fields = c('TIAB','MH'))
+s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'marijuana', 
+                                    fields = c('TIAB','MH'))
 ```
 ```{r}
 head(s0)

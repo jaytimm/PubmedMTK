@@ -7,7 +7,7 @@ output:
 
 ## Medline citation counts by year of publication
 
-For calculation of relative citation frequency. Count data made available [here](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html). Medline counts are complete through 2018; here, we have projected counts by year for 2019 onward using the R package `forecast`.  An imperfect solution, but a reasonable enough denominator for computing rough relative frequency counts historically.
+Count data made available [here](https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html). Medline counts are complete through 2018; here, we have projected counts by year for 2019 onward using the R package `forecast`.  An imperfect solution, but a reasonable enough denominator for computing rough relative frequency counts historically.
 
 ```{r message=FALSE, warning=FALSE}
 if (!require("pacman")) install.packages("pacman")
