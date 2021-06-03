@@ -178,7 +178,7 @@ two_ds$hc %>% ggdendro::ggdendrogram(rotate=TRUE)
 #### tSNE
 
 ```{r}
-two_ds$tSNE %>%
+two_ds$tsne %>%
   ggplot(aes(x = X1,
              y = X2,
              label = topic_id)) +
@@ -186,7 +186,7 @@ two_ds$tSNE %>%
                       color = '#a5c8e1',
                       alpha = 0.5) +
   geom_text(size = 3) +
-  ggtitle('Topics in 2d PCA space')
+  ggtitle('Topics in 2d space')
 ```
 
 
@@ -207,7 +207,7 @@ serVis(json, out.dir = 'ldavis', open.browser = FALSE)
 
 ### MeSH vocabulary 
 
-The package includes as a data frame the MeSH thesaurus & hierarchically-organized vocabulary -- comprised of 2021 versions of `descriptor` & `trees` files made available via NLM-NIH.  [A workflow for re-creating the table from raw data sets](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md).  
+  The package includes as a data frame the MeSH thesaurus & hierarchically-organized vocabulary -- comprised of 2021 versions of `descriptor` & `trees` files made available via NLM-NIH.  [A workflow](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md) for re-creating the table from raw data sets.  
 
 ```{r}
 PubmedMTK::pmtk_tbl_mesh[1:5, c(1:3, 5:6)]

@@ -151,8 +151,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [09:14:52.463] early stopping at 160 iteration 
-    ## INFO  [09:14:52.633] early stopping at 20 iteration
+    ## INFO  [10:17:14.068] early stopping at 90 iteration 
+    ## INFO  [10:17:14.271] early stopping at 30 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -161,18 +161,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                                     |
-|---------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | cannabis \| phytotherapy \| legislation,\_drug \| plant_preparations \| health_services_accessibility \| cannabinoid_receptor_modulators \| drug_and_narcotic_control \| politics \| ethics,\_medical \| gastrointestinal_diseases |
-|        2 | marijuana_smoking \| marijuana \| risk_assessment \| adult \| risk_factors \| practice_patterns,\_physicians’ \| health_policy \| cannabis \| time_factors \| germany                                                              |
-|        3 | cannabidiol \| dronabinol \| cannabinoids \| epilepsy \| anticonvulsants \| plant_extracts \| seizures \| tetrahydrocannabinol \| drug_resistant_epilepsy \| epilepsies,\_myoclonic                                                |
-|        4 | cannabinoids \| animals \| endocannabinoids \| brain \| receptors,\_cannabinoid \| receptor,\_cannabinoid,\_cb1 \| cognition \| treatment_outcome \| endocannabinoid_system \| inflammatory_bowel_diseases                         |
-|        5 | marijuana_smoking \| united_states \| legislation,\_drug \| cannabis \| drug_prescriptions \| public_health \| substance_abuse_detection \| workplace \| accidents,\_traffic \| substance_use                                      |
-|        6 | united_states \| california \| state_government \| government_regulation \| public_policy \| federal_government \| cannabis \| legislation,\_drug \| united_states_food_and_drug_administration \| jurisprudence                   |
-|        7 | cannabis \| thc \| cbd \| pregnancy \| commerce \| dose-response_relationship,\_drug \| medicinal_cannabis \| marijuana \| biomedical_research \| treatment                                                                        |
-|        8 | female \| male \| adult \| cross-sectional_studies \| middle_aged \| longitudinal_studies \| alcohol_drinking \| logistic_models \| self_report \| residence_characteristics                                                       |
-|        9 | middle_aged \| aged \| adult \| young_adult \| aged,\_80_and_over \| male \| cross-sectional_studies \| health_surveys \| smoking \| ptsd                                                                                          |
-|       10 | surveys_and_questionnaires \| medical_cannabis \| male \| health_knowledge,\_attitudes,\_practice \| attitude_of_health_personnel \| mental_health \| attitudes \| knowledge \| middle_aged \| public_opinion                      |
+| topic_id | topic_features                                                                                                                                                                                                             |
+|---------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | adolescent \| marijuana_smoking \| cannabis \| california \| young_adult \| canada \| adolescent_behavior \| substance_use \| commerce \| pharmacists                                                                      |
+|        2 | cannabis \| canada \| phytotherapy \| marijuana \| illicit_drugs \| receptor,\_cannabinoid,\_cb1 \| cross-sectional_studies \| endocannabinoid_system \| addiction \| receptor,\_cannabinoid,\_cb2                         |
+|        3 | male \| adult \| female \| middle_aged \| surveys_and_questionnaires \| internet \| self_report \| public_opinion \| accidents,\_traffic \| risk_factors                                                                   |
+|        4 | cannabidiol \| cannabis \| epilepsy \| dronabinol \| treatment_outcome \| quality_of_life \| plant_extracts \| randomized_controlled_trials_as_topic \| neuralgia \| germany                                               |
+|        5 | drug_and_narcotic_control \| united_states \| state_government \| government_regulation \| federal_government \| drug_approval \| health_policy \| marijuana_smoking \| risk_assessment \| legislation,\_medical           |
+|        6 | cannabis \| cannabinoids \| attitude_of_health_personnel \| neoplasms \| health_knowledge,\_attitudes,\_practice \| evidence-based_medicine \| risk_assessment \| practice_guidelines_as_topic \| health_personnel \| pain |
+|        7 | marijuana \| legislation,\_drug \| united_states \| child \| public_policy \| marijuana_use \| cannabis \| legalization \| commerce \| public_health                                                                       |
+|        8 | adult \| aged \| middle_aged \| cross-sectional_studies \| surveys_and_questionnaires \| young_adult \| aged,\_80_and_over \| female \| male \| health_knowledge,\_attitudes,\_practice                                    |
+|        9 | legislation,\_drug \| substance-related_disorders \| practice_patterns,\_physicians’ \| phytotherapy \| marijuana_use \| physicians \| politics \| united_states \| analgesics,\_opioid \| socioeconomic_factors           |
+|       10 | cannabinoids \| chronic_pain \| medical_cannabis \| pain_management \| israel \| australia \| chronic_disease \| stress_disorders,\_post-traumatic \| fibromyalgia \| cannabinoid_receptor_modulators                      |
 
 ### Two-dimensional analyses
 
@@ -195,10 +195,10 @@ two_ds$hc %>% ggdendro::ggdendrogram(rotate=TRUE)
 
 ![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
-#### Principal component analysis (PCA)
+#### tSNE
 
 ``` r
-two_ds$pca %>%
+two_ds$tsne %>%
   ggplot(aes(x = X1,
              y = X2,
              label = topic_id)) +
@@ -206,7 +206,7 @@ two_ds$pca %>%
                       color = '#a5c8e1',
                       alpha = 0.5) +
   geom_text(size = 3) +
-  ggtitle('Topics in 2d PCA space')
+  ggtitle('Topics in 2d space')
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)
@@ -217,9 +217,9 @@ two_ds$pca %>%
 
 The package includes as a data frame the MeSH thesaurus &
 hierarchically-organized vocabulary – comprised of 2021 versions of
-`descriptor` & `trees` files made available via NLM-NIH. [A workflow for
-re-creating the table from raw data
-sets](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md).
+`descriptor` & `trees` files made available via NLM-NIH. [A
+workflow](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md)
+for re-creating the table from raw data sets.
 
 ``` r
 PubmedMTK::pmtk_tbl_mesh[1:5, c(1:3, 5:6)]
