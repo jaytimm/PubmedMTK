@@ -56,7 +56,7 @@ pmtk_tbl_pmc_ref[, doc_prop := doc_count/total_pmid]
 
 
 
-```{r include=FALSE}
+```{r echo=FALSE}
 PubmedMTK::pmtk_tbl_pmc_ref
 ```
 

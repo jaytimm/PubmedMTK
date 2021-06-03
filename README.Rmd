@@ -47,12 +47,6 @@ pacman::p_load(text2vec, ggplot2, knitr, magrittr, dplyr, tidyr)
 ```
 
 
-### MeSH vocabulary 
-
-The package includes as a data frame the MeSH thesaurus & hierarchically-organized vocabulary -- comprised of 2021 versions of `descriptor` & `trees` files made available via NLM-NIH.  [A workflow for re-creating the table from raw data sets](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md).  
-
-
-
 ### PubMed search
 
 The `pmtk_search_pubmed()` function is meant for record-matching searches typically performed using the [PubMed online interface](https://pubmed.ncbi.nlm.nih.gov/).  The `search_term` parameter specifies the query term; the `fields` parameter can be used to specify which fields to query. 
@@ -200,4 +194,34 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 serVis(json, out.dir = 'ldavis', open.browser = FALSE)
 ```
 
+
+
+## Tables
+
+### MeSH vocabulary 
+
+The package includes as a data frame the MeSH thesaurus & hierarchically-organized vocabulary -- comprised of 2021 versions of `descriptor` & `trees` files made available via NLM-NIH.  [A workflow for re-creating the table from raw data sets](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md).  
+
+```{r}
+PubmedMTK::pmtk_tbl_mesh
+```
+
+
+
+
+### PMC MeSH annotation frequencies
+
+```{r}
+PubmedMTK::pmtk_tbl_pmc_ref
+```
+
+
+
+
+
+### Medline citation counts
+
+```{r}
+PubmedMTK::pmtk_tbl_citations
+```
 
