@@ -37,23 +37,23 @@ parameter specifies the query term; the `fields` parameter can be used
 to specify which fields to query.
 
 ``` r
-s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'marijuana', 
+s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'medical marijuana', 
                                     fields = c('TIAB','MH'))
 ```
 
-    ## [1] "marijuana: 22004 records"
+    ## [1] "medical marijuana: 2125 records"
 
 ``` r
 head(s0)
 ```
 
-    ##    search_term     pmid
-    ## 1:   marijuana 34074708
-    ## 2:   marijuana 34074707
-    ## 3:   marijuana 34073522
-    ## 4:   marijuana 34060494
-    ## 5:   marijuana 34058538
-    ## 6:   marijuana 34058314
+    ##          search_term     pmid
+    ## 1: medical marijuana 34044753
+    ## 2: medical marijuana 34007062
+    ## 3: medical marijuana 33998880
+    ## 4: medical marijuana 33998864
+    ## 5: medical marijuana 33981161
+    ## 6: medical marijuana 33974499
 
 ### Retrieve abstract data from PubMed
 
@@ -65,12 +65,43 @@ sen_df <- PubmedMTK::pmtk_get_records2(pmids = s0$pmid,
 sen_df <- data.table::rbindlist(sen_df)
 ```
 
+> Sample record from output:
+
 ``` r
-colnames(sen_df)
+n <- 9
+list(pmid = sen_df$pmid[n],
+     year = sen_df$year[n],
+     articletitle = strwrap(sen_df$articletitle[n], width = 60),
+     meshHeadings = strwrap(sen_df$meshHeadings[n], width = 60),
+     text = strwrap(sen_df$abstract[n], width = 60)[1:10])
 ```
 
-    ## [1] "pmid"         "year"         "articletitle" "meshHeadings" "chemNames"   
-    ## [6] "keywords"     "abstract"
+    ## $pmid
+    ## [1] "33933061"
+    ## 
+    ## $year
+    ## [1] "2021"
+    ## 
+    ## $articletitle
+    ## [1] "Opioid use in medical cannabis authorization adult patients"
+    ## [2] "from 2013 to 2018: Alberta, Canada."                        
+    ## 
+    ## $meshHeadings
+    ## [1] "Adult|Alberta|Analgesics,"                                  
+    ## [2] "Opioid|Cannabis|Female|Humans|Male|Medical Marijuana|Middle"
+    ## [3] "Aged|Opioid-Related Disorders|United States"                
+    ## 
+    ## $text
+    ##  [1] "The opioid overdose epidemic in Canada and the United"      
+    ##  [2] "States has become a public health crisis - with exponential"
+    ##  [3] "increases in opioid-related morbidity and mortality."       
+    ##  [4] "Recently, there has been an increasing body of evidence"    
+    ##  [5] "focusing on the opioid-sparing effects of medical cannabis" 
+    ##  [6] "use (reduction of opioid use and reliance), and medical"    
+    ##  [7] "cannabis as a potential alternative treatment for chronic"  
+    ##  [8] "pain. The objective of this study is to assess the effect"  
+    ##  [9] "of medical cannabis authorization on opioid use (oral"      
+    ## [10] "morphine equivalent; OME) between 2013 and 2018 in Alberta,"
 
 ### Extract MeSH classifications
 
@@ -120,8 +151,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [08:39:03.738] early stopping at 170 iteration 
-    ## INFO  [08:39:04.860] early stopping at 20 iteration
+    ## INFO  [09:14:52.463] early stopping at 160 iteration 
+    ## INFO  [09:14:52.633] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -130,18 +161,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                                               |
-|---------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | marijuana \| marijuana_use \| young_adult \| substance_use \| alcohol \| marijuana_smoking \| adolescents \| united_states \| tobacco \| adolescence                                                                                         |
-|        2 | animals \| rats \| mice \| endocannabinoids \| receptors,\_cannabinoid \| receptor,\_cannabinoid,\_cb1 \| dronabinol \| cannabinoid_receptor_modulators \| receptors,\_drug \| brain                                                         |
-|        3 | cannabis \| medical_marijuana \| legislation,\_drug \| drug_and_narcotic_control \| phytotherapy \| canada \| public_health \| health_policy \| chronic_pain \| united_kingdom                                                               |
-|        4 | united_states \| substance-related_disorders \| male \| adolescent \| age_factors \| female \| socioeconomic_factors \| behavior \| adult \| crime                                                                                           |
-|        5 | students \| alcohol_drinking \| substance-related_disorders \| sex_factors \| smoking \| adolescent \| universities \| male \| attitude \| age_factors                                                                                       |
-|        6 | marijuana_abuse \| male \| adult \| comorbidity \| female \| mental_disorders \| depression \| alcoholism \| psychoses,\_substance-induced \| anxiety                                                                                        |
-|        7 | dronabinol \| time_factors \| animals \| dose-response_relationship,\_drug \| heart_rate \| behavior,\_animal \| drug_interactions \| memory \| administration,\_oral \| drug_tolerance                                                      |
-|        8 | cannabis \| male \| aggression \| tobacco \| seeds \| ethanol \| plants,\_toxic \| lung \| smoke \| perception                                                                                                                               |
-|        9 | cannabis \| dronabinol \| cannabinoids \| gas_chromatography-mass_spectrometry \| chromatography,\_gas \| chromatography,\_thin_layer \| reproducibility_of_results \| chromatography,\_high_pressure_liquid \| mass_spectrometry \| methods |
-|       10 | female \| pregnancy \| child \| smoking \| prospective_studies \| prenatal_exposure_delayed_effects \| infant,\_newborn \| case-control_studies \| longitudinal_studies \| pregnancy_complications                                           |
+| topic_id | topic_features                                                                                                                                                                                                                     |
+|---------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | cannabis \| phytotherapy \| legislation,\_drug \| plant_preparations \| health_services_accessibility \| cannabinoid_receptor_modulators \| drug_and_narcotic_control \| politics \| ethics,\_medical \| gastrointestinal_diseases |
+|        2 | marijuana_smoking \| marijuana \| risk_assessment \| adult \| risk_factors \| practice_patterns,\_physicians’ \| health_policy \| cannabis \| time_factors \| germany                                                              |
+|        3 | cannabidiol \| dronabinol \| cannabinoids \| epilepsy \| anticonvulsants \| plant_extracts \| seizures \| tetrahydrocannabinol \| drug_resistant_epilepsy \| epilepsies,\_myoclonic                                                |
+|        4 | cannabinoids \| animals \| endocannabinoids \| brain \| receptors,\_cannabinoid \| receptor,\_cannabinoid,\_cb1 \| cognition \| treatment_outcome \| endocannabinoid_system \| inflammatory_bowel_diseases                         |
+|        5 | marijuana_smoking \| united_states \| legislation,\_drug \| cannabis \| drug_prescriptions \| public_health \| substance_abuse_detection \| workplace \| accidents,\_traffic \| substance_use                                      |
+|        6 | united_states \| california \| state_government \| government_regulation \| public_policy \| federal_government \| cannabis \| legislation,\_drug \| united_states_food_and_drug_administration \| jurisprudence                   |
+|        7 | cannabis \| thc \| cbd \| pregnancy \| commerce \| dose-response_relationship,\_drug \| medicinal_cannabis \| marijuana \| biomedical_research \| treatment                                                                        |
+|        8 | female \| male \| adult \| cross-sectional_studies \| middle_aged \| longitudinal_studies \| alcohol_drinking \| logistic_models \| self_report \| residence_characteristics                                                       |
+|        9 | middle_aged \| aged \| adult \| young_adult \| aged,\_80_and_over \| male \| cross-sectional_studies \| health_surveys \| smoking \| ptsd                                                                                          |
+|       10 | surveys_and_questionnaires \| medical_cannabis \| male \| health_knowledge,\_attitudes,\_practice \| attitude_of_health_personnel \| mental_health \| attitudes \| knowledge \| middle_aged \| public_opinion                      |
 
 ### Two-dimensional analyses
 
@@ -191,71 +222,27 @@ re-creating the table from raw data
 sets](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md).
 
 ``` r
-PubmedMTK::pmtk_tbl_mesh
+PubmedMTK::pmtk_tbl_mesh[1:5, c(1:3, 5:6)]
 ```
 
-    ##         DescriptorUI          DescriptorName                 TermName code
-    ##      1:      D000001              calcimycin               calcimycin    D
-    ##      2:      D000001              calcimycin                  a-23187    D
-    ##      3:      D000001              calcimycin                  a 23187    D
-    ##      4:      D000001              calcimycin                   a23187    D
-    ##      5:      D000001              calcimycin        antibiotic a23187    D
-    ##     ---                                                                   
-    ## 562296:      D066331 laser-evoked potentials   laser-evoked potential    G
-    ## 562297:      D066331 laser-evoked potentials  potential, laser-evoked    G
-    ## 562298:      D066331 laser-evoked potentials  potential, laser-evoked    G
-    ## 562299:      D066331 laser-evoked potentials potentials, laser-evoked    G
-    ## 562300:      D066331 laser-evoked potentials potentials, laser-evoked    G
-    ##                            cats
-    ##      1:     Chemicals and Drugs
-    ##      2:     Chemicals and Drugs
-    ##      3:     Chemicals and Drugs
-    ##      4:     Chemicals and Drugs
-    ##      5:     Chemicals and Drugs
-    ##     ---                        
-    ## 562296: Phenomena and Processes
-    ## 562297: Phenomena and Processes
-    ## 562298: Phenomena and Processes
-    ## 562299: Phenomena and Processes
-    ## 562300: Phenomena and Processes
-    ##                                                      mesh1
-    ##      1:                             Heterocyclic Compounds
-    ##      2:                             Heterocyclic Compounds
-    ##      3:                             Heterocyclic Compounds
-    ##      4:                             Heterocyclic Compounds
-    ##      5:                             Heterocyclic Compounds
-    ##     ---                                                   
-    ## 562296: Musculoskeletal and Neural Physiological Phenomena
-    ## 562297:                            Physiological Phenomena
-    ## 562298: Musculoskeletal and Neural Physiological Phenomena
-    ## 562299:                            Physiological Phenomena
-    ## 562300: Musculoskeletal and Neural Physiological Phenomena
-    ##                                          mesh2           tree_location tree1
-    ##      1:     Heterocyclic Compounds, Fused-Ring     D03.633.100.221.173   D03
-    ##      2:     Heterocyclic Compounds, Fused-Ring     D03.633.100.221.173   D03
-    ##      3:     Heterocyclic Compounds, Fused-Ring     D03.633.100.221.173   D03
-    ##      4:     Heterocyclic Compounds, Fused-Ring     D03.633.100.221.173   D03
-    ##      5:     Heterocyclic Compounds, Fused-Ring     D03.633.100.221.173   D03
-    ##     ---                                                                     
-    ## 562296: Nervous System Physiological Phenomena G11.561.200.500.400.500   G11
-    ## 562297:         Electrophysiological Phenomena G07.265.216.500.400.500   G07
-    ## 562298: Nervous System Physiological Phenomena G11.561.200.500.400.500   G11
-    ## 562299:         Electrophysiological Phenomena G07.265.216.500.400.500   G07
-    ## 562300: Nervous System Physiological Phenomena G11.561.200.500.400.500   G11
-    ##           tree2
-    ##      1: D03.633
-    ##      2: D03.633
-    ##      3: D03.633
-    ##      4: D03.633
-    ##      5: D03.633
-    ##     ---        
-    ## 562296: G11.561
-    ## 562297: G07.265
-    ## 562298: G11.561
-    ## 562299: G07.265
-    ## 562300: G11.561
+    ##    DescriptorUI DescriptorName          TermName                cats
+    ## 1:      D000001     calcimycin        calcimycin Chemicals and Drugs
+    ## 2:      D000001     calcimycin           a-23187 Chemicals and Drugs
+    ## 3:      D000001     calcimycin           a 23187 Chemicals and Drugs
+    ## 4:      D000001     calcimycin            a23187 Chemicals and Drugs
+    ## 5:      D000001     calcimycin antibiotic a23187 Chemicals and Drugs
+    ##                     mesh1
+    ## 1: Heterocyclic Compounds
+    ## 2: Heterocyclic Compounds
+    ## 3: Heterocyclic Compounds
+    ## 4: Heterocyclic Compounds
+    ## 5: Heterocyclic Compounds
 
 ### PMC MeSH annotation frequencies
+
+MeSH annotation frequencies for the Open Access Common Use portion of
+PMC. Frequencies based on roughly 1.8 million PubMed records. Details
+[here](https://github.com/jaytimm/PubmedMTK/blob/main/mds/pmc-reference.md).
 
 ``` r
 PubmedMTK::pmtk_tbl_pmc_ref
@@ -276,84 +263,17 @@ PubmedMTK::pmtk_tbl_pmc_ref
 
 ### Medline citation counts
 
+Table build details available
+[here](https://github.com/jaytimm/PubmedMTK/blob/main/mds/medline_citations.md).
+
 ``` r
-PubmedMTK::pmtk_tbl_citations
+tail(PubmedMTK::pmtk_tbl_citations)
 ```
 
-    ##           year  total    usa
-    ##  1: 1947-01-01  62869     NA
-    ##  2: 1948-01-01  68711     NA
-    ##  3: 1949-01-01  60931     NA
-    ##  4: 1950-01-01  84099     NA
-    ##  5: 1951-01-01 102578     NA
-    ##  6: 1952-01-01 106850     NA
-    ##  7: 1953-01-01 107678     NA
-    ##  8: 1954-01-01 104007     NA
-    ##  9: 1955-01-01 106760     NA
-    ## 10: 1956-01-01 105228     NA
-    ## 11: 1957-01-01 109811     NA
-    ## 12: 1958-01-01 107655     NA
-    ## 13: 1959-01-01 107792     NA
-    ## 14: 1960-01-01 108862     NA
-    ## 15: 1961-01-01 117003     NA
-    ## 16: 1962-01-01 122645     NA
-    ## 17: 1963-01-01 137734     NA
-    ## 18: 1964-01-01 158922  48007
-    ## 19: 1965-01-01 173136  52211
-    ## 20: 1966-01-01 175197  53251
-    ## 21: 1967-01-01 186846  55734
-    ## 22: 1968-01-01 203701  60711
-    ## 23: 1969-01-01 210438  63482
-    ## 24: 1970-01-01 211330  63806
-    ## 25: 1971-01-01 216614  65921
-    ## 26: 1972-01-01 222237  69590
-    ## 27: 1973-01-01 225871  74089
-    ## 28: 1974-01-01 229807  77282
-    ## 29: 1975-01-01 244105  82956
-    ## 30: 1976-01-01 249180  87105
-    ## 31: 1977-01-01 255745  91627
-    ## 32: 1978-01-01 265555  96916
-    ## 33: 1979-01-01 274279 103545
-    ## 34: 1980-01-01 272538 104572
-    ## 35: 1981-01-01 274481 106472
-    ## 36: 1982-01-01 285221 112363
-    ## 37: 1983-01-01 299016 118328
-    ## 38: 1984-01-01 307931 122777
-    ## 39: 1985-01-01 318108 126919
-    ## 40: 1986-01-01 330455 133524
-    ## 41: 1987-01-01 347998 141190
-    ## 42: 1988-01-01 365610 150036
-    ## 43: 1989-01-01 381394 156654
-    ## 44: 1990-01-01 388150 163476
-    ## 45: 1991-01-01 388767 168094
-    ## 46: 1992-01-01 391804 173562
-    ## 47: 1993-01-01 398113 178930
-    ## 48: 1994-01-01 407320 185636
-    ## 49: 1995-01-01 416476 191146
-    ## 50: 1996-01-01 421840 192566
-    ## 51: 1997-01-01 432077 198148
-    ## 52: 1998-01-01 446844 203691
-    ## 53: 1999-01-01 459801 210542
-    ## 54: 2000-01-01 485494 221990
-    ## 55: 2001-01-01 505769 231049
-    ## 56: 2002-01-01 521687 236554
-    ## 57: 2003-01-01 549305 249009
-    ## 58: 2004-01-01 579038 260288
-    ## 59: 2005-01-01 609839 273330
-    ## 60: 2006-01-01 634565 281453
-    ## 61: 2007-01-01 657654 287209
-    ## 62: 2008-01-01 685937 298734
-    ## 63: 2009-01-01 707729 306062
-    ## 64: 2010-01-01 735007 315215
-    ## 65: 2011-01-01 769281 330185
-    ## 66: 2012-01-01 811160 348797
-    ## 67: 2013-01-01 854133 365220
-    ## 68: 2014-01-01 871030 369552
-    ## 69: 2015-01-01 878432 366736
-    ## 70: 2016-01-01 862744 350671
-    ## 71: 2017-01-01 848229 343161
-    ## 72: 2018-01-01 857322 339199
-    ## 73: 2019-01-01 865068 334305
-    ## 74: 2020-01-01 871672 329411
-    ## 75: 2021-01-01 877300 324518
-    ##           year  total    usa
+    ##          year  total    usa
+    ## 1: 2016-01-01 862744 350671
+    ## 2: 2017-01-01 848229 343161
+    ## 3: 2018-01-01 857322 339199
+    ## 4: 2019-01-01 865068 334305
+    ## 5: 2020-01-01 871672 329411
+    ## 6: 2021-01-01 877300 324518
