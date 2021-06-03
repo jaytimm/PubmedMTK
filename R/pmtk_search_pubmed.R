@@ -13,6 +13,7 @@
 #' 
 #' 
 
+#search_term = 'medical marijuana'
 pmtk_search_pubmed <- function (search_term, 
                                 fields = c('TIAB','MH'),
                                 sleep = 1) { #
@@ -27,11 +28,19 @@ pmtk_search_pubmed <- function (search_term,
 
   url_term_query <- gsub(" ", "+", search_term, fixed = TRUE)
   
-  if(is.null(fields)) { fields3 <- url_term_query } else{
-    fields0 <- paste0('%5B', fields, '%5D')
-    fields1 <- paste0(url_term_query, fields0)
-    fields2 <- paste0(fields1, sep = '+OR+', collapse = '')
-    fields3 <- gsub('\\+OR\\+$', '', fields2) }
+  if(is.null(fields)) { 
+    fields3 <- url_term_query 
+    out_search <- search_term} else{
+      
+      fields0 <- paste0('%5B', fields, '%5D')
+      fields1 <- paste0(url_term_query, fields0)
+      fields2 <- paste0(fields1, sep = '+OR+', collapse = '')
+      fields3 <- gsub('\\+OR\\+$', '', fields2) 
+    
+      out_search <- paste0(search_term, 
+                           paste0('[', fields, ']'), 
+                           collapse = ' OR ')
+    }
   
   ## Make url
   full_url <- paste0 (pre_url1, pre_url2, fields3)
@@ -46,6 +55,6 @@ pmtk_search_pubmed <- function (search_term,
   out <- data.table::data.table(search_term = search_term, pmid = x3) 
   
   Sys.sleep(sleep)
-  finally =  print(paste0(search_term, ': ', nrow(out), ' records'))
+  finally =  print(paste0(out_search, ': ', nrow(out), ' records'))
   out
 }
