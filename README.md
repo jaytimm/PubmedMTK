@@ -41,7 +41,7 @@ s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'medical marijuana',
                                     fields = c('TIAB','MH'))
 ```
 
-    ## [1] "medical marijuana: 2125 records"
+    ## [1] "medical marijuana[TIAB] OR medical marijuana[MH]: 2125 records"
 
 ``` r
 head(s0)
@@ -151,8 +151,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [10:17:14.068] early stopping at 90 iteration 
-    ## INFO  [10:17:14.271] early stopping at 30 iteration
+    ## INFO  [10:55:23.818] early stopping at 100 iteration 
+    ## INFO  [10:55:23.992] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -161,18 +161,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                             |
-|---------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | adolescent \| marijuana_smoking \| cannabis \| california \| young_adult \| canada \| adolescent_behavior \| substance_use \| commerce \| pharmacists                                                                      |
-|        2 | cannabis \| canada \| phytotherapy \| marijuana \| illicit_drugs \| receptor,\_cannabinoid,\_cb1 \| cross-sectional_studies \| endocannabinoid_system \| addiction \| receptor,\_cannabinoid,\_cb2                         |
-|        3 | male \| adult \| female \| middle_aged \| surveys_and_questionnaires \| internet \| self_report \| public_opinion \| accidents,\_traffic \| risk_factors                                                                   |
-|        4 | cannabidiol \| cannabis \| epilepsy \| dronabinol \| treatment_outcome \| quality_of_life \| plant_extracts \| randomized_controlled_trials_as_topic \| neuralgia \| germany                                               |
-|        5 | drug_and_narcotic_control \| united_states \| state_government \| government_regulation \| federal_government \| drug_approval \| health_policy \| marijuana_smoking \| risk_assessment \| legislation,\_medical           |
-|        6 | cannabis \| cannabinoids \| attitude_of_health_personnel \| neoplasms \| health_knowledge,\_attitudes,\_practice \| evidence-based_medicine \| risk_assessment \| practice_guidelines_as_topic \| health_personnel \| pain |
-|        7 | marijuana \| legislation,\_drug \| united_states \| child \| public_policy \| marijuana_use \| cannabis \| legalization \| commerce \| public_health                                                                       |
-|        8 | adult \| aged \| middle_aged \| cross-sectional_studies \| surveys_and_questionnaires \| young_adult \| aged,\_80_and_over \| female \| male \| health_knowledge,\_attitudes,\_practice                                    |
-|        9 | legislation,\_drug \| substance-related_disorders \| practice_patterns,\_physicians’ \| phytotherapy \| marijuana_use \| physicians \| politics \| united_states \| analgesics,\_opioid \| socioeconomic_factors           |
-|       10 | cannabinoids \| chronic_pain \| medical_cannabis \| pain_management \| israel \| australia \| chronic_disease \| stress_disorders,\_post-traumatic \| fibromyalgia \| cannabinoid_receptor_modulators                      |
+| topic_id | topic_features                                                                                                                                                                                         |
+|---------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | analgesics,\_opioid \| opioid-related_disorders \| marijuana_abuse \| substance-related_disorders \| female \| drug_prescriptions \| opioids \| drug_overdose \| logistic_models \| prescription_drugs |
+|        2 | male \| middle_aged \| surveys_and_questionnaires \| female \| adult \| aged \| cross-sectional_studies \| treatment_outcome \| germany \| general_practitioners                                       |
+|        3 | adult \| male \| female \| young_adult \| health_knowledge,\_attitudes,\_practice \| cross-sectional_studies \| aged,\_80_and_over \| middle_aged \| marijuana_smoking \| adolescent                   |
+|        4 | cannabinoids \| cannabis \| plant_extracts \| marijuana \| mental_disorders \| chromatography,\_high_pressure_liquid \| new_zealand \| cohort_studies \| mice \| reproducibility_of_results            |
+|        5 | pain \| marijuana_smoking \| analgesics \| cannabis \| neoplasms \| animals \| legislation,\_drug \| cannabinoids \| antineoplastic_agents \| treatment_outcome                                        |
+|        6 | male \| female \| adult \| marijuana_use \| adolescent \| prevalence \| alcohol_drinking \| risk_factors \| sex_factors \| motivation                                                                  |
+|        7 | chronic_pain \| pain_management \| medical_cannabis \| treatment_outcome \| middle_aged \| quality_of_life \| prospective_studies \| pain_measurement \| israel \| aged,\_80_and_over                  |
+|        8 | adolescent \| male \| female \| child \| child,\_preschool \| marijuana_smoking \| marijuana_use \| infant \| cross-sectional_studies \| cannabis                                                      |
+|        9 | dronabinol \| cannabidiol \| cannabis \| marijuana \| treatment_outcome \| nabiximols \| tetrahydrocannabinol \| legalization \| drug_combinations \| cannabinoid_receptor_agonists                    |
+|       10 | marijuana_smoking \| united_states \| marijuana_abuse \| cannabis \| public_policy \| illicit_drugs \| commerce \| prevalence \| automobile_driving \| substance_use                                   |
 
 ### Two-dimensional analyses
 
