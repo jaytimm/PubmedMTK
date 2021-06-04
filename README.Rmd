@@ -72,18 +72,18 @@ key <- '4f47f85a9cc03c4031b3dc274c2840b06108'
 
 
 
-```{r message=FALSE, warning=FALSE}
+```{r warning=FALSE}
 sen_df <- PubmedMTK::pmtk_get_records2(pmids = s0$pmid, 
                                        cores = 6, 
                                        ncbi_key = key) 
-
-sen_df <- data.table::rbindlist(sen_df)
 ```
 
 
 > Sample record from output:
 
 ```{r}
+sen_df <- data.table::rbindlist(sen_df)
+
 n <- 9
 list(pmid = sen_df$pmid[n],
      year = sen_df$year[n],
@@ -146,7 +146,6 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 ```
 
 
-
 #### Feature composition of first ten topics
 
 ```{r echo=FALSE}
@@ -200,6 +199,22 @@ mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
 
 serVis(json, out.dir = 'ldavis', open.browser = FALSE)
 ```
+
+
+## Interactive HTML topic summary
+
+```{r eval=FALSE}
+PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,
+                                  pmtk_2d = two_ds,
+                                  out_dir = '/home/jtimm/Desktop/',
+                                  file_name = 'party.html')
+```
+
+
+```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+knitr::include_graphics("/home/jtimm/jt_work/GitHub/packages/PubmedMTK/demo.png")
+```
+
 
 
 

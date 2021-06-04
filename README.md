@@ -14,6 +14,7 @@ structure.
     -   [MeSH annotations-based topic
         model](#mesh-annotations-based-topic-model)
     -   [Two-dimensional analyses](#two-dimensional-analyses)
+-   [Interactive HTML topic summary](#interactive-html-topic-summary)
 -   [Tables](#tables)
     -   [MeSH vocabulary](#mesh-vocabulary)
     -   [PMC MeSH annotation
@@ -41,7 +42,7 @@ s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'medical marijuana',
                                     fields = c('TIAB','MH'))
 ```
 
-    ## [1] "medical marijuana[TIAB] OR medical marijuana[MH]: 2125 records"
+    ## [1] "medical marijuana[TIAB] OR medical marijuana[MH]: 2126 records"
 
 ``` r
 head(s0)
@@ -61,13 +62,13 @@ head(s0)
 sen_df <- PubmedMTK::pmtk_get_records2(pmids = s0$pmid, 
                                        cores = 6, 
                                        ncbi_key = key) 
-
-sen_df <- data.table::rbindlist(sen_df)
 ```
 
 > Sample record from output:
 
 ``` r
+sen_df <- data.table::rbindlist(sen_df)
+
 n <- 9
 list(pmid = sen_df$pmid[n],
      year = sen_df$year[n],
@@ -151,8 +152,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [10:55:23.818] early stopping at 100 iteration 
-    ## INFO  [10:55:23.992] early stopping at 20 iteration
+    ## INFO  [09:09:02.550] early stopping at 120 iteration 
+    ## INFO  [09:09:02.722] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -161,18 +162,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                         |
-|---------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | analgesics,\_opioid \| opioid-related_disorders \| marijuana_abuse \| substance-related_disorders \| female \| drug_prescriptions \| opioids \| drug_overdose \| logistic_models \| prescription_drugs |
-|        2 | male \| middle_aged \| surveys_and_questionnaires \| female \| adult \| aged \| cross-sectional_studies \| treatment_outcome \| germany \| general_practitioners                                       |
-|        3 | adult \| male \| female \| young_adult \| health_knowledge,\_attitudes,\_practice \| cross-sectional_studies \| aged,\_80_and_over \| middle_aged \| marijuana_smoking \| adolescent                   |
-|        4 | cannabinoids \| cannabis \| plant_extracts \| marijuana \| mental_disorders \| chromatography,\_high_pressure_liquid \| new_zealand \| cohort_studies \| mice \| reproducibility_of_results            |
-|        5 | pain \| marijuana_smoking \| analgesics \| cannabis \| neoplasms \| animals \| legislation,\_drug \| cannabinoids \| antineoplastic_agents \| treatment_outcome                                        |
-|        6 | male \| female \| adult \| marijuana_use \| adolescent \| prevalence \| alcohol_drinking \| risk_factors \| sex_factors \| motivation                                                                  |
-|        7 | chronic_pain \| pain_management \| medical_cannabis \| treatment_outcome \| middle_aged \| quality_of_life \| prospective_studies \| pain_measurement \| israel \| aged,\_80_and_over                  |
-|        8 | adolescent \| male \| female \| child \| child,\_preschool \| marijuana_smoking \| marijuana_use \| infant \| cross-sectional_studies \| cannabis                                                      |
-|        9 | dronabinol \| cannabidiol \| cannabis \| marijuana \| treatment_outcome \| nabiximols \| tetrahydrocannabinol \| legalization \| drug_combinations \| cannabinoid_receptor_agonists                    |
-|       10 | marijuana_smoking \| united_states \| marijuana_abuse \| cannabis \| public_policy \| illicit_drugs \| commerce \| prevalence \| automobile_driving \| substance_use                                   |
+| topic_id | topic_features                                                                                                                                                                                                                       |
+|---------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | legislation,\_drug \| united_states \| marijuana_smoking \| cannabis \| public_health \| colorado \| marijuana \| illicit_drugs \| commerce \| risk_factors                                                                          |
+|        2 | nausea \| pain \| neoplasms \| vomiting \| dronabinol \| united_states \| muscle_spasticity \| drug_interactions \| health_services_accessibility \| marijuana_smoking                                                               |
+|        3 | adolescent \| young_adult \| prevalence \| cross-sectional_studies \| marijuana_abuse \| child \| health_surveys \| adolescent_behavior \| epidemiology \| comorbidity                                                               |
+|        4 | animals \| epilepsy \| cannabidiol \| child \| anticonvulsants \| cannabinoids \| child,\_preschool \| seizures \| drug_resistant_epilepsy \| infant                                                                                 |
+|        5 | analgesics,\_opioid \| medical_cannabis \| substance-related_disorders \| opioid-related_disorders \| female \| chronic_pain \| middle_aged \| adult \| prescription_drug_misuse \| stress_disorders,\_post-traumatic                |
+|        6 | marijuana_use \| marijuana \| legalization \| alcohol_drinking \| risk_factors \| mental_health \| colorado \| motivation \| los_angeles \| substance_abuse_detection                                                                |
+|        7 | male \| marijuana_smoking \| female \| attitude_of_health_personnel \| practice_patterns,\_physicians’ \| time_factors \| drug_approval \| health_care_surveys \| drug_utilization \| child                                          |
+|        8 | united_states \| drug_and_narcotic_control \| state_government \| california \| government_regulation \| federal_government \| united_states_food_and_drug_administration \| phytotherapy \| legislation,\_medical \| legal_approach |
+|        9 | cannabis \| marijuana \| pain \| neoplasms \| medical_cannabis \| cancer \| aged \| chromatography,\_high_pressure_liquid \| treatment \| glaucoma                                                                                   |
+|       10 | cannabinoids \| marijuana_abuse \| marijuana_smoking \| health_policy \| endocannabinoids \| marijuana \| receptors,\_cannabinoid \| cannabis \| drug_approval \| drug_and_narcotic_control                                          |
 
 ### Two-dimensional analyses
 
@@ -210,6 +211,24 @@ two_ds$tsne %>%
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)
+
+## Interactive HTML topic summary
+
+``` r
+PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,
+                                  pmtk_2d = two_ds,
+                                  out_dir = '/home/jtimm/Desktop/',
+                                  file_name = 'party.html')
+```
+
+<div class="figure">
+
+<img src="/home/jtimm/jt_work/GitHub/packages/PubmedMTK/demo.png" alt="A caption" width="100%" />
+<p class="caption">
+A caption
+</p>
+
+</div>
 
 ## Tables
 

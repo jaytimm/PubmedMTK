@@ -18,7 +18,8 @@ pmtk_build_interactive <- function(pmtk_lda,
                                    out_dir,
                                    file_name){
   
-  fx <- system.file("rmd", "pmtk_topic_viz.Rmd", package = "PubmedMTK")
+  #fx <- system.file("Rmd", "pmtk_topic_viz.Rmd", package = "PubmedMTK")
+  fx <- paste0(find.package('PubmedMTK'), '/pmtk_topic_viz.Rmd')
   
   rmarkdown::render(
     input  = fx,
