@@ -22,10 +22,6 @@ pmtk_search_pubmed <- function (search_term,
   pre_url1 <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?"
   pre_url2 <- "db=pubmed&retmax=5000000&term="
     
-  #s2 <- paste0(search, '[MH]', ' OR ', s1, '[TIAB]')
-  #nns <- rentrez::entrez_search(term = s2, db = 'pubmed')$count
-  #nns <- format(5e6, scientific = F)
-
   url_term_query <- gsub(" ", "+", search_term, fixed = TRUE)
   
   if(is.null(fields)) { 

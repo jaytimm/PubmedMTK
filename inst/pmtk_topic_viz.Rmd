@@ -1,0 +1,97 @@
+---
+title: "Topic model summary"
+author: "PubmedMTK"
+output:
+  flexdashboard::flex_dashboard:
+    theme: paper
+    source_code: embed
+    orientation: columns
+    vertical_layout: fill
+params:
+  topic_model:
+    value: x
+  tsne:
+    value: x
+---
+`
+
+
+```{r include=FALSE}
+# kill -- 
+library(tidyverse)
+tmfs <- params$topic_model
+
+x1 <- tmfs$topic_word_dist[, head(.SD, 30), keyby = topic_id] %>%
+  mutate(beta = round(beta, 3),
+         feature = gsub('_', ' ', feature)) %>%
+  rename(id = topic_id)
+
+x2 <- tmfs$topic_summary %>%
+  left_join(two_ds$pca) %>%
+  rename(id = topic_id)
+
+sd_points <- crosstalk::SharedData$new(x2, group = "tm", key = ~id)
+sd_features <- crosstalk::SharedData$new(x1, group = "tm", key = ~id)
+```
+
+
+
+
+Column {data-width=550}
+-------------------------------------
+
+### Intertopic Distance Map
+
+```{r}
+p <- sd_points %>% 
+  ggplot2::ggplot(aes(x = X1, 
+                      y = X2,
+                      label = id)) + 
+  geom_hline(yintercept = 0, color = 'gray') +
+  geom_vline(xintercept = 0, color = 'gray') +
+  
+  ggplot2::geom_point(size = 10, 
+                      color = '#a5c8e1',
+                      alpha = 0.5) +
+  geom_text(size = 3) +
+  theme_minimal() +
+  theme(legend.position = 'none') 
+
+plotly::ggplotly(p) %>% 
+  plotly::layout(showlegend = F,
+                 autosize = T) %>%
+  plotly::style(hoverinfo = 'none') %>%
+  plotly::highlight(on = 'plotly_hover',
+                    opacityDim = .75)
+```
+
+
+
+
+
+Column {data-width=450}
+-------------------------------------
+    
+### Top N Features
+
+```{r message=FALSE, warning=FALSE}
+sd_features %>%
+  DT::datatable(rownames = FALSE,
+                             
+                options = list(#scrollY = "325px",
+                               dom = 't',
+                               pageLength = 30,
+                               
+                               autowidth = FALSE,
+                               columnDefs = list(list(width = '400px', 
+                                                      targets = c(2))),
+                               fixedColumns = TRUE
+                               )) %>%
+  
+  DT::formatStyle(names(x1[,3]),
+                  background = DT::styleColorBar(range(x1[,3]), '#cc474d'),
+                  backgroundSize = '80% 70%',
+                  backgroundRepeat = 'no-repeat',
+                  backgroundPosition = 'right')
+```    
+
