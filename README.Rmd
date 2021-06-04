@@ -212,7 +212,7 @@ PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,
 
 
 ```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("/home/jtimm/jt_work/GitHub/packages/PubmedMTK/demo.png")
+knitr::include_graphics("demo.png")
 ```
 
 

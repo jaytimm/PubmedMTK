@@ -152,8 +152,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [09:09:02.550] early stopping at 120 iteration 
-    ## INFO  [09:09:02.722] early stopping at 20 iteration
+    ## INFO  [09:13:11.915] early stopping at 90 iteration 
+    ## INFO  [09:13:12.086] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -162,18 +162,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                                       |
-|---------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | legislation,\_drug \| united_states \| marijuana_smoking \| cannabis \| public_health \| colorado \| marijuana \| illicit_drugs \| commerce \| risk_factors                                                                          |
-|        2 | nausea \| pain \| neoplasms \| vomiting \| dronabinol \| united_states \| muscle_spasticity \| drug_interactions \| health_services_accessibility \| marijuana_smoking                                                               |
-|        3 | adolescent \| young_adult \| prevalence \| cross-sectional_studies \| marijuana_abuse \| child \| health_surveys \| adolescent_behavior \| epidemiology \| comorbidity                                                               |
-|        4 | animals \| epilepsy \| cannabidiol \| child \| anticonvulsants \| cannabinoids \| child,\_preschool \| seizures \| drug_resistant_epilepsy \| infant                                                                                 |
-|        5 | analgesics,\_opioid \| medical_cannabis \| substance-related_disorders \| opioid-related_disorders \| female \| chronic_pain \| middle_aged \| adult \| prescription_drug_misuse \| stress_disorders,\_post-traumatic                |
-|        6 | marijuana_use \| marijuana \| legalization \| alcohol_drinking \| risk_factors \| mental_health \| colorado \| motivation \| los_angeles \| substance_abuse_detection                                                                |
-|        7 | male \| marijuana_smoking \| female \| attitude_of_health_personnel \| practice_patterns,\_physicians’ \| time_factors \| drug_approval \| health_care_surveys \| drug_utilization \| child                                          |
-|        8 | united_states \| drug_and_narcotic_control \| state_government \| california \| government_regulation \| federal_government \| united_states_food_and_drug_administration \| phytotherapy \| legislation,\_medical \| legal_approach |
-|        9 | cannabis \| marijuana \| pain \| neoplasms \| medical_cannabis \| cancer \| aged \| chromatography,\_high_pressure_liquid \| treatment \| glaucoma                                                                                   |
-|       10 | cannabinoids \| marijuana_abuse \| marijuana_smoking \| health_policy \| endocannabinoids \| marijuana \| receptors,\_cannabinoid \| cannabis \| drug_approval \| drug_and_narcotic_control                                          |
+| topic_id | topic_features                                                                                                                                                                                               |
+|---------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | male \| female \| adult \| adolescent \| substance-related_disorders \| alcohol_drinking \| young_adult \| health_personnel \| knowledge \| marijuana_smoking                                                |
+|        2 | dronabinol \| multiple_sclerosis \| treatment_outcome \| endocannabinoids \| nabiximols \| clinical_trials_as_topic \| receptors,\_cannabinoid \| neuralgia \| muscle_spasticity \| drug_combinations        |
+|        3 | marijuana_smoking \| treatment_outcome \| cannabis \| male \| female \| prospective_studies \| risk_assessment \| middle_aged \| marijuana_use \| minnesota                                                  |
+|        4 | adolescent \| young_adult \| male \| prevalence \| cross-sectional_studies \| adult \| middle_aged \| marijuana_use \| health_surveys \| socioeconomic_factors                                               |
+|        5 | middle_aged \| aged \| male \| female \| aged,\_80_and_over \| young_adult \| adult \| self_report \| pilot_projects \| cross-sectional_studies                                                              |
+|        6 | cannabis \| cannabinoids \| pain \| thc \| hiv_infections \| medical_cannabis \| mental_disorders \| legislation,\_medical \| practice_guidelines_as_topic \| germany                                        |
+|        7 | chronic_pain \| pain \| cannabis \| analgesics \| pain_management \| evidence-based_medicine \| attitude_of_health_personnel \| legislation,\_drug \| drug_overdose \| opioid                                |
+|        8 | surveys_and_questionnaires \| male \| adult \| female \| middle_aged \| health_knowledge,\_attitudes,\_practice \| medical_cannabis \| cross-sectional_studies \| washington \| medicinal_cannabis           |
+|        9 | marijuana \| child \| female \| cannabis \| pregnancy \| colorado \| child,\_preschool \| legalization \| infant \| pediatrics                                                                               |
+|       10 | canada \| united_states \| california \| health_policy \| drug_and_narcotic_control \| health_services_accessibility \| phytotherapy \| drug_prescriptions \| physician-patient_relations \| marijuana_abuse |
 
 ### Two-dimensional analyses
 
@@ -223,7 +223,7 @@ PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,
 
 <div class="figure">
 
-<img src="/home/jtimm/jt_work/GitHub/packages/PubmedMTK/demo.png" alt="A caption" width="100%" />
+<img src="demo.png" alt="A caption" width="100%" />
 <p class="caption">
 A caption
 </p>
