@@ -8,6 +8,7 @@
 #' @rdname pmtk_2d
 #' 
 pmtk_2d <- function(mat,
+                    seed = 999,
                     d.method = "euclidean",
                     c.method = "ward.D") {  
   
@@ -18,7 +19,7 @@ pmtk_2d <- function(mat,
   #                               value = beta)
   
   ##### tSNE
-  set.seed(999)
+  set.seed(seed)
   tsne <- Rtsne::Rtsne(X = as.matrix(mat), 
                        check_duplicates = T,
                        perplexity = 5)

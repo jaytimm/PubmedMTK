@@ -4,7 +4,7 @@
 \alias{pmtk_2d}
 \title{Build data structures 2d visualizations.}
 \usage{
-pmtk_2d(mat, d.method = "euclidean", c.method = "ward.D")
+pmtk_2d(mat, seed = 999, d.method = "euclidean", c.method = "ward.D")
 }
 \arguments{
 \item{x}{A topic-term summary df.}

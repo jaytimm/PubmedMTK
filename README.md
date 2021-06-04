@@ -152,8 +152,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [09:13:11.915] early stopping at 90 iteration 
-    ## INFO  [09:13:12.086] early stopping at 20 iteration
+    ## INFO  [10:21:00.867] early stopping at 190 iteration 
+    ## INFO  [10:21:01.172] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -162,18 +162,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                               |
-|---------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | male \| female \| adult \| adolescent \| substance-related_disorders \| alcohol_drinking \| young_adult \| health_personnel \| knowledge \| marijuana_smoking                                                |
-|        2 | dronabinol \| multiple_sclerosis \| treatment_outcome \| endocannabinoids \| nabiximols \| clinical_trials_as_topic \| receptors,\_cannabinoid \| neuralgia \| muscle_spasticity \| drug_combinations        |
-|        3 | marijuana_smoking \| treatment_outcome \| cannabis \| male \| female \| prospective_studies \| risk_assessment \| middle_aged \| marijuana_use \| minnesota                                                  |
-|        4 | adolescent \| young_adult \| male \| prevalence \| cross-sectional_studies \| adult \| middle_aged \| marijuana_use \| health_surveys \| socioeconomic_factors                                               |
-|        5 | middle_aged \| aged \| male \| female \| aged,\_80_and_over \| young_adult \| adult \| self_report \| pilot_projects \| cross-sectional_studies                                                              |
-|        6 | cannabis \| cannabinoids \| pain \| thc \| hiv_infections \| medical_cannabis \| mental_disorders \| legislation,\_medical \| practice_guidelines_as_topic \| germany                                        |
-|        7 | chronic_pain \| pain \| cannabis \| analgesics \| pain_management \| evidence-based_medicine \| attitude_of_health_personnel \| legislation,\_drug \| drug_overdose \| opioid                                |
-|        8 | surveys_and_questionnaires \| male \| adult \| female \| middle_aged \| health_knowledge,\_attitudes,\_practice \| medical_cannabis \| cross-sectional_studies \| washington \| medicinal_cannabis           |
-|        9 | marijuana \| child \| female \| cannabis \| pregnancy \| colorado \| child,\_preschool \| legalization \| infant \| pediatrics                                                                               |
-|       10 | canada \| united_states \| california \| health_policy \| drug_and_narcotic_control \| health_services_accessibility \| phytotherapy \| drug_prescriptions \| physician-patient_relations \| marijuana_abuse |
+| topic_id | topic_features                                                                                                                                                                                                                                      |
+|---------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | male \| child \| adolescent \| female \| retrospective_studies \| colorado \| child,\_preschool \| cannabis \| cross-sectional_studies \| infant                                                                                                    |
+|        2 | cannabis \| canada \| physicians \| germany \| europe \| ethnic_groups \| dementia \| suicide,\_assisted \| counseling \| terminal_care                                                                                                             |
+|        3 | cannabinoids \| marijuana_smoking \| randomized_controlled_trials_as_topic \| plant_extracts \| biomedical_research \| reproducibility_of_results \| marijuana_use \| chromatography,\_high_pressure_liquid \| cannabis \| tandem_mass_spectrometry |
+|        4 | united_states \| drug_and_narcotic_control \| state_government \| california \| government_regulation \| federal_government \| public_policy \| physician-patient_relations \| health_care_and_public_health \| legal_approach                      |
+|        5 | female \| male \| adult \| surveys_and_questionnaires \| longitudinal_studies \| driving_under_the_influence \| israel \| cannabis_legalization \| ontario \| curriculum                                                                            |
+|        6 | legislation,\_drug \| marijuana_abuse \| marijuana_smoking \| risk_factors \| public_health \| commerce \| legalization \| pregnancy \| history,\_20th_century \| automobile_driving                                                                |
+|        7 | female \| middle_aged \| adult \| male \| young_adult \| motivation \| sex_factors \| age_factors \| health_status \| pilot_projects                                                                                                                |
+|        8 | phytotherapy \| cannabis \| plant_preparations \| hiv_infections \| jurisprudence \| legislation,\_drug \| health_services_accessibility \| evidence-based_medicine \| politics \| san_francisco                                                    |
+|        9 | treatment_outcome \| epilepsy \| medical_cannabis \| anticonvulsants \| cannabidiol \| quality_of_life \| pain_measurement \| seizures \| plant_extracts \| drug_resistant_epilepsy                                                                 |
+|       10 | cannabis \| marijuana \| medical_cannabis \| health_knowledge,\_attitudes,\_practice \| glaucoma \| internet \| marijuana_use \| administration,\_inhalation \| attitude \| australia                                                               |
 
 ### Two-dimensional analyses
 
@@ -184,7 +184,7 @@ tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
                               value = beta)
 
 ## build 2d data structures --
-two_ds <- PubmedMTK::pmtk_2d(mat = tmat)
+two_ds <- PubmedMTK::pmtk_2d(mat = tmat, seed = 99)
 ```
 
 #### Hierarchical clustering
@@ -221,14 +221,7 @@ PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,
                                   file_name = 'party.html')
 ```
 
-<div class="figure">
-
-<img src="demo.png" alt="A caption" width="100%" />
-<p class="caption">
-A caption
-</p>
-
-</div>
+<img src="demo.png" width="100%" />
 
 ## Tables
 

@@ -17,18 +17,17 @@ params:
 
 
 ```{r include=FALSE}
-# kill -- 
-library(tidyverse)
 tmfs <- params$topic_model
 
-x1 <- tmfs$topic_word_dist[, head(.SD, 30), keyby = topic_id] %>%
-  mutate(beta = round(beta, 3),
-         feature = gsub('_', ' ', feature)) %>%
-  rename(id = topic_id)
+x1 <- tmfs$topic_word_dist[, head(.SD, 30), keyby = topic_id] 
 
-x2 <- tmfs$topic_summary %>%
-  left_join(two_ds$pca) %>%
-  rename(id = topic_id)
+x1[, beta := round(beta, 3)]
+x1[, feature := gsub('_', ' ', feature)]
+data.table::setnames(x1, new = "id", old = "topic_id")
+
+two_ds$tsne$topic_id <- as.integer(two_ds$tsne$topic_id)
+x2 <- merge(tmfs$topic_summary, two_ds$tsne) 
+data.table::setnames(x2, new = "id", old = "topic_id")
 
 sd_points <- crosstalk::SharedData$new(x2, group = "tm", key = ~id)
 sd_features <- crosstalk::SharedData$new(x1, group = "tm", key = ~id)
@@ -40,13 +39,18 @@ sd_features <- crosstalk::SharedData$new(x1, group = "tm", key = ~id)
 Column {data-width=550}
 -------------------------------------
 
-### Intertopic Distance Map
+### Intertopic Distance Map via tSNE
 
 ```{r}
-p <- sd_points %>% 
+library(magrittr)
+library(ggplot2)
+
+p <- sd_points %>%
+  
   ggplot2::ggplot(aes(x = X1, 
                       y = X2,
                       label = id)) + 
+  
   geom_hline(yintercept = 0, color = 'gray') +
   geom_vline(xintercept = 0, color = 'gray') +
   
@@ -57,6 +61,8 @@ p <- sd_points %>%
   theme_minimal() +
   theme(legend.position = 'none') 
 
+
+#####
 plotly::ggplotly(p) %>% 
   plotly::layout(showlegend = F,
                  autosize = T) %>%
@@ -76,6 +82,7 @@ Column {data-width=450}
 
 ```{r message=FALSE, warning=FALSE}
 sd_features %>%
+  
   DT::datatable(rownames = FALSE,
                              
                 options = list(#scrollY = "325px",

@@ -162,7 +162,7 @@ tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
                               value = beta)
 
 ## build 2d data structures --
-two_ds <- PubmedMTK::pmtk_2d(mat = tmat)
+two_ds <- PubmedMTK::pmtk_2d(mat = tmat, seed = 99)
 ```
 
 
@@ -211,7 +211,7 @@ PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,
 ```
 
 
-```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+```{r pressure, echo=FALSE, out.width = '100%'}
 knitr::include_graphics("demo.png")
 ```
 
