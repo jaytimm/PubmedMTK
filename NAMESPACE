@@ -2,6 +2,7 @@
 
 export(pmtk_2d)
 export(pmtk_build_interactive)
+export(pmtk_crosstab_query)
 export(pmtk_extract_pmc)
 export(pmtk_gather_mesh)
 export(pmtk_get_records2)
