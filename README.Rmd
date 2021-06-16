@@ -55,6 +55,8 @@ The `pmtk_search_pubmed()` function is meant for record-matching searches typica
 s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'medical marijuana', 
                                     fields = c('TIAB','MH'))
 ```
+
+
 ```{r}
 head(s0)
 ```
@@ -62,7 +64,10 @@ head(s0)
 
 
 
-### Retrieve abstract data from PubMed
+
+
+### Retrieve and parse abstract data 
+
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 # Set NCBI API key
@@ -94,9 +99,27 @@ list(pmid = sen_df$pmid[n],
 
 
 
+
+### KWIC search
+
+The `pmtk_locate_search()` function allows for quick keyword-in-context (KWIC) search.  A simple wrapper of the `corpus::text_locate` function. 
+
+```{r}
+toks <-  corpus::text_tokens(sen_df$abstract)
+
+egs <- PubmedMTK::pmtk_locate_search(text = toks,
+                                     doc_id = sen_df$pmid,
+                                     search = c('medical marijuana laws'),
+                                     stem = F,
+                                     window = 15)
+knitr::kable(egs[1:5, ])
+```
+
+
+
 ### Extract MeSH classifications
 
-Subject terms/headings in metadata table include `MeSH` terms, as well as (some) `keywords` & `chem-names`.   The `pmtk_gather_mesh` function extracts & structures these attributes from metadata. The resulting table amounts to a document-term matrix (DTM), in which each PubMed abstract is represented as a vector of MeSH terms.  
+Subject terms/headings in metadata table include `MeSH` terms, as well as (some) `keywords` & `chem-names`.   The `pmtk_gather_mesh` function extracts & structures these attributes from metadata. 
 
 ```{r message=FALSE, warning=FALSE}
 m0 <- PubmedMTK::pmtk_gather_mesh(sen_df)
@@ -107,8 +130,7 @@ m0 <- PubmedMTK::pmtk_gather_mesh(sen_df)
 
 ### MeSH annotations-based topic model
 
-We can use these MeSH-based abstract representations to explore the conceptual structure of a particular collection of PubMed records via topic modeling. Here we implement **Latent Dirichlet allocation**, which is a topic modeling algorithm that models *each document* in corpus as a composite of topics, and *each topic* as a composite of terms.  Topic composition can be interpreted as sets of MeSH terms that frequently co-occur.
-
+We can use these MeSH-based abstract representations to explore the conceptual structure of a particular collection of PubMed records via topic modeling. Here we implement **Latent Dirichlet allocation**, which is a topic modeling algorithm that models *each document* in corpus as a composite of topics, and *each topic* as a composite of terms.  
 
 ```{r eval=FALSE, include=FALSE}
 mesh <- PubmedMTK::pmtk_tbl_mesh
@@ -135,7 +157,7 @@ dtm <- text2vec::create_dtm(iter, vectorizer)
 
 
 
-The `pmtk_summarize_lda` function summarizes and extracts topic composition from the `text2vec::LDA` output. For each possible topic-feature pair, the model computes the likelihood a given topic generated a given feature.  Output is filtered to the highest scoring features per topic using the `topic_feats_n`.
+The `pmtk_summarize_lda` function summarizes and extracts topic composition from the `text2vec::LDA` output. 
 
 ```{r message=FALSE, warning=FALSE}
 lda <- text2vec::LDA$new(n_topics = 20) 
@@ -165,16 +187,6 @@ tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
 two_ds <- PubmedMTK::pmtk_2d(mat = tmat, seed = 99)
 ```
 
-
-#### Hierarchical clustering
-
-```{r}
-#two_ds$hc$labels <- tm_summary$topic_summary$topic_features
-two_ds$hc %>% ggdendro::ggdendrogram(rotate=TRUE)
-```
-
-
-#### tSNE
 
 ```{r}
 two_ds$tsne %>%
@@ -243,11 +255,12 @@ PubmedMTK::pmtk_tbl_pmc_ref
 
 
 
+
+```{r eval=FALSE, include=FALSE}
 ### Medline citation counts
 
-Table build details available [here](https://github.com/jaytimm/PubmedMTK/blob/main/mds/medline_citations.md).
+# Table build details available [here](https://github.com/jaytimm/PubmedMTK/blob/main/mds/medline_citations.md).
 
-```{r}
 tail(PubmedMTK::pmtk_tbl_citations)
 ```
 
