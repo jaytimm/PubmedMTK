@@ -22,6 +22,7 @@ structure.
     -   [MeSH vocabulary](#mesh-vocabulary)
     -   [PMC MeSH annotation
         frequencies](#pmc-mesh-annotation-frequencies)
+-   [Contributing](#contributing)
 
 ## Installation
 
@@ -169,8 +170,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [14:03:18.676] early stopping at 150 iteration 
-    ## INFO  [14:03:18.985] early stopping at 20 iteration
+    ## INFO  [14:15:30.092] early stopping at 150 iteration 
+    ## INFO  [14:15:30.387] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -179,18 +180,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                                           |
-|---------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | female \| male \| adult \| middle_aged \| cross-sectional_studies \| risk_factors \| prevalence \| age_factors \| health_surveys \| socioeconomic_factors                                                                                |
-|        2 | cannabinoids \| animals \| endocannabinoids \| brain \| receptors,\_cannabinoid \| cannabinoid_receptor_agonists \| receptor,\_cannabinoid,\_cb1 \| endocannabinoid_system \| mice \| drug_interactions                                  |
-|        3 | cannabis \| phytotherapy \| plant_preparations \| california \| surveys_and_questionnaires \| jurisprudence \| acquired_immunodeficiency_syndrome \| legal_approach \| stress_disorders,\_post-traumatic \| research                     |
-|        4 | marijuana_smoking \| united_states \| legislation,\_drug \| risk_assessment \| colorado \| commerce \| california \| policy_making \| alcohol_drinking \| marijuana                                                                      |
-|        5 | female \| aged \| middle_aged \| male \| aged,\_80_and_over \| adult \| prospective_studies \| australia \| adolescent \| pilot_projects                                                                                                 |
-|        6 | united_states \| state_government \| phytotherapy \| drug_approval \| politics \| federal_government \| government_regulation \| united_states_food_and_drug_administration \| public_policy \| legislation,\_medical                    |
-|        7 | legislation,\_drug \| marijuana_use \| public_health \| female \| mental_disorders \| substance-related_disorders \| drug_prescriptions \| hiv_infections \| epidemiology \| public_policy                                               |
-|        8 | cannabis \| cannabinoids \| plant_extracts \| randomized_controlled_trials_as_topic \| medicinal_cannabis \| retrospective_studies \| comorbidity \| time_factors \| reproducibility_of_results \| chromatography,\_high_pressure_liquid |
-|        9 | chronic_pain \| pain_management \| treatment_outcome \| analgesics \| cannabis \| neuralgia \| pain \| illicit_drugs \| pain_measurement \| prospective_studies                                                                          |
-|       10 | cannabis \| marijuana \| marijuana_smoking \| pregnancy \| hallucinogens \| legalization \| longitudinal_studies \| young_adult \| logistic_models \| biomedical_research                                                                |
+| topic_id | topic_features                                                                                                                                                                                                                                      |
+|---------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | pain \| neoplasms \| nausea \| palliative_care \| vomiting \| cancer_pain \| cannabinoids \| drug_prescriptions \| cancer \| evidence-based_medicine                                                                                                |
+|        2 | legislation,\_drug \| united_states \| opioid-related_disorders \| public_health \| colorado \| analgesics,\_opioid \| opioids \| drug_overdose \| adolescent_behavior \| adolescents                                                               |
+|        3 | marijuana_smoking \| adolescent \| marijuana_abuse \| child \| risk_factors \| risk_assessment \| internet \| new_zealand \| attitude \| administration,\_inhalation                                                                                |
+|        4 | marijuana_use \| marijuana_abuse \| prevalence \| cannabis \| thc \| cbd \| mental_disorders \| alcohol_drinking \| cohort_studies \| marijuana                                                                                                     |
+|        5 | united_states \| attitude_of_health_personnel \| health_knowledge,\_attitudes,\_practice \| practice_patterns,\_physicians’ \| health_policy \| physicians \| drug_approval \| minnesota \| policy_making \| health_personnel                       |
+|        6 | cannabis \| phytotherapy \| legislation,\_drug \| hiv_infections \| israel \| hallucinogens \| commerce \| australia \| clinical_trials_as_topic \| plants,\_medicinal                                                                              |
+|        7 | marijuana_smoking \| marijuana \| united_states \| marijuana_use \| illicit_drugs \| pregnancy \| legalization \| medical_marijuana_laws \| logistic_models \| policy                                                                               |
+|        8 | cannabis \| cannabinoids \| tetrahydrocannabinol \| cannabinoid \| health_policy \| reproducibility_of_results \| cannabidiol \| tourette_syndrome \| drug-related_side_effects_and_adverse_reactions \| accidents,\_traffic                        |
+|        9 | animals \| epilepsy \| cannabidiol \| endocannabinoids \| anticonvulsants \| treatment_outcome \| brain \| child \| receptors,\_cannabinoid \| seizures                                                                                             |
+|       10 | drug_and_narcotic_control \| state_government \| government_regulation \| marijuana_smoking \| federal_government \| politics \| united_states_food_and_drug_administration \| california \| health_services_accessibility \| legislation,\_medical |
 
 ### Two-dimensional analyses
 
@@ -277,3 +278,17 @@ PubmedMTK::pmtk_tbl_pmc_ref
     ## 1304695:    chemNames         monoethylglycinexylidide         1 5.513020e-07
     ## 1304696:    chemNames                           savlon         1 5.513020e-07
     ## 1304697:    chemNames            7-propyl_spirolactone         1 5.513020e-07
+
+## Contributing
+
+The project maintainer welcomes contributions in the form of feature
+requests, bug reports, comments, unit tests, vignettes, or other code.
+If you’d like to contribute, either:
+
+-   fork the repository and submit a pull request
+
+-   file an issue;
+
+-   or contact the maintainer via e-mail.
+
+Thanks!

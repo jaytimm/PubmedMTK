@@ -252,6 +252,17 @@ PubmedMTK::pmtk_tbl_pmc_ref
 
 
 
+## Contributing
+
+The project maintainer welcomes contributions in the form of feature requests, bug reports, comments, unit tests, vignettes, or other code. If you'd like to contribute, either:
+
+* fork the repository and submit a pull request
+
+* file an issue;
+
+* or contact the maintainer via e-mail.
+
+Thanks!
 
 
 
