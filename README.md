@@ -116,17 +116,17 @@ egs <- PubmedMTK::pmtk_locate_search(text = toks,
                                      doc_id = sen_df$pmid,
                                      search = c('medical marijuana laws'),
                                      stem = F,
-                                     window = 15)
+                                     window = 5)
 knitr::kable(egs[1:5, ])
 ```
 
-| doc_id   | lhs                                                                                                               | instance               | rhs                                                                                                   |
-|:---------|:------------------------------------------------------------------------------------------------------------------|:-----------------------|:------------------------------------------------------------------------------------------------------|
-| 34128629 | impaired executive function , cognition , and driving . physicians can recommend use of marijuana under           | medical marijuana laws | but cannot prescribe it , as it is classified as a schedule i controlled substance .                  |
-| 33750275 | background : states are rapidly moving to reverse marijuana prohibition , most frequently through legalization of | medical marijuana laws | ( mmls ) , and there is concern that marijuana legalization may affect adolescent marijuana use       |
-| 33730400 | more common in states with recreational marijuana laws ( rml ) , followed by states with                          | medical marijuana laws | ( mml ) and without legal cannabis use , respectively . rml and mml were associated                   |
-| 33624387 | insurance . we used a differences-in-differences ( dd ) approach and found that the implementation of             | medical marijuana laws | ( mmls ) and recreational marijuana laws ( rmls ) reduced morphine milligram equivalents per enrollee |
-| 33143941 | use were assessed each year . cannabis legalization was determined by the presence or absence of                  | medical marijuana laws | ( mml ) and recreational marijuana laws ( rml ) in each state . difference-in-difference approach     |
+| doc_id   | lhs                                       | instance               | rhs                                 |
+|:---------|:------------------------------------------|:-----------------------|:------------------------------------|
+| 34128629 | can recommend use of marijuana under      | medical marijuana laws | but cannot prescribe it , as        |
+| 33750275 | , most frequently through legalization of | medical marijuana laws | ( mmls ) , and there                |
+| 33730400 | ) , followed by states with               | medical marijuana laws | ( mml ) and without legal           |
+| 33624387 | and found that the implementation of      | medical marijuana laws | ( mmls ) and recreational marijuana |
+| 33143941 | by the presence or absence of             | medical marijuana laws | ( mml ) and recreational marijuana  |
 
 ### Extract MeSH classifications
 
@@ -169,8 +169,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [13:46:39.947] early stopping at 120 iteration 
-    ## INFO  [13:46:40.235] early stopping at 20 iteration
+    ## INFO  [14:01:39.954] early stopping at 100 iteration 
+    ## INFO  [14:01:40.239] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -179,18 +179,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                |
-|---------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | cannabis \| cannabinoids \| germany \| quality_of_life \| palliative_care \| canada \| illicit_drugs \| societies,\_medical \| cannabinoid \| glaucoma                                                        |
-|        2 | pain \| vomiting \| analgesics \| marijuana_smoking \| muscle_spasticity \| drug_interactions \| cancer_pain \| israel \| clinical_trials_as_topic \| marijuana_abuse                                         |
-|        3 | young_adult \| male \| adult \| female \| adolescent \| middle_aged \| age_factors \| prevalence \| socioeconomic_factors \| sex_factors                                                                      |
-|        4 | cannabis \| legislation,\_drug \| cannabinoids \| risk_assessment \| drug_prescriptions \| practice_patterns,\_physicians’ \| marijuana \| neoplasms \| research \| treatment_outcome                         |
-|        5 | male \| female \| adult \| treatment_outcome \| attitude_of_health_personnel \| prospective_studies \| anxiety \| self_report \| chronic_disease \| adolescent                                                |
-|        6 | legislation,\_drug \| marijuana_use \| marijuana_abuse \| marijuana_smoking \| united_states \| prevalence \| male \| epidemiology \| retrospective_studies \| time_factors                                   |
-|        7 | cannabis \| marijuana_smoking \| legislation,\_drug \| health_policy \| commerce \| pregnancy \| marijuana_use \| cannabinoids \| female \| plant_extracts                                                    |
-|        8 | united_states \| drug_and_narcotic_control \| nausea \| drug_approval \| evidence-based_medicine \| politics \| united_states_food_and_drug_administration \| minnesota \| palliative_care \| risk_assessment |
-|        9 | phytotherapy \| cannabis \| united_states \| plant_preparations \| hiv_infections \| physicians \| cancer \| practice_patterns,\_physicians’ \| physician’s_role \| pharmacists                               |
-|       10 | dronabinol \| cannabidiol \| cannabinoids \| animals \| multiple_sclerosis \| nabiximols \| tetrahydrocannabinol \| receptors,\_cannabinoid \| cognition \| drug_combinations                                 |
+| topic_id | topic_features                                                                                                                                                                                     |
+|---------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | cannabis \| united_states \| legislation,\_drug \| commerce \| jurisprudence \| risk_factors \| marijuana_abuse \| hallucinogens \| ethnic_groups \| follow-up_studies                             |
+|        2 | cannabis \| phytotherapy \| pain \| hiv_infections \| legislation,\_drug \| mental_disorders \| substance-related_disorders \| california \| chronic_disease \| opioid                             |
+|        3 | animals \| marijuana_abuse \| endocannabinoids \| cannabinoids \| receptors,\_cannabinoid \| brain \| cannabidiol \| cognition \| dronabinol \| receptor,\_cannabinoid,\_cb1                       |
+|        4 | chronic_pain \| pain_management \| treatment_outcome \| analgesics \| pain \| quality_of_life \| neuralgia \| randomized_controlled_trials_as_topic \| pain_measurement \| evidence-based_medicine |
+|        5 | male \| united_states \| anxiety \| depression \| female \| drug_prescriptions \| middle_aged \| cannabis \| time_factors \| risk_assessment                                                       |
+|        6 | female \| male \| cross-sectional_studies \| marijuana_abuse \| adolescent \| young_adult \| age_factors \| health_surveys \| risk_factors \| middle_aged                                          |
+|        7 | cannabis \| cannabinoids \| neoplasms \| marijuana_smoking \| multiple_sclerosis \| cancer_pain \| cancer \| antineoplastic_agents \| patient_education_as_topic \| societies,\_medical            |
+|        8 | marijuana_use \| adolescent \| marijuana_smoking \| substance-related_disorders \| legalization \| colorado \| illicit_drugs \| cannabis \| adolescent_behavior \| united_states                   |
+|        9 | female \| male \| adult \| middle_aged \| surveys_and_questionnaires \| aged \| attitude_to_health \| epidemiology \| pilot_projects \| severity_of_illness_index                                  |
+|       10 | dronabinol \| cannabinoids \| cannabidiol \| nausea \| vomiting \| muscle_spasticity \| clinical_trials_as_topic \| drug_combinations \| drug_interactions \| cannabinoid_receptor_agonists        |
 
 ### Two-dimensional analyses
 
@@ -200,7 +200,6 @@ tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
                               column = feature,
                               value = beta)
 
-## build 2d data structures --
 two_ds <- PubmedMTK::pmtk_2d(mat = tmat, seed = 99)
 ```
 

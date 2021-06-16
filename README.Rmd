@@ -111,7 +111,7 @@ egs <- PubmedMTK::pmtk_locate_search(text = toks,
                                      doc_id = sen_df$pmid,
                                      search = c('medical marijuana laws'),
                                      stem = F,
-                                     window = 15)
+                                     window = 5)
 knitr::kable(egs[1:5, ])
 ```
 
@@ -183,7 +183,6 @@ tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
                               column = feature,
                               value = beta)
 
-## build 2d data structures --
 two_ds <- PubmedMTK::pmtk_2d(mat = tmat, seed = 99)
 ```
 
