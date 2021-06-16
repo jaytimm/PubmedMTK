@@ -1,11 +1,9 @@
 # PubmedMTK
 
-***PubMed Mining Toolkit***
-
-An R package for querying the PubMed database & parsing retrieved
-records. Toolkit facilitates batch API requests, the creation of custom
-corpora for NLP, and the quick exploration & visualization of topic
-structure.
+**PubMed Mining Toolkit**: An R package for querying the PubMed database
+& parsing retrieved records. Toolkit facilitates batch API requests, the
+creation of custom corpora for NLP, and the quick exploration &
+visualization of topic structure.
 
 -   [Installation](#installation)
 -   [Usage](#usage)
@@ -170,8 +168,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [14:15:30.092] early stopping at 150 iteration 
-    ## INFO  [14:15:30.387] early stopping at 20 iteration
+    ## INFO  [14:39:20.918] early stopping at 80 iteration 
+    ## INFO  [14:39:21.274] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -180,18 +178,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                                                      |
-|---------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | pain \| neoplasms \| nausea \| palliative_care \| vomiting \| cancer_pain \| cannabinoids \| drug_prescriptions \| cancer \| evidence-based_medicine                                                                                                |
-|        2 | legislation,\_drug \| united_states \| opioid-related_disorders \| public_health \| colorado \| analgesics,\_opioid \| opioids \| drug_overdose \| adolescent_behavior \| adolescents                                                               |
-|        3 | marijuana_smoking \| adolescent \| marijuana_abuse \| child \| risk_factors \| risk_assessment \| internet \| new_zealand \| attitude \| administration,\_inhalation                                                                                |
-|        4 | marijuana_use \| marijuana_abuse \| prevalence \| cannabis \| thc \| cbd \| mental_disorders \| alcohol_drinking \| cohort_studies \| marijuana                                                                                                     |
-|        5 | united_states \| attitude_of_health_personnel \| health_knowledge,\_attitudes,\_practice \| practice_patterns,\_physicians’ \| health_policy \| physicians \| drug_approval \| minnesota \| policy_making \| health_personnel                       |
-|        6 | cannabis \| phytotherapy \| legislation,\_drug \| hiv_infections \| israel \| hallucinogens \| commerce \| australia \| clinical_trials_as_topic \| plants,\_medicinal                                                                              |
-|        7 | marijuana_smoking \| marijuana \| united_states \| marijuana_use \| illicit_drugs \| pregnancy \| legalization \| medical_marijuana_laws \| logistic_models \| policy                                                                               |
-|        8 | cannabis \| cannabinoids \| tetrahydrocannabinol \| cannabinoid \| health_policy \| reproducibility_of_results \| cannabidiol \| tourette_syndrome \| drug-related_side_effects_and_adverse_reactions \| accidents,\_traffic                        |
-|        9 | animals \| epilepsy \| cannabidiol \| endocannabinoids \| anticonvulsants \| treatment_outcome \| brain \| child \| receptors,\_cannabinoid \| seizures                                                                                             |
-|       10 | drug_and_narcotic_control \| state_government \| government_regulation \| marijuana_smoking \| federal_government \| politics \| united_states_food_and_drug_administration \| california \| health_services_accessibility \| legislation,\_medical |
+| topic_id | topic_features                                                                                                                                                                                                            |
+|---------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | middle_aged \| aged \| adult \| female \| aged,\_80_and_over \| marijuana_abuse \| self_medication \| health_personnel \| adolescent \| mental_health                                                                     |
+|        2 | male \| adult \| female \| marijuana_use \| washington \| israel \| middle_aged \| stress_disorders,\_post-traumatic \| attitude \| longitudinal_studies                                                                  |
+|        3 | marijuana \| female \| pain \| colorado \| prevalence \| anxiety \| depression \| adolescent \| policy \| adolescents                                                                                                     |
+|        4 | adult \| medical_cannabis \| marijuana_abuse \| risk_factors \| retrospective_studies \| female \| anticonvulsants \| child \| child,\_preschool \| middle_aged                                                           |
+|        5 | dronabinol \| cannabidiol \| cannabis \| multiple_sclerosis \| marijuana_smoking \| evidence-based_medicine \| nabiximols \| drug_combinations \| muscle_spasticity \| nabilone                                           |
+|        6 | chronic_pain \| analgesics,\_opioid \| pain_management \| opioid-related_disorders \| endocannabinoids \| medical_cannabis \| opioids \| drug_prescriptions \| drug_overdose \| prescription_drug_misuse                  |
+|        7 | cannabis \| united_states \| cannabinoids \| drug_approval \| plant_preparations \| drug_and_narcotic_control \| glaucoma \| australia \| clinical_trials_as_topic \| epilepsy                                            |
+|        8 | legislation,\_drug \| united_states \| nausea \| public_policy \| vomiting \| commerce \| marijuana_smoking \| mental_disorders \| public_health \| legalization                                                          |
+|        9 | phytotherapy \| legislation,\_drug \| state_government \| canada \| politics \| federal_government \| united_states_food_and_drug_administration \| drug_and_narcotic_control \| public_health \| evidence-based_medicine |
+|       10 | phytotherapy \| drug_and_narcotic_control \| cannabis \| hiv_infections \| california \| government_regulation \| canada \| physicians \| biomedical_research \| jurisprudence                                            |
 
 ### Two-dimensional analyses
 
