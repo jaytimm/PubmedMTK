@@ -1,7 +1,7 @@
 # PubmedMTK
 
-**PubMed Mining Toolkit**: An R package for querying the PubMed database
-& parsing retrieved records. Toolkit facilitates batch API requests, the
+PubMed Mining Toolkit:: An R package for querying the PubMed database &
+parsing retrieved records. Toolkit facilitates batch API requests, the
 creation of custom corpora for NLP, and the quick exploration &
 visualization of topic structure.
 
@@ -168,8 +168,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [14:39:20.918] early stopping at 80 iteration 
-    ## INFO  [14:39:21.274] early stopping at 20 iteration
+    ## INFO  [14:42:13.558] early stopping at 80 iteration 
+    ## INFO  [14:42:13.847] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -178,18 +178,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                            |
-|---------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | middle_aged \| aged \| adult \| female \| aged,\_80_and_over \| marijuana_abuse \| self_medication \| health_personnel \| adolescent \| mental_health                                                                     |
-|        2 | male \| adult \| female \| marijuana_use \| washington \| israel \| middle_aged \| stress_disorders,\_post-traumatic \| attitude \| longitudinal_studies                                                                  |
-|        3 | marijuana \| female \| pain \| colorado \| prevalence \| anxiety \| depression \| adolescent \| policy \| adolescents                                                                                                     |
-|        4 | adult \| medical_cannabis \| marijuana_abuse \| risk_factors \| retrospective_studies \| female \| anticonvulsants \| child \| child,\_preschool \| middle_aged                                                           |
-|        5 | dronabinol \| cannabidiol \| cannabis \| multiple_sclerosis \| marijuana_smoking \| evidence-based_medicine \| nabiximols \| drug_combinations \| muscle_spasticity \| nabilone                                           |
-|        6 | chronic_pain \| analgesics,\_opioid \| pain_management \| opioid-related_disorders \| endocannabinoids \| medical_cannabis \| opioids \| drug_prescriptions \| drug_overdose \| prescription_drug_misuse                  |
-|        7 | cannabis \| united_states \| cannabinoids \| drug_approval \| plant_preparations \| drug_and_narcotic_control \| glaucoma \| australia \| clinical_trials_as_topic \| epilepsy                                            |
-|        8 | legislation,\_drug \| united_states \| nausea \| public_policy \| vomiting \| commerce \| marijuana_smoking \| mental_disorders \| public_health \| legalization                                                          |
-|        9 | phytotherapy \| legislation,\_drug \| state_government \| canada \| politics \| federal_government \| united_states_food_and_drug_administration \| drug_and_narcotic_control \| public_health \| evidence-based_medicine |
-|       10 | phytotherapy \| drug_and_narcotic_control \| cannabis \| hiv_infections \| california \| government_regulation \| canada \| physicians \| biomedical_research \| jurisprudence                                            |
+| topic_id | topic_features                                                                                                                                                                                            |
+|---------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | adult \| middle_aged \| young_adult \| aged \| male \| cross-sectional_studies \| adolescent \| age_factors \| pain_management \| health_surveys                                                          |
+|        2 | marijuana_use \| health_knowledge,\_attitudes,\_practice \| male \| surveys_and_questionnaires \| health_policy \| commerce \| middle_aged \| female \| united_states \| substance_use                    |
+|        3 | male \| adult \| female \| marijuana \| cannabis \| marijuana_smoking \| stress_disorders,\_post-traumatic \| motivation \| severity_of_illness_index \| cannabis_use                                     |
+|        4 | cannabis \| marijuana_use \| prevalence \| united_states \| thc \| cbd \| illicit_drugs \| medical_marijuana_laws \| medical_cannabis \| logistic_models                                                  |
+|        5 | cannabis \| canada \| drug_and_narcotic_control \| phytotherapy \| united_states \| physicians \| health_policy \| jurisprudence \| attitude_of_health_personnel \| health_care_and_public_health         |
+|        6 | nausea \| marijuana_smoking \| multiple_sclerosis \| cannabis \| drug_and_narcotic_control \| vomiting \| public_policy \| marijuana_abuse \| muscle_spasticity \| neuralgia                              |
+|        7 | female \| male \| substance-related_disorders \| marijuana_abuse \| cannabis \| cross-sectional_studies \| marijuana_smoking \| risk_factors \| colorado \| anxiety                                       |
+|        8 | cannabinoids \| medical_cannabis \| drug_and_narcotic_control \| united_states \| biomedical_research \| mental_disorders \| palliative_care \| health_services_accessibility \| united_kingdom \| israel |
+|        9 | cannabis \| neoplasms \| palliative_care \| cancer_pain \| cancer \| clinical_trials_as_topic \| randomized_controlled_trials_as_topic \| medical_cannabis \| societies,\_medical \| internet             |
+|       10 | pain \| chronic_pain \| cannabis \| analgesics,\_opioid \| analgesics \| pain_management \| practice_patterns,\_physicians’ \| hiv_infections \| new_zealand \| symptom_management                        |
 
 ### Two-dimensional analyses
 

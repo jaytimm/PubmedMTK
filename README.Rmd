@@ -13,7 +13,7 @@ output:
 
 # PubmedMTK
 
-**PubMed Mining Toolkit**:  An R package for querying the PubMed database & parsing retrieved records.  Toolkit facilitates batch API requests, the creation of custom corpora for NLP, and the quick exploration & visualization of topic structure.  
+PubMed Mining Toolkit::  An R package for querying the PubMed database & parsing retrieved records.  Toolkit facilitates batch API requests, the creation of custom corpora for NLP, and the quick exploration & visualization of topic structure.  
 
 
 ```{r setup, include=FALSE}
