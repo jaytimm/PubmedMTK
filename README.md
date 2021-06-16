@@ -116,17 +116,17 @@ egs <- PubmedMTK::pmtk_locate_search(text = toks,
                                      doc_id = sen_df$pmid,
                                      search = c('medical marijuana laws'),
                                      stem = F,
-                                     window = 5)
+                                     window = 10)
 knitr::kable(egs[1:5, ])
 ```
 
-| doc_id   | lhs                                       | instance               | rhs                                 |
-|:---------|:------------------------------------------|:-----------------------|:------------------------------------|
-| 34128629 | can recommend use of marijuana under      | medical marijuana laws | but cannot prescribe it , as        |
-| 33750275 | , most frequently through legalization of | medical marijuana laws | ( mmls ) , and there                |
-| 33730400 | ) , followed by states with               | medical marijuana laws | ( mml ) and without legal           |
-| 33624387 | and found that the implementation of      | medical marijuana laws | ( mmls ) and recreational marijuana |
-| 33143941 | by the presence or absence of             | medical marijuana laws | ( mml ) and recreational marijuana  |
+| doc_id   | lhs                                                                               | instance               | rhs                                                         |
+|:---------|:----------------------------------------------------------------------------------|:-----------------------|:------------------------------------------------------------|
+| 34128629 | , and driving . physicians can recommend use of marijuana under                   | medical marijuana laws | but cannot prescribe it , as it is classified as a          |
+| 33750275 | moving to reverse marijuana prohibition , most frequently through legalization of | medical marijuana laws | ( mmls ) , and there is concern that marijuana legalization |
+| 33730400 | recreational marijuana laws ( rml ) , followed by states with                     | medical marijuana laws | ( mml ) and without legal cannabis use , respectively .     |
+| 33624387 | differences-in-differences ( dd ) approach and found that the implementation of   | medical marijuana laws | ( mmls ) and recreational marijuana laws ( rmls ) reduced   |
+| 33143941 | . cannabis legalization was determined by the presence or absence of              | medical marijuana laws | ( mml ) and recreational marijuana laws ( rml ) in          |
 
 ### Extract MeSH classifications
 
@@ -169,8 +169,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [14:01:39.954] early stopping at 100 iteration 
-    ## INFO  [14:01:40.239] early stopping at 20 iteration
+    ## INFO  [14:03:18.676] early stopping at 150 iteration 
+    ## INFO  [14:03:18.985] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -179,18 +179,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                     |
-|---------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | cannabis \| united_states \| legislation,\_drug \| commerce \| jurisprudence \| risk_factors \| marijuana_abuse \| hallucinogens \| ethnic_groups \| follow-up_studies                             |
-|        2 | cannabis \| phytotherapy \| pain \| hiv_infections \| legislation,\_drug \| mental_disorders \| substance-related_disorders \| california \| chronic_disease \| opioid                             |
-|        3 | animals \| marijuana_abuse \| endocannabinoids \| cannabinoids \| receptors,\_cannabinoid \| brain \| cannabidiol \| cognition \| dronabinol \| receptor,\_cannabinoid,\_cb1                       |
-|        4 | chronic_pain \| pain_management \| treatment_outcome \| analgesics \| pain \| quality_of_life \| neuralgia \| randomized_controlled_trials_as_topic \| pain_measurement \| evidence-based_medicine |
-|        5 | male \| united_states \| anxiety \| depression \| female \| drug_prescriptions \| middle_aged \| cannabis \| time_factors \| risk_assessment                                                       |
-|        6 | female \| male \| cross-sectional_studies \| marijuana_abuse \| adolescent \| young_adult \| age_factors \| health_surveys \| risk_factors \| middle_aged                                          |
-|        7 | cannabis \| cannabinoids \| neoplasms \| marijuana_smoking \| multiple_sclerosis \| cancer_pain \| cancer \| antineoplastic_agents \| patient_education_as_topic \| societies,\_medical            |
-|        8 | marijuana_use \| adolescent \| marijuana_smoking \| substance-related_disorders \| legalization \| colorado \| illicit_drugs \| cannabis \| adolescent_behavior \| united_states                   |
-|        9 | female \| male \| adult \| middle_aged \| surveys_and_questionnaires \| aged \| attitude_to_health \| epidemiology \| pilot_projects \| severity_of_illness_index                                  |
-|       10 | dronabinol \| cannabinoids \| cannabidiol \| nausea \| vomiting \| muscle_spasticity \| clinical_trials_as_topic \| drug_combinations \| drug_interactions \| cannabinoid_receptor_agonists        |
+| topic_id | topic_features                                                                                                                                                                                                                           |
+|---------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | female \| male \| adult \| middle_aged \| cross-sectional_studies \| risk_factors \| prevalence \| age_factors \| health_surveys \| socioeconomic_factors                                                                                |
+|        2 | cannabinoids \| animals \| endocannabinoids \| brain \| receptors,\_cannabinoid \| cannabinoid_receptor_agonists \| receptor,\_cannabinoid,\_cb1 \| endocannabinoid_system \| mice \| drug_interactions                                  |
+|        3 | cannabis \| phytotherapy \| plant_preparations \| california \| surveys_and_questionnaires \| jurisprudence \| acquired_immunodeficiency_syndrome \| legal_approach \| stress_disorders,\_post-traumatic \| research                     |
+|        4 | marijuana_smoking \| united_states \| legislation,\_drug \| risk_assessment \| colorado \| commerce \| california \| policy_making \| alcohol_drinking \| marijuana                                                                      |
+|        5 | female \| aged \| middle_aged \| male \| aged,\_80_and_over \| adult \| prospective_studies \| australia \| adolescent \| pilot_projects                                                                                                 |
+|        6 | united_states \| state_government \| phytotherapy \| drug_approval \| politics \| federal_government \| government_regulation \| united_states_food_and_drug_administration \| public_policy \| legislation,\_medical                    |
+|        7 | legislation,\_drug \| marijuana_use \| public_health \| female \| mental_disorders \| substance-related_disorders \| drug_prescriptions \| hiv_infections \| epidemiology \| public_policy                                               |
+|        8 | cannabis \| cannabinoids \| plant_extracts \| randomized_controlled_trials_as_topic \| medicinal_cannabis \| retrospective_studies \| comorbidity \| time_factors \| reproducibility_of_results \| chromatography,\_high_pressure_liquid |
+|        9 | chronic_pain \| pain_management \| treatment_outcome \| analgesics \| cannabis \| neuralgia \| pain \| illicit_drugs \| pain_measurement \| prospective_studies                                                                          |
+|       10 | cannabis \| marijuana \| marijuana_smoking \| pregnancy \| hallucinogens \| legalization \| longitudinal_studies \| young_adult \| logistic_models \| biomedical_research                                                                |
 
 ### Two-dimensional analyses
 

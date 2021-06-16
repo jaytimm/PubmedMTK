@@ -111,7 +111,7 @@ egs <- PubmedMTK::pmtk_locate_search(text = toks,
                                      doc_id = sen_df$pmid,
                                      search = c('medical marijuana laws'),
                                      stem = F,
-                                     window = 5)
+                                     window = 10)
 knitr::kable(egs[1:5, ])
 ```
 
