@@ -1,7 +1,7 @@
 # PubmedMTK
 
-PubMed Mining Toolkit:: An R package for querying the PubMed database &
-parsing retrieved records. Toolkit facilitates batch API requests, the
+`PubMed Mining Toolkit` \| An R package for querying the PubMed database
+& parsing retrieved records. Toolkit facilitates batch API requests, the
 creation of custom corpora for NLP, and the quick exploration &
 visualization of topic structure.
 
@@ -122,11 +122,11 @@ egs <- PubmedMTK::pmtk_locate_search(text = toks,
                                      stem = F,
                                      window = 10)
 
-egs$t1 <- paste0('... ', egs$lhs, ' `', egs$instance, '` ', egs$rhs, ' ...')
+egs$kwic <- paste0('... ', egs$lhs, ' `', egs$instance, '` ', egs$rhs, ' ...')
 knitr::kable(egs[1:8, c(1,5)])
 ```
 
-| doc_id   | t1                                                                                                                                                                         |
+| doc_id   | kwic                                                                                                                                                                       |
 |:---------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 34128629 | … , and driving . physicians can recommend use of marijuana under `medical marijuana laws` but cannot prescribe it , as it is classified as a …                            |
 | 33750275 | … moving to reverse marijuana prohibition , most frequently through legalization of `medical marijuana laws` ( mmls ) , and there is concern that marijuana legalization … |
@@ -178,8 +178,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [09:53:08.957] early stopping at 100 iteration 
-    ## INFO  [09:53:09.312] early stopping at 30 iteration
+    ## INFO  [10:11:39.049] early stopping at 120 iteration 
+    ## INFO  [10:11:39.223] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -188,18 +188,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                                                  |
-|---------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | medical_cannabis \| canada \| cannabis \| marijuana_smoking \| public_health \| united_states \| practice_patterns,\_physicians’ \| evidence-based_medicine \| mental_health \| substance_use                                                   |
-|        2 | female \| adult \| male \| cross-sectional_studies \| young_adult \| middle_aged \| surveys_and_questionnaires \| adolescent \| health_surveys \| comorbidity                                                                                   |
-|        3 | cannabis \| legislation,\_drug \| endocannabinoids \| hiv_infections \| public_policy \| practice_guidelines_as_topic \| politics \| male \| san_francisco \| treatment_outcome                                                                 |
-|        4 | united_states \| drug_and_narcotic_control \| state_government \| government_regulation \| federal_government \| health_policy \| risk_assessment \| united_states_food_and_drug_administration \| physician-patient_relations \| policy_making |
-|        5 | male \| female \| child \| adolescent \| adult \| anticonvulsants \| child,\_preschool \| infant \| drug_resistant_epilepsy \| safety                                                                                                           |
-|        6 | cannabidiol \| dronabinol \| epilepsy \| cbd \| animals \| nabiximols \| seizures \| drug_combinations \| cannabinoid_receptor_agonists \| endocannabinoid_system                                                                               |
-|        7 | chronic_pain \| analgesics,\_opioid \| opioid-related_disorders \| middle_aged \| adult \| male \| substance-related_disorders \| drug_prescriptions \| israel \| prescription_drugs                                                            |
-|        8 | adult \| female \| male \| marijuana \| substance-related_disorders \| hallucinogens \| cognition \| marijuana_use \| longitudinal_studies \| time_factors                                                                                      |
-|        9 | united_states \| drug_and_narcotic_control \| marijuana_smoking \| phytotherapy \| california \| commerce \| politics \| physicians \| terminal_care \| biomedical_research                                                                     |
-|       10 | marijuana_use \| female \| prevalence \| adolescent \| united_states \| age_factors \| illicit_drugs \| medical_marijuana_laws \| alcohol_drinking \| sex_factors                                                                               |
+| topic_id | topic_features                                                                                                                                                                                                                               |
+|---------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | united_states \| health_policy \| drug_and_narcotic_control \| legislation,\_drug \| risk_assessment \| legalization \| policy_making \| australia \| marijuana \| attitude_of_health_personnel                                              |
+|        2 | female \| male \| adolescent \| adult \| young_adult \| substance-related_disorders \| retrospective_studies \| risk_factors \| cross-sectional_studies \| emergency_service,\_hospital                                                      |
+|        3 | marijuana \| cannabis \| evidence-based_medicine \| cognition \| mental_health \| cannabinoid \| epidemiology \| harm_reduction \| health_services_accessibility \| sleep                                                                    |
+|        4 | adult \| male \| female \| middle_aged \| young_adult \| cohort_studies \| aged \| quality_of_life \| case-control_studies \| social_stigma                                                                                                  |
+|        5 | male \| surveys_and_questionnaires \| female \| cross-sectional_studies \| adult \| attitude \| washington \| united_states \| sex_factors \| prevalence                                                                                     |
+|        6 | medical_cannabis \| chronic_pain \| cannabis \| health_knowledge,\_attitudes,\_practice \| randomized_controlled_trials_as_topic \| quality_of_life \| medicinal_cannabis \| pain_measurement \| dose-response_relationship,\_drug \| israel |
+|        7 | cannabis \| canada \| pain \| neoplasms \| treatment_outcome \| clinical_trials_as_topic \| dronabinol \| united_kingdom \| practice_guidelines_as_topic \| drug_interactions                                                                |
+|        8 | cannabis \| marijuana_use \| pregnancy \| marijuana_smoking \| hallucinogens \| motivation \| physicians \| substance_abuse_detection \| patient_education_as_topic \| pharmacists                                                           |
+|        9 | epilepsy \| cannabinoids \| treatment_outcome \| anticonvulsants \| neoplasms \| child,\_preschool \| female \| drug_resistant_epilepsy \| seizures \| chronic_disease                                                                       |
+|       10 | marijuana_smoking \| marijuana_abuse \| united_states \| adolescent_behavior \| prevalence \| self_report \| alcohol_drinking \| marijuana \| risk \| risk_factors                                                                           |
 
 ### Two-dimensional analyses
 

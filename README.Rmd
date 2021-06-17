@@ -13,7 +13,7 @@ output:
 
 # PubmedMTK
 
-PubMed Mining Toolkit::  An R package for querying the PubMed database & parsing retrieved records.  Toolkit facilitates batch API requests, the creation of custom corpora for NLP, and the quick exploration & visualization of topic structure.  
+`PubMed Mining Toolkit` | An R package for querying the PubMed database & parsing retrieved records.  Toolkit facilitates batch API requests, the creation of custom corpora for NLP, and the quick exploration & visualization of topic structure.  
 
 
 ```{r setup, include=FALSE}
@@ -112,7 +112,7 @@ egs <- PubmedMTK::pmtk_locate_search(text = toks,
                                      stem = F,
                                      window = 10)
 
-egs$t1 <- paste0('... ', egs$lhs, ' `', egs$instance, '` ', egs$rhs, ' ...')
+egs$kwic <- paste0('... ', egs$lhs, ' `', egs$instance, '` ', egs$rhs, ' ...')
 knitr::kable(egs[1:8, c(1,5)])
 ```
 
