@@ -66,6 +66,7 @@ head(s0)
 
 ### Retrieve and parse abstract data 
 
+For quicker abstract retrieval, be sure to get an [API key](https://support.nlm.nih.gov/knowledgebase/article/KA-03521/en-us).    
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 # Set NCBI API key
@@ -87,7 +88,7 @@ sen_df <- PubmedMTK::pmtk_get_records2(pmids = s0$pmid,
 ```{r}
 sen_df <- data.table::rbindlist(sen_df)
 
-n <- 9
+n <- 12
 list(pmid = sen_df$pmid[n],
      year = sen_df$year[n],
      articletitle = strwrap(sen_df$articletitle[n], width = 60),
@@ -110,7 +111,9 @@ egs <- PubmedMTK::pmtk_locate_search(text = toks,
                                      search = c('medical marijuana laws'),
                                      stem = F,
                                      window = 10)
-knitr::kable(egs[1:5, ])
+
+egs$t1 <- paste0('... ', egs$lhs, ' `', egs$instance, '` ', egs$rhs, ' ...')
+knitr::kable(egs[1:8, c(1,5)])
 ```
 
 
@@ -254,9 +257,9 @@ PubmedMTK::pmtk_tbl_pmc_ref
 
 The project maintainer welcomes contributions in the form of feature requests, bug reports, comments, unit tests, vignettes, or other code. If you'd like to contribute, either:
 
-* fork the repository and submit a pull request
+* fork the repository and submit a [pull request](https://github.com/jaytimm/PubmedMTK/pulls);
 
-* file an issue;
+* file an [issue](https://github.com/jaytimm/PubmedMTK/issues);
 
 * or contact the maintainer via e-mail.
 

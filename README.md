@@ -59,6 +59,9 @@ head(s0)
 
 ### Retrieve and parse abstract data
 
+For quicker abstract retrieval, be sure to get an [API
+key](https://support.nlm.nih.gov/knowledgebase/article/KA-03521/en-us).
+
 ``` r
 sen_df <- PubmedMTK::pmtk_get_records2(pmids = s0$pmid, 
                                        cores = 6, 
@@ -70,7 +73,7 @@ sen_df <- PubmedMTK::pmtk_get_records2(pmids = s0$pmid,
 ``` r
 sen_df <- data.table::rbindlist(sen_df)
 
-n <- 9
+n <- 12
 list(pmid = sen_df$pmid[n],
      year = sen_df$year[n],
      articletitle = strwrap(sen_df$articletitle[n], width = 60),
@@ -79,29 +82,31 @@ list(pmid = sen_df$pmid[n],
 ```
 
     ## $pmid
-    ## [1] "33974499"
+    ## [1] "33933061"
     ## 
     ## $year
     ## [1] "2021"
     ## 
     ## $articletitle
-    ## [1] "The Risk of QTc Prolongation with Antiemetics in the"
-    ## [2] "Palliative Care Setting: A Narrative Review."        
+    ## [1] "Opioid use in medical cannabis authorization adult patients"
+    ## [2] "from 2013 to 2018: Alberta, Canada."                        
     ## 
     ## $meshHeadings
-    ## [1] "NA"
+    ## [1] "Adult|Alberta|Analgesics,"                                  
+    ## [2] "Opioid|Cannabis|Female|Humans|Male|Medical Marijuana|Middle"
+    ## [3] "Aged|Opioid-Related Disorders|United States"                
     ## 
     ## $text
-    ##  [1] "Nausea and vomiting are common within the palliative care"  
-    ##  [2] "population. Antiemetic agents may help control symptoms,"   
-    ##  [3] "but may also place patients at risk for QTc prolongation."  
-    ##  [4] "This article reviews pharmacotherapy agents including"      
-    ##  [5] "anticholinergics, antihistamines, antidopaminergics, 5-HT3" 
-    ##  [6] "receptor antagonists, dronabinol, and medical marijuana and"
-    ##  [7] "their associated risk of QTc prolongation. A clinical"      
-    ##  [8] "treatment pathway is provided to help guide clinicians in"  
-    ##  [9] "choosing the most appropriate antiemetic based upon patient"
-    ## [10] "specific factors for QTc prolongation."
+    ##  [1] "The opioid overdose epidemic in Canada and the United"      
+    ##  [2] "States has become a public health crisis - with exponential"
+    ##  [3] "increases in opioid-related morbidity and mortality."       
+    ##  [4] "Recently, there has been an increasing body of evidence"    
+    ##  [5] "focusing on the opioid-sparing effects of medical cannabis" 
+    ##  [6] "use (reduction of opioid use and reliance), and medical"    
+    ##  [7] "cannabis as a potential alternative treatment for chronic"  
+    ##  [8] "pain. The objective of this study is to assess the effect"  
+    ##  [9] "of medical cannabis authorization on opioid use (oral"      
+    ## [10] "morphine equivalent; OME) between 2013 and 2018 in Alberta,"
 
 ### KWIC search
 
@@ -116,16 +121,21 @@ egs <- PubmedMTK::pmtk_locate_search(text = toks,
                                      search = c('medical marijuana laws'),
                                      stem = F,
                                      window = 10)
-knitr::kable(egs[1:5, ])
+
+egs$t1 <- paste0('... ', egs$lhs, ' `', egs$instance, '` ', egs$rhs, ' ...')
+knitr::kable(egs[1:8, c(1,5)])
 ```
 
-| doc_id   | lhs                                                                               | instance               | rhs                                                         |
-|:---------|:----------------------------------------------------------------------------------|:-----------------------|:------------------------------------------------------------|
-| 34128629 | , and driving . physicians can recommend use of marijuana under                   | medical marijuana laws | but cannot prescribe it , as it is classified as a          |
-| 33750275 | moving to reverse marijuana prohibition , most frequently through legalization of | medical marijuana laws | ( mmls ) , and there is concern that marijuana legalization |
-| 33730400 | recreational marijuana laws ( rml ) , followed by states with                     | medical marijuana laws | ( mml ) and without legal cannabis use , respectively .     |
-| 33624387 | differences-in-differences ( dd ) approach and found that the implementation of   | medical marijuana laws | ( mmls ) and recreational marijuana laws ( rmls ) reduced   |
-| 33143941 | . cannabis legalization was determined by the presence or absence of              | medical marijuana laws | ( mml ) and recreational marijuana laws ( rml ) in          |
+| doc_id   | t1                                                                                                                                                                         |
+|:---------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 34128629 | … , and driving . physicians can recommend use of marijuana under `medical marijuana laws` but cannot prescribe it , as it is classified as a …                            |
+| 33750275 | … moving to reverse marijuana prohibition , most frequently through legalization of `medical marijuana laws` ( mmls ) , and there is concern that marijuana legalization … |
+| 33730400 | … recreational marijuana laws ( rml ) , followed by states with `medical marijuana laws` ( mml ) and without legal cannabis use , respectively . …                         |
+| 33624387 | … differences-in-differences ( dd ) approach and found that the implementation of `medical marijuana laws` ( mmls ) and recreational marijuana laws ( rmls ) reduced …     |
+| 33143941 | … . cannabis legalization was determined by the presence or absence of `medical marijuana laws` ( mml ) and recreational marijuana laws ( rml ) in …                       |
+| 33069561 | … , a limited but growing body of literature has found state `medical marijuana laws` ( mmls ) to be associated with lower levels of opioid …                              |
+| 32799573 | … management , much research has since focused on the potential for `medical marijuana laws` ( mmls ) to curb the opioid epidemic . nonetheless , …                        |
+| 32736294 | … cannabis use disorder are more prevalent in u.s . states with `medical marijuana laws` ( mmls ) , as well as among individuals with elevated …                           |
 
 ### Extract MeSH classifications
 
@@ -168,8 +178,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [14:42:13.558] early stopping at 80 iteration 
-    ## INFO  [14:42:13.847] early stopping at 20 iteration
+    ## INFO  [09:53:08.957] early stopping at 100 iteration 
+    ## INFO  [09:53:09.312] early stopping at 30 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -178,18 +188,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                            |
-|---------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | adult \| middle_aged \| young_adult \| aged \| male \| cross-sectional_studies \| adolescent \| age_factors \| pain_management \| health_surveys                                                          |
-|        2 | marijuana_use \| health_knowledge,\_attitudes,\_practice \| male \| surveys_and_questionnaires \| health_policy \| commerce \| middle_aged \| female \| united_states \| substance_use                    |
-|        3 | male \| adult \| female \| marijuana \| cannabis \| marijuana_smoking \| stress_disorders,\_post-traumatic \| motivation \| severity_of_illness_index \| cannabis_use                                     |
-|        4 | cannabis \| marijuana_use \| prevalence \| united_states \| thc \| cbd \| illicit_drugs \| medical_marijuana_laws \| medical_cannabis \| logistic_models                                                  |
-|        5 | cannabis \| canada \| drug_and_narcotic_control \| phytotherapy \| united_states \| physicians \| health_policy \| jurisprudence \| attitude_of_health_personnel \| health_care_and_public_health         |
-|        6 | nausea \| marijuana_smoking \| multiple_sclerosis \| cannabis \| drug_and_narcotic_control \| vomiting \| public_policy \| marijuana_abuse \| muscle_spasticity \| neuralgia                              |
-|        7 | female \| male \| substance-related_disorders \| marijuana_abuse \| cannabis \| cross-sectional_studies \| marijuana_smoking \| risk_factors \| colorado \| anxiety                                       |
-|        8 | cannabinoids \| medical_cannabis \| drug_and_narcotic_control \| united_states \| biomedical_research \| mental_disorders \| palliative_care \| health_services_accessibility \| united_kingdom \| israel |
-|        9 | cannabis \| neoplasms \| palliative_care \| cancer_pain \| cancer \| clinical_trials_as_topic \| randomized_controlled_trials_as_topic \| medical_cannabis \| societies,\_medical \| internet             |
-|       10 | pain \| chronic_pain \| cannabis \| analgesics,\_opioid \| analgesics \| pain_management \| practice_patterns,\_physicians’ \| hiv_infections \| new_zealand \| symptom_management                        |
+| topic_id | topic_features                                                                                                                                                                                                                                  |
+|---------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | medical_cannabis \| canada \| cannabis \| marijuana_smoking \| public_health \| united_states \| practice_patterns,\_physicians’ \| evidence-based_medicine \| mental_health \| substance_use                                                   |
+|        2 | female \| adult \| male \| cross-sectional_studies \| young_adult \| middle_aged \| surveys_and_questionnaires \| adolescent \| health_surveys \| comorbidity                                                                                   |
+|        3 | cannabis \| legislation,\_drug \| endocannabinoids \| hiv_infections \| public_policy \| practice_guidelines_as_topic \| politics \| male \| san_francisco \| treatment_outcome                                                                 |
+|        4 | united_states \| drug_and_narcotic_control \| state_government \| government_regulation \| federal_government \| health_policy \| risk_assessment \| united_states_food_and_drug_administration \| physician-patient_relations \| policy_making |
+|        5 | male \| female \| child \| adolescent \| adult \| anticonvulsants \| child,\_preschool \| infant \| drug_resistant_epilepsy \| safety                                                                                                           |
+|        6 | cannabidiol \| dronabinol \| epilepsy \| cbd \| animals \| nabiximols \| seizures \| drug_combinations \| cannabinoid_receptor_agonists \| endocannabinoid_system                                                                               |
+|        7 | chronic_pain \| analgesics,\_opioid \| opioid-related_disorders \| middle_aged \| adult \| male \| substance-related_disorders \| drug_prescriptions \| israel \| prescription_drugs                                                            |
+|        8 | adult \| female \| male \| marijuana \| substance-related_disorders \| hallucinogens \| cognition \| marijuana_use \| longitudinal_studies \| time_factors                                                                                      |
+|        9 | united_states \| drug_and_narcotic_control \| marijuana_smoking \| phytotherapy \| california \| commerce \| politics \| physicians \| terminal_care \| biomedical_research                                                                     |
+|       10 | marijuana_use \| female \| prevalence \| adolescent \| united_states \| age_factors \| illicit_drugs \| medical_marijuana_laws \| alcohol_drinking \| sex_factors                                                                               |
 
 ### Two-dimensional analyses
 
@@ -283,9 +293,10 @@ The project maintainer welcomes contributions in the form of feature
 requests, bug reports, comments, unit tests, vignettes, or other code.
 If you’d like to contribute, either:
 
--   fork the repository and submit a pull request
+-   fork the repository and submit a [pull
+    request](https://github.com/jaytimm/PubmedMTK/pulls);
 
--   file an issue;
+-   file an [issue](https://github.com/jaytimm/PubmedMTK/issues);
 
 -   or contact the maintainer via e-mail.
 
