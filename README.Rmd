@@ -5,9 +5,9 @@ output:
 ---
 
 ```{r eval=FALSE, include=FALSE}
-# <!-- badges: start -->
-# [![Travis build status](https://travis-ci.com/jaytimm/PubmedMTK.svg?branch=main)](https://travis-ci.com/jaytimm/PubmedMTK)
-# <!-- badges: end -->
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.com/jaytimm/PubmedMTK.svg?branch=main)](https://travis-ci.com/jaytimm/PubmedMTK)
+<!-- badges: end -->
 ```
 
 

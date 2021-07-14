@@ -1,9 +1,8 @@
 # PubmedMTK
 
 `PubMed Mining Toolkit` \| An R package for querying the PubMed database
-& parsing retrieved records. Toolkit facilitates batch API requests, the
-creation of custom corpora for NLP, and the quick exploration &
-visualization of topic structure.
+& parsing retrieved records. Toolkit facilitates batch API requests &
+the creation of custom corpora for NLP.
 
 -   [Installation](#installation)
 -   [Usage](#usage)
@@ -178,8 +177,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [09:08:58.558] early stopping at 100 iteration 
-    ## INFO  [09:08:58.634] early stopping at 30 iteration
+    ## INFO  [10:19:49.632] early stopping at 130 iteration 
+    ## INFO  [10:19:49.723] early stopping at 30 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -188,18 +187,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                                                  |
-|---------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | cannabis \| canada \| public_health \| tetrahydrocannabinol \| health_services_accessibility \| health_knowledge,\_attitudes,\_practice \| dronabinol \| patient_education_as_topic \| legalization \| cannabinoids                             |
-|        2 | male \| female \| marijuana \| marijuana_use \| pregnancy \| health_surveys \| adolescents \| substance_use \| substance_withdrawal_syndrome \| breast_feeding                                                                                  |
-|        3 | legislation,\_drug \| united_states \| politics \| california \| public_policy \| cannabis \| commerce \| policy \| seizure \| public_opinion                                                                                                   |
-|        4 | nausea \| vomiting \| cannabidiol \| drug_and_narcotic_control \| chronic_pain \| cannabis \| attitude_of_health_personnel \| united_states_food_and_drug_administration \| antineoplastic_agents \| dronabinol                                 |
-|        5 | female \| male \| prevalence \| substance-related_disorders \| cross-sectional_studies \| young_adult \| risk_factors \| adult \| marijuana \| alcohol_drinking                                                                                 |
-|        6 | chronic_pain \| cannabis \| analgesics,\_opioid \| opioid-related_disorders \| hallucinogens \| hiv_infections \| longitudinal_studies \| cannabinoid \| new_zealand \| health_policy                                                           |
-|        7 | phytotherapy \| drug_and_narcotic_control \| plant_preparations \| physicians \| pain_management \| jurisprudence \| civil_rights \| knowledge \| analgesics \| history,\_19th_century                                                          |
-|        8 | cannabis \| phytotherapy \| united_states \| cbd \| thc \| california \| crime \| san_francisco \| commerce \| canada                                                                                                                           |
-|        9 | pain \| marijuana \| neoplasms \| multiple_sclerosis \| plant_extracts \| palliative_care \| dronabinol \| analgesics \| muscle_spasticity \| nabiximols                                                                                        |
-|       10 | cannabis \| state_government \| marijuana_smoking \| health_policy \| federal_government \| phytotherapy \| government_regulation \| united_states_food_and_drug_administration \| physician-patient_relations \| health_care_and_public_health |
+| topic_id | topic_features                                                                                                                                                                                                               |
+|---------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | young_adult \| adult \| middle_aged \| female \| aged \| aged,\_80_and_over \| adolescent \| male \| attitude \| health_status                                                                                               |
+|        2 | legislation,\_drug \| health_policy \| united_states \| evidence-based_medicine \| drug_and_narcotic_control \| marijuana_smoking \| randomized_controlled_trials_as_topic \| treatment_outcome \| public_health \| cannabis |
+|        3 | marijuana \| analgesics,\_opioid \| opioid-related_disorders \| marijuana_use \| cross-sectional_studies \| drug_overdose \| retrospective_studies \| opioid \| adolescents \| prescription_drug_misuse                      |
+|        4 | cannabis \| cannabinoids \| neoplasms \| animals \| multiple_sclerosis \| brain \| clinical_trials_as_topic \| plant_extracts \| chromatography,\_high_pressure_liquid \| reproducibility_of_results                         |
+|        5 | marijuana_smoking \| female \| cannabis \| risk_factors \| male \| risk_assessment \| mental_disorders \| adult \| glaucoma \| biomedical_research                                                                           |
+|        6 | phytotherapy \| cannabis \| drug_and_narcotic_control \| california \| hiv_infections \| united_states \| jurisprudence \| crime \| ontario \| health_care_and_public_health                                                 |
+|        7 | marijuana \| medical_cannabis \| male \| marijuana_use \| anxiety \| legalization \| depression \| washington \| alcohol_drinking \| stress_disorders,\_post-traumatic                                                       |
+|        8 | united_states \| legislation,\_drug \| cannabis \| government_regulation \| public_policy \| politics \| united_states_food_and_drug_administration \| marijuana_use \| plant_preparations \| history,\_20th_century         |
+|        9 | female \| male \| middle_aged \| adult \| surveys_and_questionnaires \| health_knowledge,\_attitudes,\_practice \| medical_cannabis \| self_report \| cohort_studies \| attitude_of_health_personnel                         |
+|       10 | chronic_pain \| pain_management \| treatment_outcome \| analgesics \| quality_of_life \| neuralgia \| prospective_studies \| cancer_pain \| pain_measurement \| dose-response_relationship,\_drug                            |
 
 ## Interactive HTML topic summary
 
