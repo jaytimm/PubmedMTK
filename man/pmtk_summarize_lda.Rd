@@ -2,20 +2,18 @@
 % Please edit documentation in R/pmtk_summarize_lda.R
 \name{pmtk_summarize_lda}
 \alias{pmtk_summarize_lda}
-\title{Summarize topic model output
-LDA model returned from `text2vec::LDA` - a fast/efficient LDA implementation - excellent for exploration -}
+\title{Summarize topic model output returned from text2vec::LDA()}
 \usage{
 pmtk_summarize_lda(lda, topic_feats_n = 10)
 }
 \arguments{
-\item{lda}{An lda object returned from `text2vec::LDA`}
+\item{lda}{An lda object returned from text2vec::LDA()}
 
 \item{topic_feats_n}{Number of features to include in topic summary}
 }
 \value{
-
+A list of data frames
 }
 \description{
-Summarize topic model output
-LDA model returned from `text2vec::LDA` - a fast/efficient LDA implementation - excellent for exploration -
+Summarize topic model output returned from text2vec::LDA()
 }

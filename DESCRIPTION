@@ -2,9 +2,9 @@ Package: PubmedMTK
 Type: Package
 Title: PubMed Mining Toolkit
 Version: 0.1.0
-Author: Jason Timm
+Author: Jason Timm [aut, cre]
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
-Description: A collection of functions and resources for accessing, manipulating, and visualizing data made available on PubMed.
+Description: An R package for querying the PubMed database & parsing retrieved records. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -19,4 +19,8 @@ Imports:
     Matrix,
     httr,
     pbapply,
-    Rtsne
+    corpus,
+    rmarkdown,
+    rstudioapi,
+    stringi,
+    tidytext

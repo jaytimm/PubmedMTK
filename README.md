@@ -14,7 +14,6 @@ visualization of topic structure.
     -   [Extract MeSH classifications](#extract-mesh-classifications)
     -   [MeSH annotations-based topic
         model](#mesh-annotations-based-topic-model)
-    -   [Two-dimensional analyses](#two-dimensional-analyses)
 -   [Interactive HTML topic summary](#interactive-html-topic-summary)
 -   [Tables](#tables)
     -   [MeSH vocabulary](#mesh-vocabulary)
@@ -43,19 +42,19 @@ s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'medical marijuana',
                                     fields = c('TIAB','MH'))
 ```
 
-    ## [1] "medical marijuana[TIAB] OR medical marijuana[MH]: 2134 records"
+    ## [1] "medical marijuana[TIAB] OR medical marijuana[MH]: 2173 records"
 
 ``` r
 head(s0)
 ```
 
     ##          search_term     pmid
-    ## 1: medical marijuana 34128629
-    ## 2: medical marijuana 34109050
-    ## 3: medical marijuana 34082823
-    ## 4: medical marijuana 34044753
-    ## 5: medical marijuana 34007062
-    ## 6: medical marijuana 33998880
+    ## 1: medical marijuana 34234903
+    ## 2: medical marijuana 34232573
+    ## 3: medical marijuana 34225825
+    ## 4: medical marijuana 34179729
+    ## 5: medical marijuana 34176017
+    ## 6: medical marijuana 34159050
 
 ### Retrieve and parse abstract data
 
@@ -73,7 +72,7 @@ sen_df <- PubmedMTK::pmtk_get_records2(pmids = s0$pmid,
 ``` r
 sen_df <- data.table::rbindlist(sen_df)
 
-n <- 12
+n <- 10
 list(pmid = sen_df$pmid[n],
      year = sen_df$year[n],
      articletitle = strwrap(sen_df$articletitle[n], width = 60),
@@ -82,45 +81,46 @@ list(pmid = sen_df$pmid[n],
 ```
 
     ## $pmid
-    ## [1] "33933061"
+    ## [1] "34095048"
     ## 
     ## $year
     ## [1] "2021"
     ## 
     ## $articletitle
-    ## [1] "Opioid use in medical cannabis authorization adult patients"
-    ## [2] "from 2013 to 2018: Alberta, Canada."                        
+    ## [1] "Evaluation of Patient Reported Safety and Efficacy of" 
+    ## [2] "Cannabis From a Survey of Medical Cannabis Patients in"
+    ## [3] "Canada."                                               
     ## 
     ## $meshHeadings
-    ## [1] "Adult|Alberta|Analgesics,"                                  
-    ## [2] "Opioid|Cannabis|Female|Humans|Male|Medical Marijuana|Middle"
-    ## [3] "Aged|Opioid-Related Disorders|United States"                
+    ## [1] "Canada|Cannabis|Humans|Male|Medical Marijuana|Patient"
+    ## [2] "Reported Outcome Measures|Quality of Life|Surveys and"
+    ## [3] "Questionnaires"                                       
     ## 
     ## $text
-    ##  [1] "The opioid overdose epidemic in Canada and the United"      
-    ##  [2] "States has become a public health crisis - with exponential"
-    ##  [3] "increases in opioid-related morbidity and mortality."       
-    ##  [4] "Recently, there has been an increasing body of evidence"    
-    ##  [5] "focusing on the opioid-sparing effects of medical cannabis" 
-    ##  [6] "use (reduction of opioid use and reliance), and medical"    
-    ##  [7] "cannabis as a potential alternative treatment for chronic"  
-    ##  [8] "pain. The objective of this study is to assess the effect"  
-    ##  [9] "of medical cannabis authorization on opioid use (oral"      
-    ## [10] "morphine equivalent; OME) between 2013 and 2018 in Alberta,"
+    ##  [1] "With the medical use of cannabis permitted in Canada since" 
+    ##  [2] "2001, patients seek to use this botanical drug to treat a"  
+    ##  [3] "range of medical conditions. However, many healthcare"      
+    ##  [4] "practitioners express the need for further scientific"      
+    ##  [5] "evidence around the use of medical cannabis. This"          
+    ##  [6] "real-world evidence study aimed to address the paucity of"  
+    ##  [7] "scientific data by surveying newly registered medical"      
+    ##  [8] "cannabis patients, before beginning medical cannabis"       
+    ##  [9] "treatment, and at one follow up 6 weeks after beginning"    
+    ## [10] "medical cannabis treatment. The goal was to collect data on"
 
 ### KWIC search
 
-The `pmtk_locate_search()` function allows for quick keyword-in-context
+The `pmtk_locate_term()` function allows for quick keyword-in-context
 (KWIC) search. A simple wrapper of the `corpus::text_locate` function.
 
 ``` r
 toks <-  corpus::text_tokens(sen_df$abstract)
 
-egs <- PubmedMTK::pmtk_locate_search(text = toks,
-                                     doc_id = sen_df$pmid,
-                                     search = c('medical marijuana laws'),
-                                     stem = F,
-                                     window = 10)
+egs <- PubmedMTK::pmtk_locate_term(text = toks,
+                                   doc_id = sen_df$pmid,
+                                   term = c('medical marijuana laws'),
+                                   stem = F,
+                                   window = 10)
 
 egs$kwic <- paste0('... ', egs$lhs, ' `', egs$instance, '` ', egs$rhs, ' ...')
 knitr::kable(egs[1:8, c(1,5)])
@@ -178,8 +178,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [10:11:39.049] early stopping at 120 iteration 
-    ## INFO  [10:11:39.223] early stopping at 20 iteration
+    ## INFO  [09:08:58.558] early stopping at 100 iteration 
+    ## INFO  [09:08:58.634] early stopping at 30 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -188,20 +188,20 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                                               |
-|---------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | united_states \| health_policy \| drug_and_narcotic_control \| legislation,\_drug \| risk_assessment \| legalization \| policy_making \| australia \| marijuana \| attitude_of_health_personnel                                              |
-|        2 | female \| male \| adolescent \| adult \| young_adult \| substance-related_disorders \| retrospective_studies \| risk_factors \| cross-sectional_studies \| emergency_service,\_hospital                                                      |
-|        3 | marijuana \| cannabis \| evidence-based_medicine \| cognition \| mental_health \| cannabinoid \| epidemiology \| harm_reduction \| health_services_accessibility \| sleep                                                                    |
-|        4 | adult \| male \| female \| middle_aged \| young_adult \| cohort_studies \| aged \| quality_of_life \| case-control_studies \| social_stigma                                                                                                  |
-|        5 | male \| surveys_and_questionnaires \| female \| cross-sectional_studies \| adult \| attitude \| washington \| united_states \| sex_factors \| prevalence                                                                                     |
-|        6 | medical_cannabis \| chronic_pain \| cannabis \| health_knowledge,\_attitudes,\_practice \| randomized_controlled_trials_as_topic \| quality_of_life \| medicinal_cannabis \| pain_measurement \| dose-response_relationship,\_drug \| israel |
-|        7 | cannabis \| canada \| pain \| neoplasms \| treatment_outcome \| clinical_trials_as_topic \| dronabinol \| united_kingdom \| practice_guidelines_as_topic \| drug_interactions                                                                |
-|        8 | cannabis \| marijuana_use \| pregnancy \| marijuana_smoking \| hallucinogens \| motivation \| physicians \| substance_abuse_detection \| patient_education_as_topic \| pharmacists                                                           |
-|        9 | epilepsy \| cannabinoids \| treatment_outcome \| anticonvulsants \| neoplasms \| child,\_preschool \| female \| drug_resistant_epilepsy \| seizures \| chronic_disease                                                                       |
-|       10 | marijuana_smoking \| marijuana_abuse \| united_states \| adolescent_behavior \| prevalence \| self_report \| alcohol_drinking \| marijuana \| risk \| risk_factors                                                                           |
+| topic_id | topic_features                                                                                                                                                                                                                                  |
+|---------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | cannabis \| canada \| public_health \| tetrahydrocannabinol \| health_services_accessibility \| health_knowledge,\_attitudes,\_practice \| dronabinol \| patient_education_as_topic \| legalization \| cannabinoids                             |
+|        2 | male \| female \| marijuana \| marijuana_use \| pregnancy \| health_surveys \| adolescents \| substance_use \| substance_withdrawal_syndrome \| breast_feeding                                                                                  |
+|        3 | legislation,\_drug \| united_states \| politics \| california \| public_policy \| cannabis \| commerce \| policy \| seizure \| public_opinion                                                                                                   |
+|        4 | nausea \| vomiting \| cannabidiol \| drug_and_narcotic_control \| chronic_pain \| cannabis \| attitude_of_health_personnel \| united_states_food_and_drug_administration \| antineoplastic_agents \| dronabinol                                 |
+|        5 | female \| male \| prevalence \| substance-related_disorders \| cross-sectional_studies \| young_adult \| risk_factors \| adult \| marijuana \| alcohol_drinking                                                                                 |
+|        6 | chronic_pain \| cannabis \| analgesics,\_opioid \| opioid-related_disorders \| hallucinogens \| hiv_infections \| longitudinal_studies \| cannabinoid \| new_zealand \| health_policy                                                           |
+|        7 | phytotherapy \| drug_and_narcotic_control \| plant_preparations \| physicians \| pain_management \| jurisprudence \| civil_rights \| knowledge \| analgesics \| history,\_19th_century                                                          |
+|        8 | cannabis \| phytotherapy \| united_states \| cbd \| thc \| california \| crime \| san_francisco \| commerce \| canada                                                                                                                           |
+|        9 | pain \| marijuana \| neoplasms \| multiple_sclerosis \| plant_extracts \| palliative_care \| dronabinol \| analgesics \| muscle_spasticity \| nabiximols                                                                                        |
+|       10 | cannabis \| state_government \| marijuana_smoking \| health_policy \| federal_government \| phytotherapy \| government_regulation \| united_states_food_and_drug_administration \| physician-patient_relations \| health_care_and_public_health |
 
-### Two-dimensional analyses
+## Interactive HTML topic summary
 
 ``` r
 tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
@@ -209,33 +209,22 @@ tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
                               column = feature,
                               value = beta)
 
-two_ds <- PubmedMTK::pmtk_2d(mat = tmat, seed = 99)
+set.seed(99)
+tsne <- Rtsne::Rtsne(X = as.matrix(tmat), 
+                     check_duplicates = T,
+                     perplexity = 5)
+
+tsne0 <- data.frame(topic_id = as.integer(rownames(tmat)), tsne$Y)
 ```
-
-``` r
-two_ds$tsne %>%
-  ggplot(aes(x = X1,
-             y = X2,
-             label = topic_id)) +
-  ggplot2::geom_point(size = 10, 
-                      color = '#a5c8e1',
-                      alpha = 0.5) +
-  geom_text(size = 3) +
-  ggtitle('Topics in 2d space')
-```
-
-![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)
-
-## Interactive HTML topic summary
 
 ``` r
 PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,
-                                  pmtk_2d = two_ds,
+                                  pmtk_2d = tsne0,
                                   out_dir = '/home/jtimm/Desktop/',
                                   file_name = 'party.html')
 ```
 
-<img src="demo.png" width="100%" />
+<img src="README_files/figure-markdown_github/demo.png" width="100%" />
 
 ## Tables
 
@@ -274,7 +263,7 @@ PMC. Frequencies based on roughly 1.8 million PubMed records. Details
 PubmedMTK::pmtk_tbl_pmc_ref
 ```
 
-    ##                  type                             term doc_count     doc_prop
+    ##                  type                   DescriptorName doc_count     doc_prop
     ##       1: meshHeadings                       algorithms     35621 1.963793e-02
     ##       2: meshHeadings           crystallography,_x-ray      6384 3.519512e-03
     ##       3: meshHeadings data_interpretation,_statistical      3216 1.772987e-03
@@ -294,10 +283,8 @@ requests, bug reports, comments, unit tests, vignettes, or other code.
 If you’d like to contribute, either:
 
 -   fork the repository and submit a [pull
-    request](https://github.com/jaytimm/PubmedMTK/pulls);
+    request](https://github.com/jaytimm/PubmedMTK/pulls); or
 
--   file an [issue](https://github.com/jaytimm/PubmedMTK/issues);
-
--   or contact the maintainer via e-mail.
+-   file an [issue](https://github.com/jaytimm/PubmedMTK/issues).
 
 Thanks!

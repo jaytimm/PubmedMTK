@@ -2,7 +2,7 @@
 % Please edit documentation in R/pmtk_get_records2.R
 \name{pmtk_get_records2}
 \alias{pmtk_get_records2}
-\title{Download abstract and meta data for research articles included in PubMed.}
+\title{Download abstract and meta data from PubMed.}
 \usage{
 pmtk_get_records2(pmids, cores = 3, ncbi_key = NULL)
 }
@@ -10,10 +10,12 @@ pmtk_get_records2(pmids, cores = 3, ncbi_key = NULL)
 \item{pmids}{A vector of PMIDs}
 
 \item{cores}{Numeric specifying number of cores to use}
+
+\item{ncbi_key}{API key}
 }
 \value{
 A list of data frames
 }
 \description{
-Download abstract and meta data for research articles included in PubMed.
+Download abstract and meta data from PubMed.
 }

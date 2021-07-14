@@ -17,6 +17,7 @@ params:
 
 
 ```{r include=FALSE}
+library(plotly)
 tmfs <- params$topic_model
 
 x1 <- tmfs$topic_word_dist[, head(.SD, 30), keyby = topic_id] 

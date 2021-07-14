@@ -7,11 +7,11 @@
 pmtk_search_pubmed(search_term, fields = c("TIAB", "MH"), sleep = 1)
 }
 \arguments{
-\item{search_term}{A character string, or list of character strings}
+\item{search_term}{Query term as character string}
 
-\item{translate_syntax}{boolean: T to translate term to NCBI/mesh+tiab}
+\item{fields}{PubMed fields to query}
 
-\item{verbose}{boolean: T to output progress}
+\item{sleep}{In seconds.}
 }
 \value{
 A data frame of PMIDs

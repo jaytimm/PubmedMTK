@@ -2,16 +2,16 @@
 % Please edit documentation in R/pmtk_crosstab_query.R
 \name{pmtk_crosstab_query}
 \alias{pmtk_crosstab_query}
-\title{Download abstract and meta data for research articles included in PubMed.}
+\title{Cross-tab search results for multiple calls to pmtk_search_pubmed().}
 \usage{
-pmtk_crosstab_query(search_results)
+pmtk_crosstab_query(x)
 }
 \arguments{
-\item{search_results}{A df returned from pmtk_search_pubmed()}
+\item{x}{A df or list of dfs returned from pmtk_search_pubmed()}
 }
 \value{
 A data frame
 }
 \description{
-Download abstract and meta data for research articles included in PubMed.
+Cross-tab search results for multiple calls to pmtk_search_pubmed().
 }

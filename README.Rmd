@@ -13,12 +13,11 @@ output:
 
 # PubmedMTK
 
-`PubMed Mining Toolkit` | An R package for querying the PubMed database & parsing retrieved records.  Toolkit facilitates batch API requests, the creation of custom corpora for NLP, and the quick exploration & visualization of topic structure.  
-
+`PubMed Mining Toolkit` | An R package for querying the PubMed database & parsing retrieved records.  Toolkit facilitates batch API requests & the creation of custom corpora for NLP. 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-source("resources/render_toc.R")
+source("render_toc.R")
 ```
 
 
@@ -88,7 +87,7 @@ sen_df <- PubmedMTK::pmtk_get_records2(pmids = s0$pmid,
 ```{r}
 sen_df <- data.table::rbindlist(sen_df)
 
-n <- 12
+n <- 10
 list(pmid = sen_df$pmid[n],
      year = sen_df$year[n],
      articletitle = strwrap(sen_df$articletitle[n], width = 60),
@@ -101,16 +100,16 @@ list(pmid = sen_df$pmid[n],
 
 ### KWIC search
 
-The `pmtk_locate_search()` function allows for quick keyword-in-context (KWIC) search.  A simple wrapper of the `corpus::text_locate` function. 
+The `pmtk_locate_term()` function allows for quick keyword-in-context (KWIC) search.  A simple wrapper of the `corpus::text_locate` function. 
 
 ```{r}
 toks <-  corpus::text_tokens(sen_df$abstract)
 
-egs <- PubmedMTK::pmtk_locate_search(text = toks,
-                                     doc_id = sen_df$pmid,
-                                     search = c('medical marijuana laws'),
-                                     stem = F,
-                                     window = 10)
+egs <- PubmedMTK::pmtk_locate_term(text = toks,
+                                   doc_id = sen_df$pmid,
+                                   term = c('medical marijuana laws'),
+                                   stem = F,
+                                   window = 10)
 
 egs$kwic <- paste0('... ', egs$lhs, ' `', egs$instance, '` ', egs$rhs, ' ...')
 knitr::kable(egs[1:8, c(1,5)])
@@ -176,7 +175,8 @@ tm_summary$topic_summary %>% slice(1:10) %>% knitr::kable()
 ```
 
 
-### Two-dimensional analyses
+
+## Interactive HTML topic summary
 
 ```{r}
 tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
@@ -184,47 +184,25 @@ tmat <- tidytext::cast_sparse(data = tm_summary$topic_word_dist,
                               column = feature,
                               value = beta)
 
-two_ds <- PubmedMTK::pmtk_2d(mat = tmat, seed = 99)
+set.seed(99)
+tsne <- Rtsne::Rtsne(X = as.matrix(tmat), 
+                     check_duplicates = T,
+                     perplexity = 5)
+
+tsne0 <- data.frame(topic_id = as.integer(rownames(tmat)), tsne$Y)
 ```
 
-
-```{r}
-two_ds$tsne %>%
-  ggplot(aes(x = X1,
-             y = X2,
-             label = topic_id)) +
-  ggplot2::geom_point(size = 10, 
-                      color = '#a5c8e1',
-                      alpha = 0.5) +
-  geom_text(size = 3) +
-  ggtitle('Topics in 2d space')
-```
-
-
-```{r eval=FALSE, include=FALSE}
-#### Visualize topic model
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(LDAvis)
-
-mesh_lda$plot()
-mesh_lda$plot(out.dir = "ldavis", open.browser = FALSE)
-
-serVis(json, out.dir = 'ldavis', open.browser = FALSE)
-```
-
-
-## Interactive HTML topic summary
 
 ```{r eval=FALSE}
 PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,
-                                  pmtk_2d = two_ds,
+                                  pmtk_2d = tsne0,
                                   out_dir = '/home/jtimm/Desktop/',
                                   file_name = 'party.html')
 ```
 
 
 ```{r pressure, echo=FALSE, out.width = '100%'}
-knitr::include_graphics("demo.png")
+knitr::include_graphics("README_files/figure-markdown_github/demo.png")
 ```
 
 
@@ -257,11 +235,9 @@ PubmedMTK::pmtk_tbl_pmc_ref
 
 The project maintainer welcomes contributions in the form of feature requests, bug reports, comments, unit tests, vignettes, or other code. If you'd like to contribute, either:
 
-* fork the repository and submit a [pull request](https://github.com/jaytimm/PubmedMTK/pulls);
+* fork the repository and submit a [pull request](https://github.com/jaytimm/PubmedMTK/pulls); or
 
-* file an [issue](https://github.com/jaytimm/PubmedMTK/issues);
-
-* or contact the maintainer via e-mail.
+* file an [issue](https://github.com/jaytimm/PubmedMTK/issues).
 
 Thanks!
 

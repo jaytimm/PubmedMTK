@@ -1,10 +1,9 @@
-#' Summarize topic model output
-#' LDA model returned from `text2vec::LDA` - a fast/efficient LDA implementation - excellent for exploration -
+#' Summarize topic model output returned from text2vec::LDA()
 #' 
 #' @name pmtk_summarize_lda
-#' @param lda An lda object returned from `text2vec::LDA`
+#' @param lda An lda object returned from text2vec::LDA()
 #' @param topic_feats_n Number of features to include in topic summary
-#' @return 
+#' @return A list of data frames
 #' 
 #' @export
 #' @rdname pmtk_summarize_lda

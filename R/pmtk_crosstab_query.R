@@ -1,17 +1,21 @@
-#' Download abstract and meta data for research articles included in PubMed.
+#' Cross-tab search results for multiple calls to pmtk_search_pubmed().
 #'
 #' @name pmtk_crosstab_query
-#' @param search_results A df returned from pmtk_search_pubmed()
+#' @param x A df or list of dfs returned from pmtk_search_pubmed()
 #' @return A data frame
 #' 
 #' @export
 #' @rdname pmtk_crosstab_query
 #' 
 
-pmtk_crosstab_query <- function(search_results){
+pmtk_crosstab_query <- function(x){
   
-  search_results$value = 1 
-  pmatrix <- tidytext::cast_sparse(data = search_results,
+  if(is.list(x)) {
+    x <- data.table::rbindlist(x)
+    }
+  
+  x$value = 1 
+  pmatrix <- tidytext::cast_sparse(data = x,
                                    row = pmid, 
                                    column = search_term, 
                                    value = value)

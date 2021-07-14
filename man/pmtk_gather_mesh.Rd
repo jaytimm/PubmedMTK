@@ -7,7 +7,7 @@
 pmtk_gather_mesh(x)
 }
 \arguments{
-\item{meta_df}{Metadata data frame returned from `pmtk_loadr_abs'`}
+\item{x}{A data frame returned from pmtk_get_records2()}
 }
 \value{
 A data frame

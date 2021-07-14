@@ -1,8 +1,9 @@
-#' Download abstract and meta data for research articles included in PubMed.
+#' Download abstract and meta data from PubMed.
 #'
 #' @name pmtk_get_records2
 #' @param pmids A vector of PMIDs 
 #' @param cores Numeric specifying number of cores to use 
+#' @param ncbi_key API key
 #' @return A list of data frames
 #' 
 #' @export
@@ -43,7 +44,7 @@ pmtk_get_records1 <- function (x) {
   
   Sys.sleep(0.25)
   if (any(!class(x1) == 'character')) {
-    PubmedMTK:::pmtk_strip_xml(x1) } else{}
+    pmtk_strip_xml(x1) } else{}
 }
 
 

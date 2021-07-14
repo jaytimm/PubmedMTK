@@ -1,24 +1,19 @@
 #' Perform basic PubMed search.
 #'
 #' @name pmtk_search_pubmed
-#' 
-#' @param search_term A character string, or list of character strings 
-#' @param translate_syntax boolean: T to translate term to NCBI/mesh+tiab
-#' @param verbose boolean: T to output progress
-#' 
+#' @param search_term Query term as character string
+#' @param fields PubMed fields to query
+#' @param sleep In seconds.
 #' @return A data frame of PMIDs   
 #' 
 #' @export
 #' @rdname pmtk_search_pubmed
 #' 
 #' 
-
-#search_term = 'medical marijuana'
 pmtk_search_pubmed <- function (search_term, 
                                 fields = c('TIAB','MH'),
-                                sleep = 1) { #
+                                sleep = 1) { # max_n
   
-  ## good eg: "violent depression"
   pre_url1 <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?"
   pre_url2 <- "db=pubmed&retmax=5000000&term="
     
