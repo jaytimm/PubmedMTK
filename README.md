@@ -1,3 +1,9 @@
+<!-- badges: start -->
+
+[![Travis build
+status](https://travis-ci.com/jaytimm/PubmedMTK.svg?branch=main)](https://travis-ci.com/jaytimm/PubmedMTK)
+<!-- badges: end -->
+
 # PubmedMTK
 
 `PubMed Mining Toolkit` \| An R package for querying the PubMed database
@@ -177,8 +183,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [10:19:49.632] early stopping at 130 iteration 
-    ## INFO  [10:19:49.723] early stopping at 30 iteration
+    ## INFO  [10:38:11.640] early stopping at 110 iteration 
+    ## INFO  [10:38:11.717] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -187,18 +193,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                               |
-|---------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | young_adult \| adult \| middle_aged \| female \| aged \| aged,\_80_and_over \| adolescent \| male \| attitude \| health_status                                                                                               |
-|        2 | legislation,\_drug \| health_policy \| united_states \| evidence-based_medicine \| drug_and_narcotic_control \| marijuana_smoking \| randomized_controlled_trials_as_topic \| treatment_outcome \| public_health \| cannabis |
-|        3 | marijuana \| analgesics,\_opioid \| opioid-related_disorders \| marijuana_use \| cross-sectional_studies \| drug_overdose \| retrospective_studies \| opioid \| adolescents \| prescription_drug_misuse                      |
-|        4 | cannabis \| cannabinoids \| neoplasms \| animals \| multiple_sclerosis \| brain \| clinical_trials_as_topic \| plant_extracts \| chromatography,\_high_pressure_liquid \| reproducibility_of_results                         |
-|        5 | marijuana_smoking \| female \| cannabis \| risk_factors \| male \| risk_assessment \| mental_disorders \| adult \| glaucoma \| biomedical_research                                                                           |
-|        6 | phytotherapy \| cannabis \| drug_and_narcotic_control \| california \| hiv_infections \| united_states \| jurisprudence \| crime \| ontario \| health_care_and_public_health                                                 |
-|        7 | marijuana \| medical_cannabis \| male \| marijuana_use \| anxiety \| legalization \| depression \| washington \| alcohol_drinking \| stress_disorders,\_post-traumatic                                                       |
-|        8 | united_states \| legislation,\_drug \| cannabis \| government_regulation \| public_policy \| politics \| united_states_food_and_drug_administration \| marijuana_use \| plant_preparations \| history,\_20th_century         |
-|        9 | female \| male \| middle_aged \| adult \| surveys_and_questionnaires \| health_knowledge,\_attitudes,\_practice \| medical_cannabis \| self_report \| cohort_studies \| attitude_of_health_personnel                         |
-|       10 | chronic_pain \| pain_management \| treatment_outcome \| analgesics \| quality_of_life \| neuralgia \| prospective_studies \| cancer_pain \| pain_measurement \| dose-response_relationship,\_drug                            |
+| topic_id | topic_features                                                                                                                                                                                                    |
+|---------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | animals \| cannabidiol \| endocannabinoids \| plant_extracts \| dose-response_relationship,\_drug \| time_factors \| cognition \| mice \| drug_interactions \| chromatography,\_high_pressure_liquid              |
+|        2 | public_health \| united_states \| cannabis \| physicians \| practice_patterns,\_physicians’ \| male \| marijuana_smoking \| palliative_care \| europe \| physician-patient_relations                              |
+|        3 | male \| female \| adult \| middle_aged \| medical_cannabis \| health_knowledge,\_attitudes,\_practice \| anxiety \| depression \| attitude_of_health_personnel \| qualitative_research                            |
+|        4 | cannabis \| epilepsy \| thc \| marijuana \| anticonvulsants \| cbd \| cannabidiol \| medical_cannabis \| child,\_preschool \| mental_disorders                                                                    |
+|        5 | pain \| cannabis \| neoplasms \| palliative_care \| phytotherapy \| quality_of_life \| cancer_pain \| united_states \| cannabinoids \| legislation,\_medical                                                      |
+|        6 | cannabis \| canada \| phytotherapy \| hiv_infections \| legislation,\_drug \| united_states \| jurisprudence \| acquired_immunodeficiency_syndrome \| clinical_trials_as_topic \| risk_assessment                 |
+|        7 | cannabinoids \| cannabis \| dronabinol \| multiple_sclerosis \| cannabidiol \| germany \| receptors,\_cannabinoid \| seizures \| brain \| receptor,\_cannabinoid,\_cb1                                            |
+|        8 | dronabinol \| cannabinoids \| treatment_outcome \| nausea \| vomiting \| cannabidiol \| randomized_controlled_trials_as_topic \| nabiximols \| tetrahydrocannabinol \| muscle_spasticity                          |
+|        9 | female \| cross-sectional_studies \| young_adult \| male \| prevalence \| adolescent \| health_surveys \| cohort_studies \| longitudinal_studies \| adult                                                         |
+|       10 | health_policy \| legislation,\_drug \| marijuana_smoking \| commerce \| attitude_of_health_personnel \| illicit_drugs \| drug_prescriptions \| minnesota \| practice_patterns,\_physicians’ \| automobile_driving |
 
 ## Interactive HTML topic summary
 
@@ -215,6 +221,11 @@ tsne <- Rtsne::Rtsne(X = as.matrix(tmat),
 
 tsne0 <- data.frame(topic_id = as.integer(rownames(tmat)), tsne$Y)
 ```
+
+The `pmtk_build_interactive()` will generate an interactive html file
+(built on the `flexdashboard` and `crosstalk` packages) that summarizes
+(1) topics in two-dimensional, tSNE space and (2) topic composition. An
+image of the html is presented below.
 
 ``` r
 PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,

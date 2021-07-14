@@ -4,11 +4,9 @@ output:
     variant: markdown_github
 ---
 
-```{r eval=FALSE, include=FALSE}
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.com/jaytimm/PubmedMTK.svg?branch=main)](https://travis-ci.com/jaytimm/PubmedMTK)
 <!-- badges: end -->
-```
 
 
 # PubmedMTK
@@ -192,6 +190,8 @@ tsne <- Rtsne::Rtsne(X = as.matrix(tmat),
 tsne0 <- data.frame(topic_id = as.integer(rownames(tmat)), tsne$Y)
 ```
 
+
+The `pmtk_build_interactive()` will generate an interactive html file (built on the `flexdashboard` and `crosstalk` packages) that summarizes (1) topics in two-dimensional, tSNE space and (2) topic composition.  An image of the html is presented below.
 
 ```{r eval=FALSE}
 PubmedMTK::pmtk_build_interactive(pmtk_lda = tm_summary,
