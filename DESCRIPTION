@@ -7,7 +7,7 @@ Maintainer: Jason Timm <JaTimm@salud.unm.edu>
 Description: An R package for querying the PubMed database & parsing retrieved records. 
 License: MIT + file LICENSE
 Encoding: UTF-8
-lazyData: false
+LazyData: false
 LazyDataCompression: true
 RoxygenNote: 7.1.1
 Depends: 
@@ -24,4 +24,8 @@ Imports:
     rmarkdown,
     rstudioapi,
     stringi,
-    tidytext
+    tidytext,
+    methods
+Suggests: 
+    knitr
+VignetteBuilder: knitr

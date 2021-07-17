@@ -5,3 +5,6 @@
 PubmedMTK.Rcheck/
 PubmedMTK*.tar.gz
 PubmedMTK*.tgz
+inst/doc
+/doc/
+/Meta/
