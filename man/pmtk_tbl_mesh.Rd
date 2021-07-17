@@ -11,7 +11,7 @@ A data frame with 562300 rows and 10 variables:
 \url{https://www.nlm.nih.gov/databases/download/mesh.html}
 }
 \usage{
-pmtk_tbl_mesh
+data(pmtk_tbl_mesh)
 }
 \description{
 A dataset containing the MeSH hierarchical vocabulary & thesaurus.

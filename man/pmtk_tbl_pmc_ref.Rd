@@ -11,7 +11,7 @@ A data frame with 1304697 rows and 4 variables:
 \url{https://github.com/jaytimm/PubmedMTK/blob/main/mds/pmc-reference.md}
 }
 \usage{
-pmtk_tbl_pmc_ref
+data(pmtk_tbl_pmc_ref)
 }
 \description{
 A dataset containing the frequency/relative frequency of MeSH annotations in PubMed abstracts included in the PubMedCentral - Open Access Common Use PMID list.

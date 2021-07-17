@@ -11,7 +11,7 @@ A data frame with 75 rows and 3 variables:
 \url{https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html}
 }
 \usage{
-pmtk_tbl_citations
+data(pmtk_tbl_citations)
 }
 \description{
 A dataset containing Medline citation counts by year from 1947-2020.

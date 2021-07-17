@@ -4,8 +4,8 @@
 #' 
 #' @format A data frame with 75 rows and 3 variables:
 #' @source \url{https://www.nlm.nih.gov/bsd/medline_cit_counts_yr_pub.html}
+#' @usage data(pmtk_tbl_citations)
 "pmtk_tbl_citations"
-
 
 #' MeSH hierarchical vocabulary & thesaurus.
 #'
@@ -13,8 +13,8 @@
 #' 
 #' @format A data frame with 562300 rows and 10 variables:
 #' @source \url{https://www.nlm.nih.gov/databases/download/mesh.html}
+#' @usage data(pmtk_tbl_mesh)
 "pmtk_tbl_mesh"
-
 
 #' MeSH annotation frequencies.
 #'
@@ -22,4 +22,5 @@
 #' 
 #' @format A data frame with 1304697 rows and 4 variables:
 #' @source \url{https://github.com/jaytimm/PubmedMTK/blob/main/mds/pmc-reference.md}
+#' @usage data(pmtk_tbl_pmc_ref)
 "pmtk_tbl_pmc_ref"

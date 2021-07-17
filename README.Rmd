@@ -11,7 +11,7 @@ output:
 
 # PubmedMTK
 
-`PubMed Mining Toolkit` | An R package for querying the PubMed database & parsing retrieved records.  Toolkit facilitates batch API requests & the creation of custom corpora for NLP. 
+An R package for querying the PubMed database & parsing retrieved records.  Toolkit facilitates batch API requests & the creation of custom corpora for NLP. 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -50,6 +50,12 @@ The `pmtk_search_pubmed()` function is meant for record-matching searches typica
 s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'medical marijuana', 
                                     fields = c('TIAB','MH'))
 ```
+
+```{r eval=FALSE, include=FALSE}
+s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'immunity', 
+                                    fields = c('TIAB','MH'))
+```
+
 
 
 ```{r}
