@@ -19,9 +19,9 @@ pmtk_toke_sentences <- function(text,
                               filter = corpus::text_filter(sent_suppress = c(corpus::abbreviations_en)))
 
   class(corp0) <- 'data.frame'
-  corp0$abstract <- as.character(corp0$text)
-  corp0$pmid <- paste0(corp0$parent, '.', corp0$index)
-  corp1 <- corp0[, c(5, 4)]
+  corp0$text <- as.character(corp0$text)
+  corp0$doc_id <- paste0(corp0$parent, '.', corp0$index)
+  corp1 <- corp0[, c(4, 3)]
 }
 
 ## xx <- sentence_tokenizer(x = corpus1)
