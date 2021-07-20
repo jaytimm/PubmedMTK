@@ -88,7 +88,7 @@ pmtk_strip_xml <- function (x) {
   
   abstract <- lapply(records, XML::xpathSApply, ".//Abstract/AbstractText", XML::xmlValue)
   abstract[sapply(abstract, is.list)] <- NA
-  abstract <- sapply(abstract, paste, collapse = " | ")
+  abstract <- sapply(abstract, paste, collapse = " ")
   y$abstract <- abstract   
   
   Encoding(rownames(y)) <- 'UTF-8'    

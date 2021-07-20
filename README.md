@@ -6,15 +6,16 @@ status](https://travis-ci.com/jaytimm/PubmedMTK.svg?branch=main)](https://travis
 
 # PubmedMTK
 
-`PubMed Mining Toolkit` \| An R package for querying the PubMed database
-& parsing retrieved records. Toolkit facilitates batch API requests &
-the creation of custom corpora for NLP.
+An R package for querying the PubMed database & parsing retrieved
+records. Toolkit facilitates batch API requests & the creation of custom
+corpora for NLP.
 
 -   [Installation](#installation)
 -   [Usage](#usage)
     -   [PubMed search](#pubmed-search)
     -   [Retrieve and parse abstract
         data](#retrieve-and-parse-abstract-data)
+    -   [Sentence tokenization](#sentence-tokenization)
     -   [KWIC search](#kwic-search)
     -   [Extract MeSH classifications](#extract-mesh-classifications)
     -   [MeSH annotations-based topic
@@ -24,7 +25,6 @@ the creation of custom corpora for NLP.
     -   [MeSH vocabulary](#mesh-vocabulary)
     -   [PMC MeSH annotation
         frequencies](#pmc-mesh-annotation-frequencies)
--   [Contributing](#contributing)
 
 ## Installation
 
@@ -47,19 +47,19 @@ s0 <- PubmedMTK::pmtk_search_pubmed(search_term = 'medical marijuana',
                                     fields = c('TIAB','MH'))
 ```
 
-    ## [1] "medical marijuana[TIAB] OR medical marijuana[MH]: 2173 records"
+    ## [1] "medical marijuana[TIAB] OR medical marijuana[MH]: 2177 records"
 
 ``` r
 head(s0)
 ```
 
     ##          search_term     pmid
-    ## 1: medical marijuana 34234903
-    ## 2: medical marijuana 34232573
-    ## 3: medical marijuana 34225825
-    ## 4: medical marijuana 34179729
-    ## 5: medical marijuana 34176017
-    ## 6: medical marijuana 34159050
+    ## 1: medical marijuana 34258798
+    ## 2: medical marijuana 34258360
+    ## 3: medical marijuana 34234903
+    ## 4: medical marijuana 34232573
+    ## 5: medical marijuana 34225825
+    ## 6: medical marijuana 34179729
 
 ### Retrieve and parse abstract data
 
@@ -86,32 +86,45 @@ list(pmid = sen_df$pmid[n],
 ```
 
     ## $pmid
-    ## [1] "34095048"
+    ## [1] "34128629"
     ## 
     ## $year
     ## [1] "2021"
     ## 
     ## $articletitle
-    ## [1] "Evaluation of Patient Reported Safety and Efficacy of" 
-    ## [2] "Cannabis From a Survey of Medical Cannabis Patients in"
-    ## [3] "Canada."                                               
+    ## [1] "Integrative Medicine: Cannabis and Cannabis-Related Drugs."
     ## 
     ## $meshHeadings
-    ## [1] "Canada|Cannabis|Humans|Male|Medical Marijuana|Patient"
-    ## [2] "Reported Outcome Measures|Quality of Life|Surveys and"
-    ## [3] "Questionnaires"                                       
+    ## [1] "Cannabidiol|Cannabis|Child|Humans|Integrative"         
+    ## [2] "Medicine|Medical Marijuana|Pharmaceutical Preparations"
     ## 
     ## $text
-    ##  [1] "With the medical use of cannabis permitted in Canada since" 
-    ##  [2] "2001, patients seek to use this botanical drug to treat a"  
-    ##  [3] "range of medical conditions. However, many healthcare"      
-    ##  [4] "practitioners express the need for further scientific"      
-    ##  [5] "evidence around the use of medical cannabis. This"          
-    ##  [6] "real-world evidence study aimed to address the paucity of"  
-    ##  [7] "scientific data by surveying newly registered medical"      
-    ##  [8] "cannabis patients, before beginning medical cannabis"       
-    ##  [9] "treatment, and at one follow up 6 weeks after beginning"    
-    ## [10] "medical cannabis treatment. The goal was to collect data on"
+    ##  [1] "Cannabis is a genus of flowering herbs in the Cannabaceae"  
+    ##  [2] "family. Federal law defines dried plant material"           
+    ##  [3] "preparations of the subspecies Cannabis sativa as"          
+    ##  [4] "marijuana. The term cannabis refers to all products derived"
+    ##  [5] "from Cannabis plants. The active compounds in cannabis are" 
+    ##  [6] "cannabinoids, which include delta-9-tetrahydrocannabinol"   
+    ##  [7] "(THC) and cannabidiol (CBD). THC is the psychoactive"       
+    ##  [8] "component, whereas CBD has no psychoactive effects. There"  
+    ##  [9] "are three Food and Drug Administration (FDA)-approved"      
+    ## [10] "cannabis-related drugs. Dronabinol and nabilone (Cesamet)"
+
+### Sentence tokenization
+
+``` r
+sentences <- PubmedMTK::pmtk_toke_sentences(text = sen_df$abstract,
+                                            doc_id = sen_df$pmid)
+```
+
+| pmid       | abstract                                                                                                                                                                                                                                                            |
+|:-----------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 34258798.1 | Although cannabis is federally prohibited, a majority of U.S. states have implemented medical cannabis laws (MCLs).                                                                                                                                                 |
+| 34258798.2 | As more individuals consider the drug for medical treatment, they potentially substitute away from prescription drugs.                                                                                                                                              |
+| 34258798.3 | Therefore, an MCL signals competitor entry.                                                                                                                                                                                                                         |
+| 34258798.4 | This paper exploits geographic and temporal variation in MCLs to examine the strategic response in direct-to-physician marketing by pharmaceutical firms as cannabis enters the market.                                                                             |
+| 34258798.5 | Using office detailing records from 2014-2018 aggregated to the county level, we find weak evidence of a relatively small and delayed response in substitute prescription drug- and opioid-related detailing.                                                       |
+| 34258798.6 | While these effects on detailing dollars are more pronounced among smaller pharmaceutical firms, the magnitudes are economically small and likely muted at aggregate levels by the small percent of doctors that actively recommend cannabis for medical treatment. |
 
 ### KWIC search
 
@@ -183,8 +196,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [10:38:11.640] early stopping at 110 iteration 
-    ## INFO  [10:38:11.717] early stopping at 20 iteration
+    ## INFO  [18:50:51.514] early stopping at 140 iteration 
+    ## INFO  [18:50:51.832] early stopping at 20 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -195,16 +208,16 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 | topic_id | topic_features                                                                                                                                                                                                    |
 |---------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | animals \| cannabidiol \| endocannabinoids \| plant_extracts \| dose-response_relationship,\_drug \| time_factors \| cognition \| mice \| drug_interactions \| chromatography,\_high_pressure_liquid              |
-|        2 | public_health \| united_states \| cannabis \| physicians \| practice_patterns,\_physicians’ \| male \| marijuana_smoking \| palliative_care \| europe \| physician-patient_relations                              |
-|        3 | male \| female \| adult \| middle_aged \| medical_cannabis \| health_knowledge,\_attitudes,\_practice \| anxiety \| depression \| attitude_of_health_personnel \| qualitative_research                            |
-|        4 | cannabis \| epilepsy \| thc \| marijuana \| anticonvulsants \| cbd \| cannabidiol \| medical_cannabis \| child,\_preschool \| mental_disorders                                                                    |
-|        5 | pain \| cannabis \| neoplasms \| palliative_care \| phytotherapy \| quality_of_life \| cancer_pain \| united_states \| cannabinoids \| legislation,\_medical                                                      |
-|        6 | cannabis \| canada \| phytotherapy \| hiv_infections \| legislation,\_drug \| united_states \| jurisprudence \| acquired_immunodeficiency_syndrome \| clinical_trials_as_topic \| risk_assessment                 |
-|        7 | cannabinoids \| cannabis \| dronabinol \| multiple_sclerosis \| cannabidiol \| germany \| receptors,\_cannabinoid \| seizures \| brain \| receptor,\_cannabinoid,\_cb1                                            |
-|        8 | dronabinol \| cannabinoids \| treatment_outcome \| nausea \| vomiting \| cannabidiol \| randomized_controlled_trials_as_topic \| nabiximols \| tetrahydrocannabinol \| muscle_spasticity                          |
-|        9 | female \| cross-sectional_studies \| young_adult \| male \| prevalence \| adolescent \| health_surveys \| cohort_studies \| longitudinal_studies \| adult                                                         |
-|       10 | health_policy \| legislation,\_drug \| marijuana_smoking \| commerce \| attitude_of_health_personnel \| illicit_drugs \| drug_prescriptions \| minnesota \| practice_patterns,\_physicians’ \| automobile_driving |
+|        1 | united_states \| legislation,\_drug \| state_government \| california \| federal_government \| public_policy \| politics \| united_states_food_and_drug_administration \| government_regulation \| legal_approach |
+|        2 | neoplasms \| palliative_care \| cannabinoids \| treatment_outcome \| cancer_pain \| cancer \| randomized_controlled_trials_as_topic \| medical_cannabis \| practice_guidelines_as_topic \| germany                |
+|        3 | cannabidiol \| animals \| epilepsy \| dronabinol \| anticonvulsants \| endocannabinoids \| brain \| tetrahydrocannabinol \| seizures \| drug_resistant_epilepsy                                                   |
+|        4 | cannabinoids \| plant_extracts \| cannabis \| treatment_outcome \| prospective_studies \| child,\_preschool \| infant \| dose-response_relationship,\_drug \| time_factors \| israel                              |
+|        5 | cannabis \| marijuana \| phytotherapy \| hiv_infections \| legalization \| health_services_accessibility \| pain \| hallucinogens \| internet \| drug_interactions                                                |
+|        6 | male \| female \| middle_aged \| adult \| child \| health_surveys \| sex_factors \| socioeconomic_factors \| surveys_and_questionnaires \| cannabis_legalization                                                  |
+|        7 | adult \| male \| young_adult \| aged \| cross-sectional_studies \| middle_aged \| quality_of_life \| marijuana_smoking \| marijuana \| retrospective_studies                                                      |
+|        8 | phytotherapy \| cannabis \| united_states \| drug_approval \| plant_preparations \| cannabinoids \| jurisprudence \| history,\_20th_century \| history,\_19th_century \| plants,\_medicinal                       |
+|        9 | marijuana_smoking \| united_states \| marijuana_abuse \| legislation,\_drug \| evidence-based_medicine \| risk_assessment \| practice_patterns,\_physicians’ \| policy_making \| prevalence \| marijuana_use      |
+|       10 | male \| adolescent \| adult \| young_adult \| middle_aged \| female \| surveys_and_questionnaires \| anxiety \| qualitative_research \| prevalence                                                                |
 
 ## Interactive HTML topic summary
 
@@ -247,7 +260,9 @@ workflow](https://github.com/jaytimm/PubmedMTK/blob/main/mds/build-MeSH-df.md)
 for re-creating the table from raw data sets.
 
 ``` r
-PubmedMTK::pmtk_tbl_mesh[1:5, c(1:3, 5:6)]
+library(PubmedMTK)
+data(pmtk_tbl_mesh)
+pmtk_tbl_mesh[1:5, c(1:3, 5:6)]
 ```
 
     ##    DescriptorUI DescriptorName          TermName                cats
@@ -270,31 +285,5 @@ PMC. Frequencies based on roughly 1.8 million PubMed records. Details
 [here](https://github.com/jaytimm/PubmedMTK/blob/main/mds/pmc-reference.md).
 
 ``` r
-PubmedMTK::pmtk_tbl_pmc_ref
+data(pmtk_tbl_pmc_ref)
 ```
-
-    ##                  type                   DescriptorName doc_count     doc_prop
-    ##       1: meshHeadings                       algorithms     35621 1.963793e-02
-    ##       2: meshHeadings           crystallography,_x-ray      6384 3.519512e-03
-    ##       3: meshHeadings data_interpretation,_statistical      3216 1.772987e-03
-    ##       4: meshHeadings                 fourier_analysis       472 2.602145e-04
-    ##       5: meshHeadings              molecular_structure      8696 4.794122e-03
-    ##      ---                                                                     
-    ## 1304693: meshHeadings         tricuspid_valve_stenosis         1 5.513020e-07
-    ## 1304694: meshHeadings                    ethylestrenol         1 5.513020e-07
-    ## 1304695:    chemNames         monoethylglycinexylidide         1 5.513020e-07
-    ## 1304696:    chemNames                           savlon         1 5.513020e-07
-    ## 1304697:    chemNames            7-propyl_spirolactone         1 5.513020e-07
-
-## Contributing
-
-The project maintainer welcomes contributions in the form of feature
-requests, bug reports, comments, unit tests, vignettes, or other code.
-If you’d like to contribute, either:
-
--   fork the repository and submit a [pull
-    request](https://github.com/jaytimm/PubmedMTK/pulls); or
-
--   file an [issue](https://github.com/jaytimm/PubmedMTK/issues).
-
-Thanks!
