@@ -196,8 +196,8 @@ lda <- text2vec::LDA$new(n_topics = 20)
 fit <- lda$fit_transform(dtm, progressbar = F)
 ```
 
-    ## INFO  [18:50:51.514] early stopping at 140 iteration 
-    ## INFO  [18:50:51.832] early stopping at 20 iteration
+    ## INFO  [18:54:40.800] early stopping at 120 iteration 
+    ## INFO  [18:54:41.156] early stopping at 30 iteration
 
 ``` r
 tm_summary <- PubmedMTK::pmtk_summarize_lda(
@@ -206,18 +206,18 @@ tm_summary <- PubmedMTK::pmtk_summarize_lda(
 
 #### Feature composition of first ten topics
 
-| topic_id | topic_features                                                                                                                                                                                                    |
-|---------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        1 | united_states \| legislation,\_drug \| state_government \| california \| federal_government \| public_policy \| politics \| united_states_food_and_drug_administration \| government_regulation \| legal_approach |
-|        2 | neoplasms \| palliative_care \| cannabinoids \| treatment_outcome \| cancer_pain \| cancer \| randomized_controlled_trials_as_topic \| medical_cannabis \| practice_guidelines_as_topic \| germany                |
-|        3 | cannabidiol \| animals \| epilepsy \| dronabinol \| anticonvulsants \| endocannabinoids \| brain \| tetrahydrocannabinol \| seizures \| drug_resistant_epilepsy                                                   |
-|        4 | cannabinoids \| plant_extracts \| cannabis \| treatment_outcome \| prospective_studies \| child,\_preschool \| infant \| dose-response_relationship,\_drug \| time_factors \| israel                              |
-|        5 | cannabis \| marijuana \| phytotherapy \| hiv_infections \| legalization \| health_services_accessibility \| pain \| hallucinogens \| internet \| drug_interactions                                                |
-|        6 | male \| female \| middle_aged \| adult \| child \| health_surveys \| sex_factors \| socioeconomic_factors \| surveys_and_questionnaires \| cannabis_legalization                                                  |
-|        7 | adult \| male \| young_adult \| aged \| cross-sectional_studies \| middle_aged \| quality_of_life \| marijuana_smoking \| marijuana \| retrospective_studies                                                      |
-|        8 | phytotherapy \| cannabis \| united_states \| drug_approval \| plant_preparations \| cannabinoids \| jurisprudence \| history,\_20th_century \| history,\_19th_century \| plants,\_medicinal                       |
-|        9 | marijuana_smoking \| united_states \| marijuana_abuse \| legislation,\_drug \| evidence-based_medicine \| risk_assessment \| practice_patterns,\_physicians’ \| policy_making \| prevalence \| marijuana_use      |
-|       10 | male \| adolescent \| adult \| young_adult \| middle_aged \| female \| surveys_and_questionnaires \| anxiety \| qualitative_research \| prevalence                                                                |
+| topic_id | topic_features                                                                                                                                                                                                                 |
+|---------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        1 | marijuana \| marijuana_use \| united_states \| female \| adolescent_behavior \| glaucoma \| stress_disorders,\_post-traumatic \| headache \| emergency_service,\_hospital \| adolescents                                       |
+|        2 | dronabinol \| nausea \| multiple_sclerosis \| vomiting \| nabiximols \| plant_extracts \| drug_combinations \| cannabis \| pain \| analgesics                                                                                  |
+|        3 | cannabinoids \| animals \| epilepsy \| cannabidiol \| endocannabinoids \| anticonvulsants \| treatment_outcome \| brain \| receptors,\_cannabinoid \| mice                                                                     |
+|        4 | neoplasms \| chronic_pain \| analgesics \| quality_of_life \| treatment_outcome \| pain_management \| cannabinoids \| cancer_pain \| cancer \| medicinal_cannabis                                                              |
+|        5 | legislation,\_drug \| medical_cannabis \| public_health \| colorado \| legalization \| marijuana_smoking \| government_regulation \| public_policy \| health_knowledge,\_attitudes,\_practice \| epidemiology                  |
+|        6 | female \| male \| middle_aged \| adult \| cross-sectional_studies \| self_report \| socioeconomic_factors \| motivation \| los_angeles \| longitudinal_studies                                                                 |
+|        7 | cannabis \| cannabinoids \| biomedical_research \| hallucinogens \| canada \| san_francisco \| inflammatory_bowel_diseases \| phytotherapy \| research \| occupational_health                                                  |
+|        8 | attitude_of_health_personnel \| health_policy \| risk_assessment \| marijuana_smoking \| drug_approval \| treatment_outcome \| australia \| cannabis \| minnesota \| new_zealand                                               |
+|        9 | male \| aged \| middle_aged \| adult \| female \| aged,\_80_and_over \| young_adult \| health_knowledge,\_attitudes,\_practice \| surveys_and_questionnaires \| prospective_studies                                            |
+|       10 | marijuana_smoking \| canada \| drug_and_narcotic_control \| mental_disorders \| legislation,\_drug \| palliative_care \| health_services_accessibility \| united_kingdom \| physician-patient_relations \| societies,\_medical |
 
 ## Interactive HTML topic summary
 
@@ -286,4 +286,18 @@ PMC. Frequencies based on roughly 1.8 million PubMed records. Details
 
 ``` r
 data(pmtk_tbl_pmc_ref)
+pmtk_tbl_pmc_ref
 ```
+
+    ##                  type                   DescriptorName doc_count     doc_prop
+    ##       1: meshHeadings                       algorithms     35621 1.963793e-02
+    ##       2: meshHeadings           crystallography,_x-ray      6384 3.519512e-03
+    ##       3: meshHeadings data_interpretation,_statistical      3216 1.772987e-03
+    ##       4: meshHeadings                 fourier_analysis       472 2.602145e-04
+    ##       5: meshHeadings              molecular_structure      8696 4.794122e-03
+    ##      ---                                                                     
+    ## 1304693: meshHeadings         tricuspid_valve_stenosis         1 5.513020e-07
+    ## 1304694: meshHeadings                    ethylestrenol         1 5.513020e-07
+    ## 1304695:    chemNames         monoethylglycinexylidide         1 5.513020e-07
+    ## 1304696:    chemNames                           savlon         1 5.513020e-07
+    ## 1304697:    chemNames            7-propyl_spirolactone         1 5.513020e-07

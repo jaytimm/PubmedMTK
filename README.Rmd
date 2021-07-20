@@ -240,6 +240,7 @@ MeSH annotation frequencies for the Open Access Common Use portion of PMC.  Freq
 
 ```{r}
 data(pmtk_tbl_pmc_ref)
+pmtk_tbl_pmc_ref
 ```
 
 
